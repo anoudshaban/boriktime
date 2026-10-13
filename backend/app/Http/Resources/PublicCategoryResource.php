@@ -24,6 +24,7 @@ class PublicCategoryResource extends JsonResource
             'description' => ['en' => $this->description_en, 'ar' => $this->description_ar],
             'icon' => $this->icon,
             'image' => ImageStore::url($this->image_path),
+            'image_credit' => $this->image_credit,
             'products' => PublicProductResource::collection($this->whenLoaded('products')),
         ];
     }

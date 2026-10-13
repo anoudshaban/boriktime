@@ -5,6 +5,7 @@ import { Logo } from '../components/brand/Logo'
 import { CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import type { Group, Settings } from '../types'
+import { PhotoCredits } from './Credits'
 import { OffersSlider } from './Offers'
 
 const EASE = [0.2, 0.7, 0.3, 1] as const
@@ -73,6 +74,7 @@ export function Home({ groups, settings, firstVisit }: Props) {
         <p className="foot__brand">
           {name} · {t('digitalMenu')}
         </p>
+        <PhotoCredits />
       </motion.footer>
     </main>
   )

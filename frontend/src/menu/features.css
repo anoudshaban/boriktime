@@ -915,3 +915,75 @@
 .mylist__clear {
   margin-top: 14px;
 }
+
+/* ---------- Photo credits ---------- */
+.credit {
+  margin: 8px 0 0;
+  max-width: 300px;
+  font-size: 10.5px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.banner__credit {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 12px;
+  z-index: 1;
+  max-width: 60%;
+  font-size: 9.5px;
+  color: rgba(244, 237, 227, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cover .banner__credit {
+  top: auto;
+  bottom: 10px;
+}
+
+.credits-link {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:root[lang='ar'] .credits-link {
+  letter-spacing: 0;
+  font-size: 13px;
+}
+
+.credits {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.credits li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.credits__name {
+  font-family: var(--font-display);
+  font-size: 17px;
+}
+
+.credits__by {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: start;
+}

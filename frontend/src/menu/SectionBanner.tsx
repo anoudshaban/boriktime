@@ -57,6 +57,7 @@ export function SectionBanner({ section, headingId, hero = false }: Props) {
       )}
 
       <span className="banner__shade" />
+      {section.image && section.image_credit && <span className="banner__credit">{section.image_credit}</span>}
 
       <div className="banner__text">
         <motion.span

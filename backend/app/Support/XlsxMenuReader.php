@@ -81,10 +81,14 @@ class XlsxMenuReader
     {
         $value = $this->clean($value);
 
-        if (preg_match('/^(.+?)\s*\((.{25,})\)\s*$/u', $value, $m)) {
+        // Only long lists (a platter's contents) become the description;
+        // short ones such as "(Pepsi - Seven up - Merinda)" stay in the name.
+        if (preg_match('/^(.+?)\s*\((.+)\)\s*$/u', $value, $m)) {
             $parts = array_filter(array_map('trim', preg_split('/\s+-\s+/u', $m[2])));
 
-            return [$m[1], implode(' · ', $parts)];
+            if (count($parts) >= 5) {
+                return [$m[1], implode(' · ', $parts)];
+            }
         }
 
         return [$value, null];

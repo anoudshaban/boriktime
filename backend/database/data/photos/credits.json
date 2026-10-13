@@ -1,0 +1,593 @@
+{
+  "note": "Starter photos are openly licensed stock images (CC0, public domain, CC BY or CC BY-SA) from Wikimedia Commons. They are stand-ins, not photos of Börek Time dishes - replace them with your own in Admin > Photos. Each photo’s author and licence are listed below and shown on the menu.",
+  "photos": {
+    "dish-1": {
+      "credit": "Jwslubbock · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Turkish breakfast in Rumelihisarı.jpg",
+      "creator": "Jwslubbock",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Turkish_breakfast_in_Rumelihisar%C4%B1.jpg"
+    },
+    "dish-4": {
+      "credit": "E4024 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Gül böreği.jpg",
+      "creator": "E4024",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:G%C3%BCl_b%C3%B6re%C4%9Fi.jpg"
+    },
+    "dish-5": {
+      "credit": "Contrapunctus-1 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Za'atar with cheese manakish at Agasi, Lajpat Nagar, Delhi (2025-10-04).jpg",
+      "creator": "Contrapunctus-1",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Za%27atar_with_cheese_manakish_at_Agasi,_Lajpat_Nagar,_Delhi_(2025-10-04).jpg"
+    },
+    "dish-6": {
+      "credit": "Contrapunctus-1 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Za'atar with cheese manakish at Agasi, Lajpat Nagar, Delhi (2025-10-04).jpg",
+      "creator": "Contrapunctus-1",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Za%27atar_with_cheese_manakish_at_Agasi,_Lajpat_Nagar,_Delhi_(2025-10-04).jpg"
+    },
+    "dish-7": {
+      "credit": "Garrett Ziegler · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Peynirli Pide.jpg",
+      "creator": "Garrett Ziegler",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Peynirli_Pide.jpg"
+    },
+    "dish-8": {
+      "credit": "E4024 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Pide with kashar cheese and eggs.jpg",
+      "creator": "E4024",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Pide_with_kashar_cheese_and_eggs.jpg"
+    },
+    "dish-10": {
+      "credit": "Rumana22 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Sebzeli Lahmacun with quartered lemon.png",
+      "creator": "Rumana22",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sebzeli_Lahmacun_with_quartered_lemon.png"
+    },
+    "dish-11": {
+      "credit": "Maksym Kozlenko · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "2023-01-20 Turkish pide.jpg",
+      "creator": "Maksym Kozlenko",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:2023-01-20_Turkish_pide.jpg"
+    },
+    "dish-13": {
+      "credit": "Laliv g · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Arayes.jpg",
+      "creator": "Laliv g",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Arayes.jpg"
+    },
+    "dish-14": {
+      "credit": "Bazel · Public domain · Wikimedia Commons",
+      "title": "Sfiha2.jpg",
+      "creator": "Bazel",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Sfiha2.jpg"
+    },
+    "dish-15": {
+      "credit": "Takeaway · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Yam som-o.JPG",
+      "creator": "Takeaway",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Yam_som-o.JPG"
+    },
+    "dish-16": {
+      "credit": "Noumenon · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Kisir.jpg",
+      "creator": "Noumenon",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Kisir.jpg"
+    },
+    "dish-17": {
+      "credit": "Mack Male from Edmonton, AB, Canada · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Banh Mi Burger & Quinoa Tabbouleh (15839231859).jpg",
+      "creator": "Mack Male from Edmonton, AB, Canada",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Banh_Mi_Burger_%26_Quinoa_Tabbouleh_(15839231859).jpg"
+    },
+    "dish-18": {
+      "credit": "pattyonflickr · CC BY 2.0 · Wikimedia Commons",
+      "title": "Chicken Caesar Salad at French Market Restaurant.jpg",
+      "creator": "pattyonflickr",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Chicken_Caesar_Salad_at_French_Market_Restaurant.jpg"
+    },
+    "dish-19": {
+      "credit": "Sdkb · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Tatte Green & Nutty salad.jpg",
+      "creator": "Sdkb",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tatte_Green_%26_Nutty_salad.jpg"
+    },
+    "dish-20": {
+      "credit": "Paul Goyette · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Hummus from The Nile.jpg",
+      "creator": "Paul Goyette",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hummus_from_The_Nile.jpg"
+    },
+    "dish-21": {
+      "credit": "Bazel · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Mutabbel.jpg",
+      "creator": "Bazel",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Mutabbel.jpg"
+    },
+    "dish-22": {
+      "credit": "HaJunkiyada · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Liat Portal for Foodie Disorder – Hummus with Moroccan Beef (Oren’s Hummus).jpg",
+      "creator": "HaJunkiyada",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Liat_Portal_for_Foodie_Disorder_%E2%80%93_Hummus_with_Moroccan_Beef_(Oren%E2%80%99s_Hummus).jpg"
+    },
+    "dish-23": {
+      "credit": "Breville USA · CC BY 2.0 · Wikimedia Commons",
+      "title": "Baba Ganoush 05of05 (8735238183).jpg",
+      "creator": "Breville USA",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Baba_Ganoush_05of05_(8735238183).jpg"
+    },
+    "dish-24": {
+      "credit": "Suzette - www.suzette.nu from Arnhem, Netherlands · CC BY 2.0 · Wikimedia Commons",
+      "title": "Beetroot Salad (3862315693).jpg",
+      "creator": "Suzette - www.suzette.nu from Arnhem, Netherlands",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Beetroot_Salad_(3862315693).jpg"
+    },
+    "dish-25": {
+      "credit": "Krista · CC BY 2.0 · Wikimedia Commons",
+      "title": "Tanoreen muhammara.jpg",
+      "creator": "Krista",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tanoreen_muhammara.jpg"
+    },
+    "dish-26": {
+      "credit": "Jon Sullivan · Public domain · Wikimedia Commons",
+      "title": "Stuffed grape leaves.jpg",
+      "creator": "Jon Sullivan",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Stuffed_grape_leaves.jpg"
+    },
+    "dish-27": {
+      "credit": "Ewan Munro from London, UK · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Queens Head and Artichoke, Regents Park, London (3676047519).jpg",
+      "creator": "Ewan Munro from London, UK",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Queens_Head_and_Artichoke,_Regents_Park,_London_(3676047519).jpg"
+    },
+    "dish-28": {
+      "credit": "Vincent60030 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "DoughnDolce Beef Sandwich.jpg",
+      "creator": "Vincent60030",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:DoughnDolce_Beef_Sandwich.jpg"
+    },
+    "dish-29": {
+      "credit": "Vimkay · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Potatoes coated with spices and fried in an air-fryer.jpg",
+      "creator": "Vimkay",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Potatoes_coated_with_spices_and_fried_in_an_air-fryer.jpg"
+    },
+    "dish-30": {
+      "credit": "Hmioannou · CC BY 3.0 · Wikimedia Commons",
+      "title": "Grilled Halloumi.jpg",
+      "creator": "Hmioannou",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Grilled_Halloumi.jpg"
+    },
+    "dish-32": {
+      "credit": "Fjmustak · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "كبيبة.jpg",
+      "creator": "Fjmustak",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:%D9%83%D8%A8%D9%8A%D8%A8%D8%A9.jpg"
+    },
+    "dish-33": {
+      "credit": "Unknown author · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Kobbeh.png",
+      "creator": "Unknown author",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Kobbeh.png"
+    },
+    "dish-35": {
+      "credit": "روتانا · CC BY 4.0 · Wikimedia Commons",
+      "title": "Hummus Fatteh with Meat.jpg",
+      "creator": "روتانا",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hummus_Fatteh_with_Meat.jpg"
+    },
+    "dish-36": {
+      "credit": "Mngck · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Ghiudem.jpg",
+      "creator": "Mngck",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ghiudem.jpg"
+    },
+    "dish-37": {
+      "credit": "Tamorlan · CC BY 3.0 · Wikimedia Commons",
+      "title": "Setas al ajillo-Madrid.jpg",
+      "creator": "Tamorlan",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Setas_al_ajillo-Madrid.jpg"
+    },
+    "dish-39": {
+      "credit": "Mence · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Ali-nazik-2.jpg",
+      "creator": "Mence",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ali-nazik-2.jpg"
+    },
+    "dish-40": {
+      "credit": "Oystercard · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Syrian Fatteh sold in Mardin, Turkey.jpg",
+      "creator": "Oystercard",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Syrian_Fatteh_sold_in_Mardin,_Turkey.jpg"
+    },
+    "dish-41": {
+      "credit": "Deed89 at English Wikipedia · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Fatethomos.JPG",
+      "creator": "Deed89 at English Wikipedia",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Fatethomos.JPG"
+    },
+    "dish-42": {
+      "credit": "روتانا · CC BY 4.0 · Wikimedia Commons",
+      "title": "Hummus Fatteh with lamb Meat and Spiced Chickpeas.jpg",
+      "creator": "روتانا",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hummus_Fatteh_with_lamb_Meat_and_Spiced_Chickpeas.jpg"
+    },
+    "dish-43": {
+      "credit": "Benoît Prieur · CC0 · Wikimedia Commons",
+      "title": "Brasserie Chanteclair (Lyon) - souris d'agneau (avril 2022).jpg",
+      "creator": "Benoît Prieur",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Brasserie_Chanteclair_(Lyon)_-_souris_d%27agneau_(avril_2022).jpg"
+    },
+    "dish-44": {
+      "credit": "Kangkan Goswami · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Chicken cooked in clay pot.jpg",
+      "creator": "Kangkan Goswami",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Chicken_cooked_in_clay_pot.jpg"
+    },
+    "dish-45": {
+      "credit": "Author has given permission for Mark Miller to release th… · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Chicken dinner.jpg",
+      "creator": "Author has given permission for Mark Miller to release th…",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Chicken_dinner.jpg"
+    },
+    "dish-47": {
+      "credit": "Scott Dexter · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Iskender kebab on plate.jpg",
+      "creator": "Scott Dexter",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskender_kebab_on_plate.jpg"
+    },
+    "dish-48": {
+      "credit": "bnhsu · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Some ayran in copper cups.jpg",
+      "creator": "bnhsu",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Some_ayran_in_copper_cups.jpg"
+    },
+    "dish-49": {
+      "credit": "HarshLight · CC BY 2.0 · Wikimedia Commons",
+      "title": "Lemonade - 27682817724.jpg",
+      "creator": "HarshLight",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Lemonade_-_27682817724.jpg"
+    },
+    "dish-50": {
+      "credit": "Evening42 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Homemade Mint Lemonade,Bangladesh.jpg",
+      "creator": "Evening42",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Homemade_Mint_Lemonade,Bangladesh.jpg"
+    },
+    "dish-52": {
+      "credit": "Jameswasswa · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Strawberry juice.jpg",
+      "creator": "Jameswasswa",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Strawberry_juice.jpg"
+    },
+    "dish-53": {
+      "credit": "Agency of the United States Department of Agriculture Edi… · Public domain · Wikimedia Commons",
+      "title": "Orange juice 1 edit1.jpg",
+      "creator": "Agency of the United States Department of Agriculture Edi…",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Orange_juice_1_edit1.jpg"
+    },
+    "dish-54": {
+      "credit": "Alkemieug · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "MelissA Mojito.jpg",
+      "creator": "Alkemieug",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:MelissA_Mojito.jpg"
+    },
+    "dish-55": {
+      "credit": "pic_p_ter · Public domain · Wikimedia Commons",
+      "title": "Glass cola.jpg",
+      "creator": "pic_p_ter",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Glass_cola.jpg"
+    },
+    "dish-56": {
+      "credit": "Melissa Doroquez · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Iced Tea from flickr.jpg",
+      "creator": "Melissa Doroquez",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iced_Tea_from_flickr.jpg"
+    },
+    "dish-57": {
+      "credit": "Anke Klitzing · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Iced coffee (Eiskaffee).jpg",
+      "creator": "Anke Klitzing",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iced_coffee_(Eiskaffee).jpg"
+    },
+    "dish-58": {
+      "credit": "Tony Webster · CC BY 2.0 · Wikimedia Commons",
+      "title": "Sparkling Water with Mint in Glass Cup.jpg",
+      "creator": "Tony Webster",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sparkling_Water_with_Mint_in_Glass_Cup.jpg"
+    },
+    "dish-59": {
+      "credit": "Philsacor · CC0 · Wikimedia Commons",
+      "title": "A bottle of cold water with droplets.jpg",
+      "creator": "Philsacor",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:A_bottle_of_cold_water_with_droplets.jpg"
+    },
+    "dish-60": {
+      "credit": "Andy Li · CC0 · Wikimedia Commons",
+      "title": "Turkish Coffee - Lavash 2023-12-13.jpg",
+      "creator": "Andy Li",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Turkish_Coffee_-_Lavash_2023-12-13.jpg"
+    },
+    "dish-61": {
+      "credit": "Firzafp · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "A cup of Americano in Lano Coffee (Palembang, SS).jpg",
+      "creator": "Firzafp",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:A_cup_of_Americano_in_Lano_Coffee_(Palembang,_SS).jpg"
+    },
+    "dish-62": {
+      "credit": "Slywire · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Arabic coffee with dates.jpg",
+      "creator": "Slywire",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Arabic_coffee_with_dates.jpg"
+    },
+    "dish-63": {
+      "credit": "TricksterWildcat · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Cappuccino and cookie.jpg",
+      "creator": "TricksterWildcat",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Cappuccino_and_cookie.jpg"
+    },
+    "dish-64": {
+      "credit": "Mortefot from Flickr · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Latte art.jpg",
+      "creator": "Mortefot from Flickr",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Latte_art.jpg"
+    },
+    "dish-65": {
+      "credit": "Emna Mizouni · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Hot Chocolate in December.jpg",
+      "creator": "Emna Mizouni",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hot_Chocolate_in_December.jpg"
+    },
+    "dish-66": {
+      "credit": "Kim Sanso · CC0 · Wikimedia Commons",
+      "title": "Manual drip (pour-over) coffee.jpg",
+      "creator": "Kim Sanso",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Manual_drip_(pour-over)_coffee.jpg"
+    },
+    "dish-67": {
+      "credit": "Berthold Werner · Public domain · Wikimedia Commons",
+      "title": "Espresso BW 1.jpg",
+      "creator": "Berthold Werner",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Espresso_BW_1.jpg"
+    },
+    "dish-68": {
+      "credit": "massage-techniques · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Double Espresso Shot in a Demitasse.jpg",
+      "creator": "massage-techniques",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Double_Espresso_Shot_in_a_Demitasse.jpg"
+    },
+    "dish-69": {
+      "credit": "Sarkar Sayantan · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Moroccan Mint Tea - 1.jpg",
+      "creator": "Sarkar Sayantan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Moroccan_Mint_Tea_-_1.jpg"
+    },
+    "dish-70": {
+      "credit": "Geoff Peters from Vancouver, BC, Canada · CC BY 2.0 · Wikimedia Commons",
+      "title": "Homemade apple galette (5171649664).jpg",
+      "creator": "Geoff Peters from Vancouver, BC, Canada",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Homemade_apple_galette_(5171649664).jpg"
+    },
+    "dish-71": {
+      "credit": "Arnold Gatilao · CC BY 2.0 · Wikimedia Commons",
+      "title": "Pistachio ice cream with whipped mascarpone and pistachio biscotti.jpg",
+      "creator": "Arnold Gatilao",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Pistachio_ice_cream_with_whipped_mascarpone_and_pistachio_biscotti.jpg"
+    },
+    "dish-72": {
+      "credit": "Yoga Jaganathan · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "BROWNIE WITH ICE CREAM - ZUKA, CHENNAI.jpg",
+      "creator": "Yoga Jaganathan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:BROWNIE_WITH_ICE_CREAM_-_ZUKA,_CHENNAI.jpg"
+    },
+    "dish-73": {
+      "credit": "Alpha from Melbourne, Australia · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Baklava, pomegranite ice cream, mastic-flavoured custard (3061207178).jpg",
+      "creator": "Alpha from Melbourne, Australia",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Baklava,_pomegranite_ice_cream,_mastic-flavoured_custard_(3061207178).jpg"
+    },
+    "dish-74": {
+      "credit": "白と赤茶 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Knafeh khishnah with cheese of sheep milk.jpg",
+      "creator": "白と赤茶",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Knafeh_khishnah_with_cheese_of_sheep_milk.jpg"
+    },
+    "dish-2": {
+      "credit": "Garrett Ziegler · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Sigara Börek.jpg",
+      "creator": "Garrett Ziegler",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sigara_B%C3%B6rek.jpg"
+    },
+    "dish-3": {
+      "credit": "Yashfaahmad123 · CC0 · Wikimedia Commons",
+      "title": "Borek aesthetic.jpg",
+      "creator": "Yashfaahmad123",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Borek_aesthetic.jpg"
+    },
+    "dish-9": {
+      "credit": "autumnroseuk · CC BY 2.0 · Wikimedia Commons",
+      "title": "Woolton pie (4653443530).jpg",
+      "creator": "autumnroseuk",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Woolton_pie_(4653443530).jpg"
+    },
+    "dish-12": {
+      "credit": "E4024 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Pastirmali pide.jpg",
+      "creator": "E4024",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Pastirmali_pide.jpg"
+    },
+    "dish-46": {
+      "credit": "Kgbo · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Lamb shank at the Southern Hotel, Toowoomba, Queensland 2024.jpg",
+      "creator": "Kgbo",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Lamb_shank_at_the_Southern_Hotel,_Toowoomba,_Queensland_2024.jpg"
+    },
+    "banner-breakfast": {
+      "credit": "Jwslubbock · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Turkish breakfast in Rumelihisarı.jpg",
+      "creator": "Jwslubbock",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Turkish_breakfast_in_Rumelihisar%C4%B1.jpg"
+    },
+    "banner-bakery": {
+      "credit": "E4024 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Homemade börek.jpg",
+      "creator": "E4024",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Homemade_b%C3%B6rek.jpg"
+    },
+    "banner-salads": {
+      "credit": "Horacio Cambeiro · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Fresh salad with arugula, cabbage and tomato in a glass bowl.jpg",
+      "creator": "Horacio Cambeiro",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Fresh_salad_with_arugula,_cabbage_and_tomato_in_a_glass_bowl.jpg"
+    },
+    "banner-cold-mezze": {
+      "credit": "RubaMorsi · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Middle Eastern Food From a Restaurant in Egypt.jpg",
+      "creator": "RubaMorsi",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Middle_Eastern_Food_From_a_Restaurant_in_Egypt.jpg"
+    },
+    "banner-hot-mezze": {
+      "credit": "Fjmustak · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "كبيبة.jpg",
+      "creator": "Fjmustak",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:%D9%83%D8%A8%D9%8A%D8%A8%D8%A9.jpg"
+    },
+    "banner-fatteh": {
+      "credit": "روتانا · CC BY 4.0 · Wikimedia Commons",
+      "title": "Hummus Fatteh with Meat.jpg",
+      "creator": "روتانا",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hummus_Fatteh_with_Meat.jpg"
+    },
+    "banner-main-course": {
+      "credit": "Scott Dexter · CC BY-SA 2.0 · Wikimedia Commons",
+      "title": "Iskender kebab on plate.jpg",
+      "creator": "Scott Dexter",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskender_kebab_on_plate.jpg"
+    },
+    "banner-cold-drinks": {
+      "credit": "Alkemieug · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "MelissA Mojito.jpg",
+      "creator": "Alkemieug",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:MelissA_Mojito.jpg"
+    },
+    "banner-hot-drinks": {
+      "credit": "Cromptonenator1 · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Turkish coffee Turk kahvesi.jpg",
+      "creator": "Cromptonenator1",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Turkish_coffee_Turk_kahvesi.jpg"
+    },
+    "banner-desserts": {
+      "credit": "Maksym Kozlenko · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "2018-04-28 Turkish baklava in Australian turkish cafe.jpg",
+      "creator": "Maksym Kozlenko",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:2018-04-28_Turkish_baklava_in_Australian_turkish_cafe.jpg"
+    },
+    "banner-kitchen": {
+      "credit": "Jj saezdeo · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Traditional lebanese cuisine table setting.jpg",
+      "creator": "Jj saezdeo",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Traditional_lebanese_cuisine_table_setting.jpg"
+    },
+    "banner-cafe": {
+      "credit": "Tema · CC BY-SA 3.0 · Wikimedia Commons",
+      "title": "Turkish coffee in Istanbul.jpg",
+      "creator": "Tema",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Turkish_coffee_in_Istanbul.jpg"
+    },
+    "banner-sweets": {
+      "credit": "Challiyan · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "Baklava 2.jpg",
+      "creator": "Challiyan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Baklava_2.jpg"
+    },
+    "dish-34": {
+      "credit": "Saraabdallat · CC BY-SA 4.0 · Wikimedia Commons",
+      "title": "فريكة.jpg",
+      "creator": "Saraabdallat",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:%D9%81%D8%B1%D9%8A%D9%83%D8%A9.jpg"
+    }
+  }
+}

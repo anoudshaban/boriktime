@@ -117,6 +117,7 @@ class MenuCache
             'description' => ['en' => $group->description_en, 'ar' => $group->description_ar],
             'icon' => $group->icon,
             'image' => ImageStore::url($group->image_path),
+            'image_credit' => $group->image_credit,
             'sections' => PublicCategoryResource::collection($sections)->resolve(),
         ];
     }

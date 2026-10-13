@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\MenuImporter;
+use App\Support\StarterPhotos;
 use Illuminate\Support\Facades\Artisan;
 
 Artisan::command('menu:import {path? : Path to the .xlsx menu (defaults to database/data/menu.xlsx)}
@@ -18,3 +19,11 @@ Artisan::command('menu:import {path? : Path to the .xlsx menu (defaults to datab
 
     return 0;
 })->purpose('Import or update the menu from the restaurant spreadsheet');
+
+Artisan::command('menu:photos {--force : Replace photos that were already uploaded}', function (StarterPhotos $photos) {
+    $stats = $photos->attach((bool) $this->option('force'));
+
+    $this->components->info("Attached {$stats['dishes']} dish photos and {$stats['banners']} banners ({$stats['skipped']} skipped: already had a photo or not on the menu).");
+
+    return 0;
+})->purpose('Attach the starter photos from database/data/photos to dishes and sections without a photo');

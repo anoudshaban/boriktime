@@ -91,6 +91,17 @@ php artisan menu:import --fresh                               # wipe and re-impo
 
 Arabic section names, icons, taglines and the home-page groups live in `backend/config/menu.php`.
 
+## Starter photos
+
+`backend/database/data/photos` holds openly licensed photos from Wikimedia Commons (one per dish, by menu number, plus section banners). `php artisan db:seed` attaches them, or run:
+
+```bash
+php artisan menu:photos            # only fills dishes/sections without a photo
+php artisan menu:photos --force    # replace everything with the starter photos
+```
+
+They are stand-ins, not photos of Börek Time dishes. Each one's author and licence (CC BY / CC BY-SA require credit) is in `credits.json`, shown under the photo and in **Photo credits** on the menu. Uploading your own photo in Admin → Photos replaces it and removes the credit.
+
 ## API
 
 | Method | Endpoint | |

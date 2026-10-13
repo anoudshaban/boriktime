@@ -29,6 +29,7 @@ class CategoryResource extends JsonResource
             'description_ar' => $this->description_ar,
             'icon' => $this->icon,
             'image' => ImageStore::url($this->image_path),
+            'image_credit' => $this->image_credit,
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
             'products_count' => $this->whenCounted('products'),

@@ -24,6 +24,7 @@ class MenuImportTest extends TestCase
 
         $breakfast = Product::where('code', 1)->firstOrFail();
         $this->assertSame('Breakfast / 2 Persons', $breakfast->name_en);
+        $this->assertSame('Soft Drink ( Pepsi - Seven up - Merinda )', Product::where('code', 55)->value('name_en'));
         $this->assertStringContainsString('Shakshoka', $breakfast->description_en);
         $this->assertSame('14.000', $breakfast->price);
 
@@ -61,6 +62,22 @@ class MenuImportTest extends TestCase
         $this->assertSame('10.000', $dish->price);
         $this->assertSame('Written by the chef', $dish->description_en);
         $this->assertSame('products/x.webp', $dish->image_path);
+    }
+
+    public function test_a_renamed_dish_is_updated_not_duplicated(): void
+    {
+        $importer = app(MenuImporter::class);
+        $importer->import(config('menu.source'));
+        $drink = Product::where('code', 55)->firstOrFail();
+        $drink->update(['name_en' => 'Soft Drink', 'image_path' => 'products/cola.webp']);
+
+        $stats = $importer->import(config('menu.source'));
+
+        $this->assertSame(0, $stats['created']);
+        $this->assertSame(74, Product::count());
+        $drink->refresh();
+        $this->assertSame('Soft Drink ( Pepsi - Seven up - Merinda )', $drink->name_en);
+        $this->assertSame('products/cola.webp', $drink->image_path);
     }
 
     public function test_admin_can_upload_a_spreadsheet(): void

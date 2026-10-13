@@ -39,7 +39,7 @@ class MenuImporter
                 $stats['categories']++;
 
                 foreach ($section['items'] as $index => $item) {
-                    $product = $this->findProduct($item['name_en']) ?? new Product([
+                    $product = $this->findProduct($item['name_en'], $item['code'], $seen) ?? new Product([
                         'tags' => config('menu.tags')[$item['name_en']] ?? [],
                         'is_featured' => in_array($item['name_en'], config('menu.featured'), true),
                     ]);
@@ -125,10 +125,17 @@ class MenuImporter
         }
     }
 
-    private function findProduct(string $nameEn): ?Product
+    /**
+     * Match on the English name; if the name was edited in the sheet, fall
+     * back to the menu number so the dish (and its photo) is renamed, not duplicated.
+     *
+     * @param  list<int>  $taken  dishes already matched in this import
+     */
+    private function findProduct(string $nameEn, ?int $code, array $taken): ?Product
     {
         return Product::query()
             ->whereRaw('lower(name_en) = ?', [Str::lower($nameEn)])
-            ->first();
+            ->first()
+            ?? ($code === null ? null : Product::query()->where('code', $code)->whereNotIn('id', $taken)->first());
     }
 }

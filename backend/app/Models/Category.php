@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 #[Fillable([
     'parent_id', 'slug', 'name_en', 'name_ar', 'description_en', 'description_ar',
-    'icon', 'image_path', 'sort_order', 'is_active',
+    'icon', 'image_path', 'image_credit', 'sort_order', 'is_active',
 ])]
 class Category extends Model
 {

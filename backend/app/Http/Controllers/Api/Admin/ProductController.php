@@ -64,7 +64,7 @@ class ProductController extends Controller
         $request->validate(['image' => ['required', 'image', 'max:8192']]);
 
         $old = $product->image_path;
-        $product->update(['image_path' => $this->images->store($request->file('image'), 'products')]);
+        $product->update(['image_path' => $this->images->store($request->file('image'), 'products'), 'image_credit' => null]);
         $this->images->delete($old);
 
         return new ProductResource($product);
@@ -73,7 +73,7 @@ class ProductController extends Controller
     public function deleteImage(Product $product): ProductResource
     {
         $this->images->delete($product->image_path);
-        $product->update(['image_path' => null]);
+        $product->update(['image_path' => null, 'image_credit' => null]);
 
         return new ProductResource($product);
     }

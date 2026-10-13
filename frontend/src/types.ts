@@ -16,6 +16,8 @@ export type Product = {
   calories: number | null
   tags: Tag[]
   image: string | null
+  /** Credit for openly licensed starter photos, e.g. "Jane Doe · CC BY 2.0". */
+  image_credit?: string | null
   featured: boolean
 }
 
@@ -39,6 +41,7 @@ export type Category = {
   description: LocalizedOptional
   icon: string
   image: string | null
+  image_credit?: string | null
   products: Product[]
 }
 
@@ -50,6 +53,7 @@ export type Group = {
   description: LocalizedOptional
   icon: string
   image: string | null
+  image_credit?: string | null
   sections: Category[]
 }
 

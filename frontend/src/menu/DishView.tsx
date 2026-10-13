@@ -194,6 +194,11 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
                 )}
                 {onSale && <span className="dish__sale">{t('offer')}</span>}
               </motion.div>
+              {product.image && product.image_credit && (
+                <p className="credit">
+                  {t('photo')}: {product.image_credit}
+                </p>
+              )}
 
               {siblings.length > 1 && (
                 <div className="dish__stepper">

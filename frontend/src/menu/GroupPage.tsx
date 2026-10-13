@@ -43,7 +43,7 @@ export function GroupPage({ group, settings }: Props) {
         {pick(group.description) && <p className="note">{pick(group.description)}</p>}
       </div>
 
-      {group.image && <GroupCover src={group.image} />}
+      {group.image && <GroupCover src={group.image} credit={group.image_credit} />}
 
       {group.sections.length > 1 && (
         <div className="chips-bar">
@@ -104,7 +104,7 @@ export function GroupPage({ group, settings }: Props) {
 }
 
 /** Wide group photo under the title, drifting slower than the page. */
-function GroupCover({ src }: { src: string }) {
+function GroupCover({ src, credit }: { src: string; credit?: string | null }) {
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
@@ -120,6 +120,7 @@ function GroupCover({ src }: { src: string }) {
         transition={{ duration: 0.8, ease: EASE }}
       >
         <motion.img src={src} alt="" style={{ y }} />
+        {credit && <span className="banner__credit">{credit}</span>}
       </motion.div>
     </div>
   )
