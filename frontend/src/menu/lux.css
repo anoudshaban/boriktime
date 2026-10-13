@@ -1102,3 +1102,26 @@ body:has(.menu) {
 .window::before {
   inset: -14px -14px 18px -14px;
 }
+
+/* Dish page: clean ivory, no colour glow; strips keep their side margins. */
+.dish__ambient {
+  display: none;
+}
+
+.dish .also {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.dish .also h3 {
+  color: var(--gold);
+}
+
+.dish .strip .card {
+  background: #fff;
+  border-color: var(--line);
+  box-shadow: 0 20px 40px -32px rgba(70, 25, 15, 0.5);
+}
