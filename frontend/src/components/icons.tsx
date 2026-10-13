@@ -25,6 +25,12 @@ function Svg({ size = 24, children, ...rest }: IconProps & { children: ReactNode
 /* ---------- Menu section icons (keys match config/menu.php "icon") ---------- */
 
 const CATEGORY_ICONS: Record<string, ReactNode> = {
+  cutlery: (
+    <>
+      <path d="M8 3v7.5M5.5 3v5a2.5 2.5 0 0 0 5 0V3M8 10.5V21" />
+      <path d="M17.5 21V3c-2 1.3-3 3.6-3 6.6 0 1.9.8 3.2 3 3.6" />
+    </>
+  ),
   breakfast: (
     <>
       <path d="M7.5 6.5c2-2.5 6-2.6 8.2-.6 1.6 1.4 3.6 1.6 4.3 3.7.8 2.4-.6 4.3-1.4 6.1-1 2.4-3.3 4.3-6.4 4.3-3.6 0-6.9-1.6-8.1-4.7C3 12.6 5 9.6 7.5 6.5Z" />

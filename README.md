@@ -13,25 +13,23 @@ boriktime/
 
 ## What guests get
 
-- Animated intro: the logo draws itself, then the curtain lifts (once per visit, tap to skip)
-- Hero with swaying wheat, drifting flour particles and scroll parallax
-- Sticky category bar with icons and scroll-spy; the active section slides into view
-- **Chef's picks** carousel
-- Cards with 3D tilt, light sheen and scroll-reveal; or a classic **list view** with dotted price leaders
-- Dish detail sheet: drag down to close on phones, modal on desktop, next/previous, share link (`/#dish-12`)
-- Instant search across English and Arabic (`borek` finds “Börek”, Arabic spelling variants match)
-- Full Arabic mode: RTL layout, Arabic fonts and Arabic-Indic numerals
-- Works offline with the last menu seen, and respects “reduce motion”
+A calm, typographic menu in three steps:
 
-Dishes without a photo get a designed placeholder (burgundy plate + section icon + menu number) until you upload one.
+1. **Home** (`/`) — the logo draws itself on the first visit, a short welcome text, then one large card per group: *The Kitchen*, *The Café*, *Sweets*.
+2. **Group page** (`/menu/kitchen`) — sticky pill tabs for its sections (Breakfast, Bakery…) that follow your scroll, gold section headings and dish cards.
+3. **Dish quick view** (`/menu/kitchen/12`) — large photo, description, price, calories and “You may also like”. Every dish has its own shareable link.
+
+Also: instant search in English and Arabic (`borek` finds “Börek”), full Arabic mode (RTL, Arabic fonts and numerals), offline copy of the last menu, and “reduce motion” support.
+
+Dishes without a photo show a porcelain plate, tilted in 3D and slowly turning, with the section's motif — until you upload a photo in the admin. **Real photos make the biggest difference to how the menu looks.**
 
 ## Admin panel — `/admin`
 
 | | |
 |---|---|
 | Dishes | Inline price edit, show/hide, Chef's pick, reorder, photos (auto-resized to WebP), tags, descriptions |
-| Sections | Names, taglines, icon, order, visibility |
-| Restaurant info | Phone, WhatsApp, Instagram, address, map link, opening hours, currency |
+| Sections | Groups (home cards) and their sections: names, descriptions, icon, group, order, visibility |
+| Restaurant info | Welcome text & motto, phone, WhatsApp, Instagram, address, map link, opening hours, currency |
 | Import Excel | Upload a new version of `FINAL Menu.xlsx` to update names and prices in bulk (photos and edits are kept) |
 
 Default login (set in `backend/.env` **before** seeding, then change it):
@@ -91,7 +89,7 @@ php artisan menu:import "path/to/menu.xlsx" --hide-missing   # also hide removed
 php artisan menu:import --fresh                               # wipe and re-import
 ```
 
-Arabic section names, icons and taglines for the spreadsheet's sections live in `backend/config/menu.php`.
+Arabic section names, icons, taglines and the home-page groups live in `backend/config/menu.php`.
 
 ## API
 

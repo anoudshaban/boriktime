@@ -2,7 +2,7 @@ import { MotionConfig } from 'motion/react'
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { I18nProvider } from './lib/i18n'
-import MenuPage from './menu/MenuPage'
+import MenuApp from './menu/MenuApp'
 
 // Guests never download the admin bundle.
 const AdminApp = lazy(() => import('./admin/AdminApp'))
@@ -24,7 +24,7 @@ export default function App() {
             path="*"
             element={
               <I18nProvider>
-                <MenuPage />
+                <MenuApp />
               </I18nProvider>
             }
           />

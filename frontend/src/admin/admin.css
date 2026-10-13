@@ -409,6 +409,10 @@
   opacity: 0.55;
 }
 
+.a-item--nested {
+  margin-inline-start: 34px;
+}
+
 .a-item--cat {
   grid-template-columns: auto auto 1fr auto auto;
   grid-template-areas: 'order thumb names price toggles';

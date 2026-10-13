@@ -1,20 +1,20 @@
 import { AnimatePresence, motion } from 'motion/react'
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CloseIcon, SearchIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt, highlightParts, normalize } from '../lib/text'
-import type { Category, Product, Settings } from '../types'
+import type { Category, Group, Product, Settings } from '../types'
 import { DishMedia, Price } from './parts'
 
 type Props = {
   open: boolean
-  categories: Category[]
+  groups: Group[]
   settings: Settings | null
   onClose: () => void
-  onSelect: (product: Product) => void
 }
 
-type Indexed = { product: Product; category: Category; haystack: string }
+type Indexed = { product: Product; section: Category; group: Group; haystack: string }
 
 function Highlight({ text, query }: { text: string; query: string }) {
   return (
@@ -24,26 +24,31 @@ function Highlight({ text, query }: { text: string; query: string }) {
   )
 }
 
-export function SearchOverlay({ open, categories, settings, onClose, onSelect }: Props) {
-  const { lang, pick, other, t } = useI18n()
+/** Instant search across every dish, in English or Arabic. */
+export function SearchOverlay({ open, groups, settings, onClose }: Props) {
+  const { lang, pick, t } = useI18n()
+  const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const deferred = useDeferredValue(query)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const index = useMemo<Indexed[]>(
     () =>
-      categories.flatMap((category) =>
-        category.products.map((product) => ({
-          product,
-          category,
-          haystack: normalize(
-            [product.name.en, product.name.ar, product.description.en, product.description.ar, category.name.en, category.name.ar, product.code]
-              .filter(Boolean)
-              .join(' | '),
-          ),
-        })),
+      groups.flatMap((group) =>
+        group.sections.flatMap((section) =>
+          section.products.map((product) => ({
+            product,
+            section,
+            group,
+            haystack: normalize(
+              [product.name.en, product.name.ar, product.description.en, product.description.ar, section.name.en, section.name.ar, product.code]
+                .filter(Boolean)
+                .join(' | '),
+            ),
+          })),
+        ),
       ),
-    [categories],
+    [groups],
   )
 
   const results = useMemo(() => {
@@ -63,12 +68,14 @@ export function SearchOverlay({ open, categories, settings, onClose, onSelect }:
       cancelAnimationFrame(id)
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKey)
+      setQuery('')
     }
   }, [open, onClose])
 
-  useEffect(() => {
-    if (!open) setQuery('')
-  }, [open])
+  const select = (item: Indexed) => {
+    onClose()
+    navigate(`/menu/${item.group.slug}/${item.product.id}`, { state: { modal: true } })
+  }
 
   return (
     <AnimatePresence>
@@ -81,64 +88,50 @@ export function SearchOverlay({ open, categories, settings, onClose, onSelect }:
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.25 }}
         >
-          <motion.div
-            className="search__bar"
-            initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -20, opacity: 0 }}
-            transition={{ type: 'spring', damping: 26, stiffness: 300 }}
-          >
-            <SearchIcon size={22} className="search__icon" />
-            <input
-              ref={inputRef}
-              type="search"
-              inputMode="search"
-              enterKeyHint="search"
-              autoComplete="off"
-              placeholder={t('searchPlaceholder')}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button className="search__close" onClick={onClose} aria-label={t('close')}>
-              <CloseIcon size={22} />
+          <motion.div className="search__bar container" initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.35, ease: [0.2, 0.7, 0.3, 1] }}>
+            <label className="search__field">
+              <SearchIcon size={18} />
+              <input
+                ref={inputRef}
+                type="search"
+                enterKeyHint="search"
+                autoComplete="off"
+                placeholder={t('searchPlaceholder')}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </label>
+            <button className="round-btn" onClick={onClose} aria-label={t('close')}>
+              <CloseIcon size={18} />
             </button>
           </motion.div>
 
           <div className="search__results container">
             {deferred && (
-              <p className="search__count" aria-live="polite">
+              <p className="eyebrow eyebrow--muted" aria-live="polite">
                 {formatInt(results.length, lang)} {t('results')}
               </p>
             )}
-
             {deferred && results.length === 0 && (
-              <motion.div className="search__empty" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="search__empty">
                 <p className="search__empty-title">{t('noResults')}</p>
                 <p>{t('noResultsHint')}</p>
-              </motion.div>
+              </div>
             )}
-
             <ul className="search__list">
-              {results.map(({ product, category }, i) => (
-                <motion.li
-                  key={product.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(i, 10) * 0.025 }}
-                >
-                  <button className="search__item" onClick={() => onSelect(product)}>
-                    <DishMedia product={product} icon={category.icon} size="thumb" />
+              {results.map((item, i) => (
+                <motion.li key={item.product.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.025 }}>
+                  <button className="search__item" onClick={() => select(item)}>
+                    <DishMedia product={item.product} icon={item.section.icon} size="g" spin={false} />
                     <span className="search__text">
                       <span className="search__name">
-                        <Highlight text={pick(product.name)} query={deferred} />
+                        <Highlight text={pick(item.product.name)} query={deferred} />
                       </span>
-                      <span className="search__meta">
-                        <Highlight text={other(product.name)} query={deferred} /> · {pick(category.name)}
-                      </span>
+                      <span className="search__meta">{pick(item.section.name)}</span>
                     </span>
-                    <Price value={product.price} settings={settings} />
+                    <Price value={item.product.price} settings={settings} className="card__price" />
                   </button>
                 </motion.li>
               ))}

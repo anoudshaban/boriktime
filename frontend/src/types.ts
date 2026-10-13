@@ -27,11 +27,26 @@ export type Category = {
   products: Product[]
 }
 
+/** A home-page card (The Kitchen, The Café…) holding the sections shown as tabs. */
+export type Group = {
+  id: number
+  slug: string
+  name: Localized
+  description: LocalizedOptional
+  icon: string
+  image: string | null
+  sections: Category[]
+}
+
 export type Settings = {
   name_en: string
   name_ar: string
   tagline_en: string | null
   tagline_ar: string | null
+  about_en: string | null
+  about_ar: string | null
+  motto_en: string | null
+  motto_ar: string | null
   currency_en: string
   currency_ar: string
   phone: string | null
@@ -50,13 +65,14 @@ export type Settings = {
 export type Menu = {
   version: string
   settings: Settings
-  categories: Category[]
+  groups: Group[]
 }
 
 /* Admin (flat) shapes */
 
 export type AdminCategory = {
   id: number
+  parent_id: number | null
   slug: string
   name_en: string
   name_ar: string

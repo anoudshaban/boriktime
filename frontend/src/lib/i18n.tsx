@@ -3,6 +3,16 @@ import type { Lang, Localized, LocalizedOptional } from '../types'
 
 const STRINGS = {
   menu: { en: 'Menu', ar: 'القائمة' },
+  theMenu: { en: 'The menu', ar: 'القائمة' },
+  digitalMenu: { en: 'Digital menu', ar: 'القائمة الرقمية' },
+  back: { en: 'Back', ar: 'رجوع' },
+  quickView: { en: 'Quick view', ar: 'نظرة سريعة' },
+  viewDish: { en: 'View dish', ar: 'عرض الطبق' },
+  youMayAlsoLike: { en: 'You may also like', ar: 'قد يعجبك أيضاً' },
+  signature: { en: 'Signature', ar: 'مميّز' },
+  sections: { en: 'Sections', ar: 'الأقسام' },
+  notFound: { en: 'This page is not on the menu.', ar: 'هذه الصفحة غير موجودة في القائمة.' },
+  home: { en: 'Back to the menu', ar: 'العودة إلى القائمة' },
   viewMenu: { en: 'Explore the menu', ar: 'تصفّح القائمة' },
   search: { en: 'Search', ar: 'بحث' },
   searchPlaceholder: { en: 'Search dishes, drinks…', ar: 'ابحث عن طبق أو مشروب…' },

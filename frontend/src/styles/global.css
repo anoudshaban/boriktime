@@ -1,47 +1,51 @@
 /* ============================================================
    Börek Time — design tokens
-   Burgundy comes straight from the logo; cream and wheat-gold
-   echo flour, pastry and the wheat stalk.
+   Calm warm paper, charcoal ink and wheat gold, with the logo's
+   burgundy reserved for the dark accents (group cards, active tab).
    ============================================================ */
 :root {
   --burgundy: #7b1416;
   --burgundy-600: #6a1113;
   --burgundy-800: #4a0b0d;
   --burgundy-900: #2c0607;
-  --wine-glow: #9b2224;
 
-  --paper: #f6efe3;
-  --paper-2: #efe4d1;
-  --card: #fffaf2;
+  /* Dark surfaces: a deep wine that reads almost charcoal. */
+  --wine: #3f1214;
+  --wine-2: #521719;
+  --wine-ink: #f4ede3;
+  --wine-muted: #c6b2a4;
+
+  --paper: #efe9e1;
+  --paper-2: #e3dbcf;
+  --card: #faf7f2;
   --cream: #f4ecdd;
-  --ink: #2a1a16;
-  --ink-2: #4a3a33;
-  --muted: #85736a;
-  --line: rgba(123, 20, 22, 0.13);
-  --line-strong: rgba(123, 20, 22, 0.24);
+  --ink: #2b2321;
+  --ink-2: #4a403b;
+  --muted: #7d726a;
+  --line: rgba(43, 35, 33, 0.12);
+  --line-strong: rgba(43, 35, 33, 0.2);
 
-  --gold: #b9893b;
-  --gold-l: #e2bd72;
-  --gold-soft: rgba(185, 137, 59, 0.16);
+  --gold: #a67c33;
+  --gold-l: #c4953f;
+  --gold-soft: rgba(166, 124, 51, 0.14);
+  --sage: #5e6b45;
 
   --success: #4f6b3a;
   --danger: #b3261e;
 
   --radius-sm: 10px;
-  --radius: 18px;
-  --radius-lg: 26px;
+  --radius: 16px;
+  --radius-lg: 22px;
 
-  --shadow-sm: 0 1px 2px rgba(74, 11, 13, 0.06), 0 2px 8px rgba(74, 11, 13, 0.05);
-  --shadow: 0 2px 6px rgba(74, 11, 13, 0.06), 0 12px 32px rgba(74, 11, 13, 0.1);
-  --shadow-lg: 0 6px 16px rgba(44, 6, 7, 0.12), 0 30px 70px rgba(44, 6, 7, 0.22);
+  --shadow-sm: 0 1px 2px rgba(43, 35, 33, 0.05), 0 8px 18px rgba(43, 35, 33, 0.07);
+  --shadow: 0 10px 24px rgba(43, 35, 33, 0.12);
+  --shadow-lg: 0 18px 50px rgba(43, 35, 33, 0.22);
 
   --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --font-ui: 'Jost', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --header-h: 60px;
-  --nav-h: 58px;
-  --gutter: 16px;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --gutter: 18px;
   --max: 1180px;
 
   color-scheme: light;
@@ -54,8 +58,7 @@
 
 @media (min-width: 768px) {
   :root {
-    --gutter: 28px;
-    --header-h: 68px;
+    --gutter: 32px;
   }
 }
 
@@ -67,13 +70,11 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--header-h) + var(--nav-h) + 12px);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: 16px;
@@ -83,18 +84,19 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
+  background: var(--paper-2);
 }
 
-/* Paper grain over the whole page — subtle, purely decorative. */
+/* Soft light from above, darker toward the bottom edges — like paper under a lamp. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  pointer-events: none;
   z-index: 0;
-  opacity: 0.35;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.48 0 0 0 0 0.3 0 0 0 0 0.2 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 12%, rgba(255, 255, 255, 0.62), rgba(43, 35, 33, 0.12) 88%),
+    linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
 }
 
 #root {
@@ -130,12 +132,12 @@ a {
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 ::selection {
-  background: var(--burgundy);
-  color: var(--cream);
+  background: var(--wine);
+  color: var(--wine-ink);
 }
 
 .sr-only {

@@ -7,7 +7,7 @@ import { ConfirmButton, Drawer, Field, ImageDrop, Switch, useToast } from './ui'
 type Props = {
   product: AdminProduct | null
   open: boolean
-  categories: AdminCategory[]
+  categories: (AdminCategory & { label?: string })[]
   defaultCategory?: number
   onClose: () => void
   onSaved: (product: AdminProduct, deleted?: boolean) => void
@@ -156,7 +156,7 @@ export function ProductEditor({ product, open, categories, defaultCategory, onCl
             <select value={draft.category_id} onChange={(e) => set('category_id', Number(e.target.value))}>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name_en}
+                  {c.label ?? c.name_en}
                 </option>
               ))}
             </select>

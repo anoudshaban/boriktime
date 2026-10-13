@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api } from '../lib/api'
 import type { Menu } from '../types'
 
-const CACHE_KEY = 'bt_menu_cache_v1'
+const CACHE_KEY = 'bt_menu_cache_v2'
 
 type State = {
   menu: Menu | null

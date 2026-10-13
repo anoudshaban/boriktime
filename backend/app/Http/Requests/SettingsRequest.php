@@ -21,7 +21,7 @@ class SettingsRequest extends FormRequest
         $rules = [];
 
         foreach (array_keys(config('menu.default_settings')) as $key) {
-            $rules[$key] = ['sometimes', 'nullable', 'string', 'max:500'];
+            $rules[$key] = ['sometimes', 'nullable', 'string', 'max:1000'];
         }
 
         foreach (['instagram', 'facebook', 'map_url'] as $key) {

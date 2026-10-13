@@ -59,7 +59,7 @@ class AdminApiTest extends TestCase
             ->assertJsonPath('data.price', 4)
             ->assertJsonPath('data.is_available', false);
 
-        $this->getJson('/api/menu')->assertJsonCount(0, 'categories');
+        $this->getJson('/api/menu')->assertJsonCount(0, 'groups');
 
         $this->deleteJson("/api/admin/products/{$id}")->assertNoContent();
         $this->assertDatabaseMissing('products', ['id' => $id]);

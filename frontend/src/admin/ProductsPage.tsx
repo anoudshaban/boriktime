@@ -9,7 +9,7 @@ import { Switch, useToast } from './ui'
 
 export function ProductsPage() {
   const toast = useToast()
-  const [categories, setCategories] = useState<AdminCategory[]>([])
+  const [categories, setCategories] = useState<(AdminCategory & { label: string })[]>([])
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
@@ -18,7 +18,14 @@ export function ProductsPage() {
 
   const load = useCallback(async () => {
     const [c, p] = await Promise.all([api<{ data: AdminCategory[] }>('/admin/categories'), api<{ data: AdminProduct[] }>('/admin/products')])
-    setCategories(c.data)
+    // Only sections hold dishes: drop groups that have sections under them, and label "Group › Section".
+    const names = new Map(c.data.map((x) => [x.id, x.name_en]))
+    const parents = new Set(c.data.map((x) => x.parent_id).filter(Boolean))
+    setCategories(
+      c.data
+        .filter((x) => !parents.has(x.id))
+        .map((x) => ({ ...x, label: x.parent_id ? `${names.get(x.parent_id)} › ${x.name_en}` : x.name_en })),
+    )
     setProducts(p.data)
     setLoading(false)
   }, [])
@@ -108,7 +115,7 @@ export function ProductsPage() {
           <option value="all">All sections</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.name_en}
+              {c.label}
             </option>
           ))}
         </select>
@@ -120,7 +127,7 @@ export function ProductsPage() {
         <section key={category.id} className="a-group">
           <h2 className="a-group__title">
             <CategoryIcon name={category.icon} size={20} />
-            {category.name_en}
+            {category.label}
             <span className="a-muted" lang="ar">
               {category.name_ar}
             </span>

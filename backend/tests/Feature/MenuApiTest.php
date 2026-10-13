@@ -25,12 +25,30 @@ class MenuApiTest extends TestCase
 
         $response = $this->getJson('/api/menu')->assertOk();
 
-        $response->assertJsonCount(1, 'categories')
-            ->assertJsonPath('categories.0.id', $visible->id)
-            ->assertJsonCount(1, 'categories.0.products')
-            ->assertJsonPath('categories.0.products.0.name.en', 'Doner Borek')
-            ->assertJsonPath('categories.0.products.0.price', 4.5)
-            ->assertJsonPath('settings.currency_en', 'JOD');
+        $response->assertJsonCount(1, 'groups')
+            ->assertJsonPath('groups.0.id', $visible->id)
+            ->assertJsonCount(1, 'groups.0.sections.0.products')
+            ->assertJsonPath('groups.0.sections.0.products.0.name.en', 'Doner Borek')
+            ->assertJsonPath('groups.0.sections.0.products.0.price', 4.5)
+            ->assertJsonPath('settings.currency_en', 'JD');
+    }
+
+    public function test_sections_are_nested_under_their_group(): void
+    {
+        $kitchen = Category::factory()->create(['sort_order' => 0]);
+        $bakery = Category::factory()->create(['parent_id' => $kitchen->id, 'sort_order' => 1]);
+        $salads = Category::factory()->create(['parent_id' => $kitchen->id, 'sort_order' => 0]);
+        $hidden = Category::factory()->create(['parent_id' => $kitchen->id, 'is_active' => false]);
+        Product::factory()->for($bakery)->create();
+        Product::factory()->for($salads)->create();
+        Product::factory()->for($hidden)->create();
+
+        $this->getJson('/api/menu')
+            ->assertJsonCount(1, 'groups')
+            ->assertJsonPath('groups.0.slug', $kitchen->slug)
+            ->assertJsonCount(2, 'groups.0.sections')
+            ->assertJsonPath('groups.0.sections.0.id', $salads->id)
+            ->assertJsonPath('groups.0.sections.1.id', $bakery->id);
     }
 
     public function test_cached_menu_contains_only_plain_data(): void
@@ -41,7 +59,7 @@ class MenuApiTest extends TestCase
 
         // Persistent cache stores unserialize without allowing classes.
         $this->assertSame($menu, unserialize(serialize($menu), ['allowed_classes' => false]));
-        $this->assertIsArray($menu['categories'][0]['products']);
+        $this->assertIsArray($menu['groups'][0]['sections'][0]['products']);
     }
 
     public function test_menu_supports_etag_revalidation(): void
@@ -62,6 +80,6 @@ class MenuApiTest extends TestCase
 
         $response = $this->getJson('/api/menu');
         $this->assertNotSame($before, $response->json('version'));
-        $response->assertJsonPath('categories.0.products.0.price', 2.5);
+        $response->assertJsonPath('groups.0.sections.0.products.0.price', 2.5);
     }
 }

@@ -17,6 +17,15 @@ const GROUPS: { title: string; rows: Row[] }[] = [
     ],
   },
   {
+    title: 'Welcome text (menu home)',
+    rows: [
+      { key: 'about_en', label: 'Welcome text (English)', multiline: true, hint: 'The short story under the logo' },
+      { key: 'about_ar', label: 'النص الترحيبي (عربي)', rtl: true, multiline: true },
+      { key: 'motto_en', label: 'Motto (English)', hint: 'Shown in italics below the welcome text' },
+      { key: 'motto_ar', label: 'العبارة (عربي)', rtl: true },
+    ],
+  },
+  {
     title: 'Currency',
     rows: [
       { key: 'currency_en', label: 'Currency (English)', hint: 'e.g. JOD' },

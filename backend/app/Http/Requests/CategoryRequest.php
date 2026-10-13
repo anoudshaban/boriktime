@@ -38,6 +38,12 @@ class CategoryRequest extends FormRequest
             'description_ar' => ['nullable', 'string', 'max:255'],
             'icon' => ['sometimes', 'string', 'max:40'],
             'is_active' => ['sometimes', 'boolean'],
+            // Only one level of nesting: a section's parent must itself be a group.
+            'parent_id' => [
+                'sometimes', 'nullable', 'integer',
+                Rule::exists('categories', 'id')->whereNull('parent_id'),
+                Rule::notIn(array_filter([$category?->id])),
+            ],
         ];
     }
 }

@@ -63,6 +63,8 @@ class MenuImporter
                 }
             }
 
+            $this->assignGroups();
+
             if ($hideMissing) {
                 $stats['hidden'] = Product::query()
                     ->whereNotIn('id', $seen)
@@ -95,6 +97,32 @@ class MenuImporter
         $category->save();
 
         return $category;
+    }
+
+    /**
+     * Put sections under their home-page group (config menu.groups).
+     * Sections the admin already moved elsewhere are left alone.
+     */
+    private function assignGroups(): void
+    {
+        foreach (config('menu.groups', []) as $position => $group) {
+            $sections = $group['sections'];
+            unset($group['sections']);
+
+            $parent = Category::query()->firstOrNew(['slug' => $group['slug']]);
+            if (! $parent->exists) {
+                $parent->fill($group + ['sort_order' => $position])->save();
+            }
+
+            $slugs = collect($sections)
+                ->map(fn (string $title) => config('menu.categories')[$title]['slug'] ?? Str::slug($title));
+
+            Category::query()
+                ->whereIn('slug', $slugs)
+                ->whereNull('parent_id')
+                ->whereKeyNot($parent->id)
+                ->update(['parent_id' => $parent->id]);
+        }
     }
 
     private function findProduct(string $nameEn): ?Product

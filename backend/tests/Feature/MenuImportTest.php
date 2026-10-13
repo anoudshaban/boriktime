@@ -31,6 +31,21 @@ class MenuImportTest extends TestCase
         $this->assertSame('0.600', Product::where('name_en', 'Water Small')->value('price'));
     }
 
+    public function test_import_groups_sections_for_the_menu_home(): void
+    {
+        app(MenuImporter::class)->import(config('menu.source'));
+
+        $kitchen = Category::where('slug', 'kitchen')->firstOrFail();
+        $this->assertNull($kitchen->parent_id);
+        $this->assertSame(7, $kitchen->children()->count());
+        $this->assertSame('cafe', Category::where('slug', 'hot-drinks')->firstOrFail()->parent->slug);
+
+        $this->getJson('/api/menu')
+            ->assertJsonCount(3, 'groups')
+            ->assertJsonPath('groups.0.slug', 'kitchen')
+            ->assertJsonPath('groups.2.sections.0.slug', 'desserts');
+    }
+
     public function test_reimporting_keeps_admin_edits_and_updates_prices(): void
     {
         $importer = app(MenuImporter::class);

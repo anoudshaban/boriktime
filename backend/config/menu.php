@@ -16,6 +16,41 @@ return [
 
     'source' => database_path('data/menu.xlsx'),
 
+    /*
+    | Groups shown as the large cards on the menu home. Each lists the
+    | spreadsheet section titles it contains. Sections not listed in any group
+    | stay at the top level. Changes made later in the admin panel are kept.
+    */
+    'groups' => [
+        [
+            'slug' => 'kitchen',
+            'name_en' => 'The Kitchen',
+            'name_ar' => 'المطبخ',
+            'description_en' => 'Breakfast, börek, mezze and the kitchen.',
+            'description_ar' => 'فطور، بوريك، مقبلات وأطباق المطبخ.',
+            'icon' => 'cutlery',
+            'sections' => ['breakfast', 'bakery', 'salad', 'cold mezzah', 'hot mezzah', 'fattat', 'main course'],
+        ],
+        [
+            'slug' => 'cafe',
+            'name_en' => 'The Café',
+            'name_ar' => 'المقهى',
+            'description_en' => 'Turkish coffee, fresh juices and cool drinks.',
+            'description_ar' => 'قهوة تركية، عصائر طازجة ومشروبات باردة.',
+            'icon' => 'coffee',
+            'sections' => ['cold drinks', 'hot drinks'],
+        ],
+        [
+            'slug' => 'sweets',
+            'name_en' => 'Sweets',
+            'name_ar' => 'الحلويات',
+            'description_en' => 'Something sweet to finish.',
+            'description_ar' => 'ختامها حلو.',
+            'icon' => 'dessert',
+            'sections' => ['dessert'],
+        ],
+    ],
+
     'categories' => [
         'breakfast' => [
             'slug' => 'breakfast',
@@ -121,7 +156,11 @@ return [
         'name_ar' => 'بوريك تايم',
         'tagline_en' => 'Restaurant & Cafe · Since 2020',
         'tagline_ar' => 'مطعم ومقهى · منذ 2020',
-        'currency_en' => 'JOD',
+        'about_en' => 'Börek rolled by hand, pies straight from the oven and mezze made for sharing — a Turkish and Levantine kitchen and café, setting the table since 2020.',
+        'about_ar' => 'بوريك يُلفّ باليد، فطائر خارجة من الفرن ومقبلات للمشاركة — مطبخ ومقهى تركي شامي، يُجهّز الطاولة منذ 2020.',
+        'motto_en' => 'There is always time for börek.',
+        'motto_ar' => 'دائماً هناك وقت للبوريك.',
+        'currency_en' => 'JD',
         'currency_ar' => 'د.أ',
         'phone' => null,
         'whatsapp' => null,
