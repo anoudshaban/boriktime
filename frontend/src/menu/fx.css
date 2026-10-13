@@ -1,0 +1,634 @@
+/* ============================================================
+   Effects layer + overrides for content that sits on photos
+   ============================================================ */
+
+/* ---------- Text on photos stays light ---------- */
+.gcard,
+.sig__card,
+.ghero,
+.banner,
+.offer,
+.offer__link {
+  color: var(--on-photo);
+}
+
+.gcard__meta,
+.sig__cat,
+.sig__price,
+.crumbs,
+.offer__price {
+  color: var(--on-photo-gold);
+}
+
+.gcard__icon,
+.banner__icon {
+  color: var(--on-photo-gold);
+  background: var(--glass-dark);
+}
+
+.banner__count,
+.ghero__meta span,
+.offer__ends {
+  color: var(--on-photo);
+  background: var(--glass-dark);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.dcard__badge,
+.dcard__go,
+.offers__arrow {
+  color: var(--on-photo);
+  background: var(--glass-dark);
+}
+
+.dcard__badge {
+  color: var(--on-photo-gold);
+}
+
+.banner .banner__title,
+.ghero__title {
+  color: var(--on-photo);
+}
+
+.gcard__go {
+  color: var(--wine);
+  background: var(--on-photo);
+}
+
+/* Active tab and price chips in burgundy to echo the logo. */
+.tab.is-on {
+  color: var(--on-photo);
+}
+
+.tab__on {
+  background: linear-gradient(135deg, #a3242a, var(--wine) 60%, #4e0b0d);
+  box-shadow: 0 10px 24px -10px rgba(123, 20, 22, 0.8);
+}
+
+.dish__add,
+.mylist-fab {
+  color: var(--on-photo);
+  background: linear-gradient(135deg, #a3242a, var(--wine) 55%, #4e0b0d);
+  box-shadow: 0 18px 36px -14px rgba(123, 20, 22, 0.8);
+}
+
+.dish__add-qty,
+.mylist-fab__count {
+  color: var(--wine);
+  background: var(--on-photo-gold);
+}
+
+.mylist-fab {
+  box-shadow: 0 18px 40px -12px rgba(60, 15, 10, 0.6), 0 0 0 6px rgba(123, 20, 22, 0.12);
+}
+
+/* ---------- Hero stage ---------- */
+.stage {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 100px 0 120px;
+}
+
+.stage__blobs span {
+  position: absolute;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: blob 18s ease-in-out infinite alternate;
+}
+
+.stage__blobs span:nth-child(1) {
+  width: 46vmax;
+  height: 46vmax;
+  top: -18vmax;
+  inset-inline-end: -12vmax;
+  background: radial-gradient(circle, rgba(163, 36, 42, 0.32), transparent 65%);
+}
+
+.stage__blobs span:nth-child(2) {
+  width: 40vmax;
+  height: 40vmax;
+  bottom: -16vmax;
+  inset-inline-start: -12vmax;
+  background: radial-gradient(circle, rgba(212, 166, 90, 0.4), transparent 65%);
+  animation-delay: -6s;
+}
+
+.stage__blobs span:nth-child(3) {
+  width: 26vmax;
+  height: 26vmax;
+  top: 30%;
+  left: 40%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 65%);
+  animation-delay: -11s;
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(4vmax, -3vmax) scale(1.1);
+  }
+  100% {
+    transform: translate(-3vmax, 4vmax) scale(0.95);
+  }
+}
+
+.stage__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stage__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.stage__eyebrow span {
+  width: 40px;
+  height: 1px;
+  background: currentColor;
+}
+
+:root[lang='ar'] .stage__eyebrow {
+  letter-spacing: 0;
+  font-size: 15px;
+}
+
+.stage__logo {
+  position: relative;
+  width: min(82vw, 600px);
+  color: var(--wine);
+  filter: drop-shadow(0 20px 40px rgba(123, 20, 22, 0.18));
+}
+
+.stage__ring {
+  position: absolute;
+  top: -14%;
+  inset-inline-end: -12%;
+  width: clamp(92px, 16vw, 150px);
+}
+
+.ringtext {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.ringtext__svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  animation: spin 22s linear infinite;
+}
+
+.ringtext__svg text {
+  font-family: 'Jost', sans-serif;
+  font-size: 15.5px;
+  font-weight: 500;
+  letter-spacing: 3.2px;
+  fill: var(--wine);
+}
+
+:root[lang='ar'] .ringtext__svg text {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 17px;
+  letter-spacing: 0;
+}
+
+.ringtext__core {
+  position: absolute;
+  inset: 26%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--on-photo-gold);
+  background: radial-gradient(circle at 35% 30%, #a3242a, var(--wine) 60%, #4e0b0d);
+  box-shadow: 0 10px 24px -8px rgba(123, 20, 22, 0.7);
+}
+
+.stage__ring-star {
+  font-size: clamp(16px, 2.4vw, 24px);
+  animation: spin 22s linear infinite reverse;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stage__about {
+  max-width: 660px;
+  margin: 30px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.3vw, 25px);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.stage__motto {
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--wine);
+}
+
+:root[lang='ar'] .stage__motto {
+  font-style: normal;
+}
+
+.stage__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 36px;
+}
+
+.magnetic {
+  display: inline-block;
+}
+
+.hero__scroll {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  z-index: 2;
+  translate: -50% 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hero__scroll i {
+  position: relative;
+  width: 1px;
+  height: 46px;
+  overflow: hidden;
+  background: var(--line-2);
+}
+
+.hero__scroll i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--wine);
+  animation: drip 2.2s var(--ease) infinite;
+}
+
+/* ---------- Floating dish bubbles ---------- */
+.bub {
+  position: absolute;
+  z-index: 1;
+  width: var(--s);
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.bub__inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 5px solid #fffaf2;
+  box-shadow: 0 24px 50px -16px rgba(60, 15, 10, 0.45), 0 0 0 1px rgba(123, 20, 22, 0.1);
+  animation: bob 7s ease-in-out infinite;
+}
+
+.bub__inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: slowspin 40s linear infinite;
+  scale: 1.15;
+}
+
+@keyframes bob {
+  50% {
+    translate: 0 -14px;
+  }
+}
+
+@keyframes slowspin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.bub--0 { --s: 170px; top: 14%; left: 5%; }
+.bub--1 { --s: 120px; top: 9%; right: 9%; }
+.bub--2 { --s: 200px; top: 50%; right: 3%; }
+.bub--3 { --s: 140px; top: 60%; left: 3%; }
+.bub--4 { --s: 96px; bottom: 7%; left: 22%; }
+.bub--5 { --s: 110px; bottom: 9%; right: 24%; }
+.bub--1 .bub__inner { animation-delay: -2s; }
+.bub--2 .bub__inner { animation-delay: -4s; }
+.bub--3 .bub__inner { animation-delay: -1s; }
+.bub--4 .bub__inner { animation-delay: -5s; }
+.bub--5 .bub__inner { animation-delay: -3s; }
+
+@media (max-width: 899px) {
+  .bub__inner { border-width: 3px; }
+  .bub--0 { --s: 92px; top: 9%; left: -18px; }
+  .bub--1 { --s: 74px; top: 7%; right: 24px; }
+  .bub--2 { --s: 100px; top: auto; bottom: 7%; right: -22px; }
+  .bub--3 { --s: 78px; top: auto; bottom: 11%; left: -14px; }
+  .bub--4,
+  .bub--5 { display: none; }
+  .stage__ring { top: -20%; inset-inline-end: -4%; }
+}
+
+/* ---------- Text split reveal ---------- */
+.split__w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.split__i {
+  display: inline-block;
+}
+
+/* ---------- Double marquee bands ---------- */
+.bands {
+  position: relative;
+  padding: 40px 0 10px;
+  overflow: hidden;
+}
+
+.marquee {
+  padding: 18px 0;
+  border: 0;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.marquee--wine {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(90deg, #4e0b0d, var(--wine) 50%, #4e0b0d);
+  transform: rotate(-2.2deg) scale(1.05);
+  box-shadow: 0 20px 40px -20px rgba(123, 20, 22, 0.7);
+}
+
+.marquee--gold {
+  margin-top: -26px;
+  background: var(--bg-2);
+  border-block: 1px solid var(--line-2);
+  transform: rotate(1.6deg) scale(1.05);
+}
+
+.marquee__track--rev {
+  animation-direction: reverse;
+}
+
+.marquee--wine .marquee__row span {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(251, 243, 230, 0.6);
+}
+
+.marquee--wine .marquee__row span:nth-child(3n + 1) {
+  color: var(--on-photo);
+  -webkit-text-stroke: 0;
+}
+
+.marquee--wine .marquee__row i {
+  color: var(--on-photo-gold);
+}
+
+.marquee--gold .marquee__row span {
+  font-size: clamp(16px, 2vw, 22px);
+  font-style: normal;
+  color: var(--wine);
+  -webkit-text-stroke: 0;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-family: 'Jost', sans-serif;
+}
+
+:root[lang='ar'] .marquee--gold .marquee__row span {
+  font-family: 'Tajawal', sans-serif;
+  letter-spacing: 0;
+}
+
+/* ---------- Glare on tilting cards ---------- */
+.gcard,
+.dcard {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.25s ease-out, border-color 0.4s, box-shadow 0.5s;
+}
+
+.glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(500px circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 245, 225, 0.35), transparent 40%);
+  mix-blend-mode: soft-light;
+  transition: opacity 0.3s;
+}
+
+.gcard:hover .glare,
+.dcard:hover .glare {
+  opacity: 1;
+}
+
+.dcard__reveal {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* ---------- Custom cursor ---------- */
+.has-cursor .menu a,
+.has-cursor .menu button {
+  cursor: none;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--wine);
+}
+
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(123, 20, 22, 0.5);
+  transition: width 0.35s var(--ease), height 0.35s var(--ease), margin 0.35s var(--ease), background 0.35s, border-color 0.35s;
+}
+
+.cursor-ring.is-label {
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  background: var(--wine);
+  border-color: var(--wine);
+  box-shadow: 0 12px 30px -10px rgba(123, 20, 22, 0.7);
+}
+
+.cursor-ring span {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--on-photo);
+}
+
+:root[lang='ar'] .cursor-ring span {
+  letter-spacing: 0;
+  font-size: 14px;
+}
+
+/* ---------- Scroll progress ---------- */
+.progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 3px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--gold-2), var(--wine));
+}
+
+[dir='rtl'] .progress {
+  transform-origin: 100% 50%;
+}
+
+/* ---------- Page curtain ---------- */
+.wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  background: var(--wine);
+}
+
+.wipe--gold {
+  background: var(--gold-2);
+}
+
+/* ---------- Preloader ---------- */
+.preload {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 45%, #fffaf2, var(--bg) 70%);
+  cursor: pointer;
+}
+
+.preload__logo {
+  width: min(78vw, 480px);
+  color: var(--wine);
+}
+
+.preload__bar {
+  position: absolute;
+  bottom: 60px;
+  left: 50%;
+  width: min(60vw, 280px);
+  height: 2px;
+  translate: -50% 0;
+  background: var(--line-2);
+  overflow: hidden;
+}
+
+.preload__bar span {
+  position: absolute;
+  inset: 0;
+  background: var(--wine);
+  transform-origin: 0 50%;
+}
+
+.preload__count {
+  position: absolute;
+  bottom: 74px;
+  inset-inline-end: calc(50% - min(30vw, 140px));
+  font-family: var(--font-display);
+  font-size: 34px;
+  color: var(--wine);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Section heads & cards on cream ---------- */
+.gcard {
+  border-color: transparent;
+}
+
+.sig__card {
+  box-shadow: 0 24px 50px -28px rgba(60, 15, 10, 0.6);
+}
+
+.sfoot {
+  background: radial-gradient(800px 300px at 50% 0%, rgba(123, 20, 22, 0.08), transparent 70%), var(--bg-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bub__inner,
+  .bub__inner img,
+  .ringtext__svg,
+  .stage__blobs span {
+    animation: none;
+  }
+}
+
+/* Text on a circular path must be laid out left-to-right to show at all. */
+.ringtext__svg {
+  direction: ltr;
+}
+
+@media (max-width: 600px) {
+  .stage__eyebrow {
+    gap: 10px;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    white-space: nowrap;
+  }
+  .stage__eyebrow span {
+    width: 22px;
+  }
+}

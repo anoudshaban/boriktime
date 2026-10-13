@@ -7,6 +7,7 @@ import { formatInt, formatPrice } from '../lib/text'
 import type { Category, Group, Product, Settings } from '../types'
 import { dishPath, useMenuData, type DishRef } from './menuData'
 import { useMyList } from './myList'
+import { SplitText } from './fx'
 import { DishMedia, Price, Tags } from './parts'
 
 type Props = {
@@ -213,7 +214,7 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
 
             <div className="dish__info">
               <h1 id="dish-title" className="dish__name">
-                {pick(product.name)}
+                <SplitText text={pick(product.name)} delay={0.25} stagger={0.06} />
               </h1>
               <p className="dish__alt" lang={lang === 'en' ? 'ar' : 'en'}>
                 {other(product.name)}

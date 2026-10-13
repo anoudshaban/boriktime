@@ -33,7 +33,7 @@ export function TopNav({ backTo, showLogo = true, logoUrl, onSearch }: Props) {
   const logoVisible = showLogo || solid
 
   return (
-    <header className={`top${solid ? ' is-solid' : ''}`}>
+    <header className={`top${solid || showLogo ? ' is-solid' : ''}`}>
       <div className="top__row container">
         <div className="top__side">
           {backTo && (

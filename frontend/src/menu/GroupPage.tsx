@@ -6,6 +6,7 @@ import { useI18n } from '../lib/i18n'
 import { formatInt } from '../lib/text'
 import type { Category, Group, Product, Settings } from '../types'
 import { groupImage, SiteFooter } from './Home'
+import { SplitText, useTilt } from './fx'
 import { DishMedia, Price } from './parts'
 import { SectionBanner } from './SectionBanner'
 import { scrollToSection, useScrollSpy } from './useScrollSpy'
@@ -109,9 +110,9 @@ function GroupHero({ group, dishes }: { group: Group; dishes: number }) {
           <ChevronIcon size={12} className="flip-fwd" />
           <span>{pick(group.name)}</span>
         </motion.nav>
-        <motion.h1 className="ghero__title" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1, ease: EASE }}>
-          {pick(group.name)}
-        </motion.h1>
+        <h1 className="ghero__title">
+          <SplitText text={pick(group.name)} delay={0.35} stagger={0.1} />
+        </h1>
         {pick(group.description) && (
           <motion.p className="ghero__desc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.25, ease: EASE }}>
             {pick(group.description)}
@@ -137,17 +138,26 @@ function DishCard({ group, section, product, settings, index }: { group: Group; 
   const reduce = useReducedMotion()
   const onSale = product.sale_price != null && product.sale_price < product.price
   const description = pick(product.description)
+  const tilt = useTilt<HTMLAnchorElement>(6)
 
   return (
     <motion.div
-      initial={reduce ? false : { opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={reduce ? false : 'hidden'}
+      whileInView="show"
       viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+      variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }}
       transition={{ duration: 0.7, delay: (index % 4) * 0.07, ease: EASE }}
     >
-      <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="dcard">
+      <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="dcard" ref={tilt} data-cursor={t('view')}>
+        <span className="glare" />
         <span className="dcard__media">
-          <DishMedia product={product} icon={section.icon} size="fill" />
+          <motion.span
+            className="dcard__reveal"
+            variants={{ hidden: { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.25 }, show: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 } }}
+            transition={{ duration: 1.1, delay: (index % 4) * 0.08, ease: [0.76, 0, 0.24, 1] }}
+          >
+            <DishMedia product={product} icon={section.icon} size="fill" />
+          </motion.span>
           <span className="dcard__shade" />
           {onSale ? (
             <span className="dcard__badge dcard__badge--offer">{t('offer')}</span>

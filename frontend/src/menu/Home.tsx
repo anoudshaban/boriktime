@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
+import { useMemo, useRef, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
@@ -10,6 +10,7 @@ import { PhotoCredits } from './Credits'
 import { dishPath, useMenuData, type DishRef } from './menuData'
 import { OffersSlider } from './Offers'
 import { DishMedia, Price } from './parts'
+import { Magnetic, PRELOAD_MS, RingText, SplitText, useTilt } from './fx'
 
 const EASE = [0.2, 0.7, 0.3, 1] as const
 
@@ -72,98 +73,118 @@ function Hero({ slides, settings, firstVisit, hasOffers }: { slides: string[]; s
   const { lang, t } = useI18n()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLElement>(null)
-  const [index, setIndex] = useState(0)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '22%'])
-  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
-  const lift = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -80])
+  const fade = useTransform(scrollYProgress, [0, 0.75], [1, 0])
+  const lift = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -120])
+  const logoScale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 0.85])
 
-  useEffect(() => {
-    if (slides.length < 2 || reduce) return
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), 6000)
-    return () => window.clearInterval(id)
-  }, [slides.length, reduce])
+  // Mouse position (−0.5…0.5) drives the floating photos' parallax.
+  const mx = useSpring(0, { stiffness: 60, damping: 18 })
+  const my = useSpring(0, { stiffness: 60, damping: 18 })
+  const onMove = (e: ReactPointerEvent) => {
+    if (reduce || e.pointerType !== 'mouse') return
+    mx.set(e.clientX / window.innerWidth - 0.5)
+    my.set(e.clientY / window.innerHeight - 0.5)
+  }
 
-  const base = firstVisit && !reduce ? 1.4 : 0.1
+  const base = firstVisit && !reduce ? PRELOAD_MS / 1000 + 0.2 : 0.15
   const about = (lang === 'ar' ? settings?.about_ar || settings?.about_en : settings?.about_en || settings?.about_ar) ?? ''
   const motto = (lang === 'ar' ? settings?.motto_ar || settings?.motto_en : settings?.motto_en || settings?.motto_ar) ?? ''
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  // A brand stamp, like the logo: Arabic letters don't join when spaced along a curve.
+  const ring = 'BÖREK TIME • RESTAURANT & CAFE • SINCE 2020 • '
 
   return (
-    <section className="hero" ref={ref}>
-      <motion.div className="hero__bg" style={{ y: bgY }} aria-hidden="true">
-        <AnimatePresence initial={false}>
-          {slides.length > 0 && (
-            <motion.img
-              key={slides[index]}
-              src={slides[index]}
-              alt=""
-              className="hero__img"
-              initial={{ opacity: 0, scale: 1.18 }}
-              animate={{ opacity: 1, scale: 1.04 }}
-              exit={{ opacity: 0 }}
-              transition={{ opacity: { duration: 1.6 }, scale: { duration: 7.5, ease: 'linear' } }}
-            />
-          )}
-        </AnimatePresence>
-        <div className="hero__veil" />
-        <div className="hero__dust">
-          {Array.from({ length: 18 }, (_, i) => (
-            <span key={i} style={{ left: `${(i * 53) % 100}%`, animationDelay: `${-(i * 1.7)}s`, animationDuration: `${12 + (i % 5) * 3}s` }} />
-          ))}
-        </div>
-      </motion.div>
+    <section className="stage" ref={ref} onPointerMove={onMove}>
+      <div className="stage__blobs" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
 
-      <motion.div className="hero__content container" style={{ opacity: fade, y: lift }}>
-        <motion.p className="hero__eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4, delay: base * 0.3 }}>
+      {slides.slice(0, 6).map((src, i) => (
+        <Bubble key={src} src={src} index={i} mx={mx} my={my} progress={scrollYProgress} delay={base + 0.15 + i * 0.12} />
+      ))}
+
+      <motion.div className="stage__content container" style={{ opacity: fade, y: lift }}>
+        <motion.p className="stage__eyebrow" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: base }}>
+          <span />
           {lang === 'ar' ? settings?.tagline_ar : settings?.tagline_en}
+          <span />
         </motion.p>
 
-        <div className="hero__logo">
-          {settings?.logo_url ? (
-            <motion.img src={settings.logo_url} alt={settings.name_en} className="brand-img" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }} />
-          ) : (
-            <Logo motionMode={firstVisit ? 'intro' : 'idle'} title={settings?.name_en ?? 'Börek Time'} />
-          )}
-        </div>
+        <motion.div
+          className="stage__logo"
+          style={{ scale: logoScale }}
+          initial={{ opacity: 0, scale: 0.92, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+          transition={{ duration: 1.2, delay: base - 0.1, ease: EASE }}
+        >
+          {settings?.logo_url ? <img src={settings.logo_url} alt={settings.name_en} className="brand-img" /> : <Logo motionMode="idle" title={settings?.name_en ?? 'Börek Time'} />}
+          <motion.div className="stage__ring" initial={{ opacity: 0, scale: 0.5, rotate: -90 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 1.2, delay: base + 0.5, ease: EASE }}>
+            <RingText text={ring}>
+              <span className="stage__ring-star">✦</span>
+            </RingText>
+          </motion.div>
+        </motion.div>
 
         {about && (
-          <motion.p className="hero__about" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: base + 0.1, ease: EASE }}>
-            {about}
-          </motion.p>
+          <p className="stage__about">
+            <SplitText text={about} delay={base + 0.25} stagger={0.025} />
+          </p>
         )}
         {motto && (
-          <motion.p className="hero__motto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: base + 0.3 }}>
+          <motion.p className="stage__motto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: base + 0.9 }}>
             {motto}
           </motion.p>
         )}
 
-        <motion.div className="hero__ctas" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: base + 0.45, ease: EASE }}>
-          <button className="btn-gold" onClick={() => go('menu-groups')}>
-            {t('viewMenu')}
-            <ChevronIcon size={16} className="flip-fwd" />
-          </button>
-          {hasOffers && (
-            <button className="btn-ghost" onClick={() => go('offers')}>
-              {t('todaysOffers')}
+        <motion.div className="stage__ctas" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: base + 1, ease: EASE }}>
+          <Magnetic>
+            <button className="btn-gold" onClick={() => go('menu-groups')} data-cursor={t('view')}>
+              {t('viewMenu')}
+              <ChevronIcon size={16} className="flip-fwd" />
             </button>
+          </Magnetic>
+          {hasOffers && (
+            <Magnetic>
+              <button className="btn-ghost" onClick={() => go('offers')}>
+                {t('todaysOffers')}
+              </button>
+            </Magnetic>
           )}
         </motion.div>
       </motion.div>
-
-      {slides.length > 1 && (
-        <div className="hero__dots" aria-hidden="true">
-          {slides.map((s, i) => (
-            <span key={s} className={i === index ? 'is-on' : ''} />
-          ))}
-        </div>
-      )}
 
       <button className="hero__scroll" onClick={() => go('menu-groups')} aria-label={t('scroll')}>
         <span>{t('scroll')}</span>
         <i />
       </button>
     </section>
+  )
+}
+
+/** A circular dish photo floating around the logo, with mouse and scroll parallax. */
+function Bubble({ src, index, mx, my, progress, delay }: { src: string; index: number; mx: MotionValue<number>; my: MotionValue<number>; progress: MotionValue<number>; delay: number }) {
+  const reduce = useReducedMotion()
+  const depth = [60, -40, 80, -70, 45, -55][index] ?? 40
+  const speed = [-160, -260, -120, -220, -300, -180][index] ?? -150
+  const x = useTransform(mx, (v) => v * depth)
+  const yMouse = useTransform(my, (v) => v * depth)
+  const yScroll = useTransform(progress, [0, 1], [0, reduce ? 0 : speed])
+  const y = useTransform(() => yMouse.get() + yScroll.get())
+
+  return (
+    <motion.div className={`bub bub--${index}`} style={{ x, y }} aria-hidden="true">
+      <motion.div
+        className="bub__inner"
+        initial={reduce ? false : { scale: 0, rotate: -25, opacity: 0 }}
+        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 90, damping: 14, delay }}
+      >
+        <img src={src} alt="" />
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -193,10 +214,18 @@ function Marquee({ names }: { names: { en: string; ar: string }[] }) {
     </div>
   )
   return (
-    <div className="marquee" aria-hidden="true">
-      <div className="marquee__track">
-        {row}
-        {row}
+    <div className="bands" aria-hidden="true">
+      <div className="marquee marquee--wine">
+        <div className="marquee__track">
+          {row}
+          {row}
+        </div>
+      </div>
+      <div className="marquee marquee--gold">
+        <div className="marquee__track marquee__track--rev">
+          {row}
+          {row}
+        </div>
       </div>
     </div>
   )
@@ -214,7 +243,9 @@ export function SectionHead({ eyebrowKey, titleKey, subKey }: { eyebrowKey: Stri
       transition={{ duration: 0.8, ease: EASE }}
     >
       <span className="shead__eyebrow">{t(eyebrowKey)}</span>
-      <h2 className="shead__title">{t(titleKey)}</h2>
+      <h2 className="shead__title">
+        <SplitText text={t(titleKey)} inView stagger={0.08} />
+      </h2>
       {subKey && <p className="shead__sub">{t(subKey)}</p>}
     </motion.header>
   )
@@ -226,6 +257,7 @@ function GroupCard({ group, index }: { group: Group; index: number }) {
   const img = groupImage(group)
   const dishes = group.sections.reduce((n, s) => n + s.products.length, 0)
   const num = formatInt(index + 1, lang)
+  const tilt = useTilt<HTMLAnchorElement>(7)
 
   return (
     <motion.div
@@ -234,7 +266,8 @@ function GroupCard({ group, index }: { group: Group; index: number }) {
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.8, delay: index * 0.12, ease: EASE }}
     >
-      <Link to={`/menu/${group.slug}`} className="gcard">
+      <Link to={`/menu/${group.slug}`} className="gcard" ref={tilt} data-cursor={t('view')}>
+        <span className="glare" />
         {img ? <img className="gcard__img" src={img} alt="" loading="lazy" /> : <span className="gcard__img gcard__img--empty" />}
         <span className="gcard__veil" />
         <span className="gcard__num">{(lang === 'ar' ? '٠' : '0') + num}</span>
@@ -288,7 +321,7 @@ function Signatures({ refs, settings }: { refs: DishRef[]; settings: Settings | 
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: Math.min(i, 5) * 0.08, ease: EASE }}
           >
-            <Link to={dishPath(ref)} state={{ modal: true }} className="sig__card">
+            <Link to={dishPath(ref)} state={{ modal: true }} className="sig__card" data-cursor={t('view')}>
               <DishMedia product={ref.product} icon={ref.section.icon} size="fill" />
               <span className="sig__veil" />
               <span className="sig__body">

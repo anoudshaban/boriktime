@@ -5,7 +5,7 @@
    ============================================================ */
 
 body:has(.menu) {
-  background: #120909;
+  background: #f4ece0;
 }
 
 body:has(.menu)::before {
@@ -13,20 +13,24 @@ body:has(.menu)::before {
 }
 
 .menu {
-  --bg: #120909;
-  --bg-2: #1a0e0d;
-  --bg-3: #241514;
-  --ink: #f6ede1;
-  --ink-2: #d8c8b8;
-  --muted: #9b8a7d;
-  --gold: #d4a65a;
-  --gold-2: #f1d08e;
-  --gold-soft: rgba(212, 166, 90, 0.14);
+  --bg: #f4ece0;
+  --bg-2: #ece1cf;
+  --bg-3: #e2d3bc;
+  --card: #fffaf2;
+  --ink: #2a1513;
+  --ink-2: #5b4540;
+  --muted: #8c766b;
+  --gold: #9c6b22;
+  --gold-2: #b5832f;
+  --gold-soft: rgba(181, 131, 47, 0.12);
   --wine: #7b1416;
-  --wine-2: #a3242a;
-  --line: rgba(246, 237, 225, 0.09);
-  --line-2: rgba(246, 237, 225, 0.18);
-  --glass: rgba(22, 12, 11, 0.62);
+  --wine-2: #5c0d10;
+  --line: rgba(42, 21, 19, 0.1);
+  --line-2: rgba(42, 21, 19, 0.18);
+  --glass: rgba(255, 250, 242, 0.72);
+  --glass-dark: rgba(30, 12, 11, 0.5);
+  --on-photo: #fbf3e6;
+  --on-photo-gold: #f1d08e;
   --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
   --ease-out: var(--ease);
 
@@ -34,8 +38,8 @@ body:has(.menu)::before {
   min-height: 100vh;
   color: var(--ink);
   background:
-    radial-gradient(1200px 700px at 85% -10%, rgba(123, 20, 22, 0.35), transparent 60%),
-    radial-gradient(900px 600px at -10% 40%, rgba(212, 166, 90, 0.07), transparent 60%),
+    radial-gradient(1200px 700px at 85% -10%, rgba(123, 20, 22, 0.09), transparent 60%),
+    radial-gradient(900px 600px at -10% 40%, rgba(181, 131, 47, 0.1), transparent 60%),
     var(--bg);
   overflow-x: clip;
 }
@@ -47,8 +51,8 @@ body:has(.menu)::before {
   inset: 0;
   z-index: 100;
   pointer-events: none;
-  opacity: 0.07;
-  mix-blend-mode: overlay;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -115,7 +119,7 @@ body:has(.menu)::before {
   border-radius: 50%;
   color: var(--ink);
   border: 1px solid var(--line-2);
-  background: rgba(246, 237, 225, 0.04);
+  background: rgba(255, 250, 242, 0.7);
   text-decoration: none;
   transition: background 0.25s, border-color 0.25s, transform 0.2s, color 0.25s;
 }
@@ -154,7 +158,7 @@ body:has(.menu)::before {
   border-radius: 999px;
   color: var(--ink);
   border: 1px solid var(--line-2);
-  background: rgba(246, 237, 225, 0.04);
+  background: rgba(255, 250, 242, 0.7);
   font-size: 14px;
   text-decoration: none;
   transition: border-color 0.25s, background 0.25s;
@@ -195,9 +199,9 @@ body:has(.menu)::before {
 }
 
 .btn-gold {
-  color: #1b0d0b;
-  background: linear-gradient(135deg, #f6dca2 0%, var(--gold) 55%, #b9853d 100%);
-  box-shadow: 0 14px 34px -10px rgba(212, 166, 90, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: #fbf3e6;
+  background: linear-gradient(135deg, #a3242a 0%, var(--wine) 50%, #4e0b0d 100%);
+  box-shadow: 0 16px 34px -12px rgba(123, 20, 22, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 /* A slow light sweep across the gold. */
@@ -212,19 +216,19 @@ body:has(.menu)::before {
 
 .btn-gold:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 40px -10px rgba(212, 166, 90, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 22px 44px -12px rgba(123, 20, 22, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 .btn-ghost {
-  color: var(--ink);
-  border: 1px solid rgba(246, 237, 225, 0.35);
-  background: rgba(246, 237, 225, 0.06);
+  color: var(--wine);
+  border: 1px solid rgba(123, 20, 22, 0.35);
+  background: rgba(255, 250, 242, 0.6);
   backdrop-filter: blur(10px);
 }
 
 .btn-ghost:hover {
   border-color: var(--gold-2);
-  background: rgba(246, 237, 225, 0.12);
+  background: #fffaf2;
 }
 
 @keyframes sweep {
@@ -248,11 +252,11 @@ body:has(.menu)::before {
 }
 
 .top.is-solid {
-  background: rgba(18, 9, 9, 0.72);
+  background: rgba(244, 236, 224, 0.82);
   backdrop-filter: blur(18px) saturate(1.4);
   -webkit-backdrop-filter: blur(18px) saturate(1.4);
   border-bottom-color: var(--line);
-  box-shadow: 0 10px 40px -20px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 40px -24px rgba(60, 20, 10, 0.5);
 }
 
 .top__row {
@@ -280,7 +284,7 @@ body:has(.menu)::before {
 .top__logo {
   display: block;
   width: 118px;
-  color: var(--ink);
+  color: var(--wine);
 }
 
 .lang {
@@ -911,7 +915,7 @@ body:has(.menu)::before {
 
 .sfoot__logo {
   width: 200px;
-  color: var(--ink);
+  color: var(--wine);
   opacity: 0.92;
 }
 
@@ -938,7 +942,7 @@ body:has(.menu)::before {
   border-radius: 18px;
   text-align: start;
   border: 1px solid var(--line);
-  background: rgba(246, 237, 225, 0.03);
+  background: var(--card);
   font-family: var(--font-display);
   font-size: 17px;
 }
@@ -1133,7 +1137,7 @@ body:has(.menu)::before {
   top: calc(68px + env(safe-area-inset-top));
   z-index: 30;
   padding: 10px 0;
-  background: linear-gradient(180deg, rgba(18, 9, 9, 0.92), rgba(18, 9, 9, 0.7));
+  background: rgba(244, 236, 224, 0.86);
   backdrop-filter: blur(16px) saturate(1.3);
   -webkit-backdrop-filter: blur(16px) saturate(1.3);
   border-bottom: 1px solid var(--line);
@@ -1252,7 +1256,8 @@ body:has(.menu)::before {
   color: var(--ink);
   text-decoration: none;
   border: 1px solid var(--line);
-  background: linear-gradient(180deg, rgba(246, 237, 225, 0.05), rgba(246, 237, 225, 0.015));
+  background: var(--card);
+  box-shadow: 0 18px 40px -28px rgba(60, 20, 10, 0.5);
   transition: transform 0.5s var(--ease), border-color 0.4s, box-shadow 0.5s;
 }
 
@@ -1541,14 +1546,14 @@ body:has(.menu)::before {
 .tag--vegetarian,
 .tag--vegan,
 .tag--gluten_free {
-  color: #b9cf95;
-  background: rgba(150, 180, 110, 0.1);
+  color: #4f6b3a;
+  background: rgba(79, 107, 58, 0.1);
   border-color: rgba(150, 180, 110, 0.35);
 }
 
 .tag--spicy {
-  color: #ff9a8a;
-  background: rgba(220, 70, 60, 0.12);
+  color: #a3242a;
+  background: rgba(163, 36, 42, 0.08);
   border-color: rgba(220, 70, 60, 0.4);
 }
 
@@ -1571,7 +1576,7 @@ body:has(.menu)::before {
 
 .state__logo {
   width: 130px;
-  color: var(--ink);
+  color: var(--wine);
 }
 
 .offline {
