@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\Product;
+use App\Support\ImageStore;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * @mixin Product
+ */
+class PublicProductResource extends JsonResource
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'code' => $this->code,
+            'name' => ['en' => $this->name_en, 'ar' => $this->name_ar],
+            'description' => ['en' => $this->description_en, 'ar' => $this->description_ar],
+            'price' => (float) $this->price,
+            'calories' => $this->calories,
+            'tags' => $this->tags ?? [],
+            'image' => ImageStore::url($this->image_path),
+            'featured' => $this->is_featured,
+        ];
+    }
+}

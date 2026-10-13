@@ -1,0 +1,139 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Menu import defaults
+|--------------------------------------------------------------------------
+|
+| The menu spreadsheet only carries English section titles, so the Arabic
+| titles, icons and short taglines for each section live here. Keys are the
+| section titles exactly as they appear in the spreadsheet (case-insensitive).
+| Icons map to the illustrated set in frontend/src/components/icons.
+|
+*/
+
+return [
+
+    'source' => database_path('data/menu.xlsx'),
+
+    'categories' => [
+        'breakfast' => [
+            'slug' => 'breakfast',
+            'name_en' => 'Breakfast',
+            'name_ar' => 'الفطور',
+            'description_en' => 'A generous Turkish-Levantine spread to share.',
+            'description_ar' => 'سفرة فطور تركية شامية للمشاركة.',
+            'icon' => 'breakfast',
+        ],
+        'bakery' => [
+            'slug' => 'bakery',
+            'name_en' => 'Bakery',
+            'name_ar' => 'المخبوزات',
+            'description_en' => 'Börek and pies, baked fresh through the day.',
+            'description_ar' => 'بوريك وفطائر تُخبز طازجة طوال اليوم.',
+            'icon' => 'borek',
+        ],
+        'salad' => [
+            'slug' => 'salads',
+            'name_en' => 'Salads',
+            'name_ar' => 'السلطات',
+            'description_en' => 'Crisp, bright and made to order.',
+            'description_ar' => 'طازجة ومحضّرة عند الطلب.',
+            'icon' => 'salad',
+        ],
+        'cold mezzah' => [
+            'slug' => 'cold-mezze',
+            'name_en' => 'Cold Mezze',
+            'name_ar' => 'المقبلات الباردة',
+            'description_en' => 'Classic dips and plates for the middle of the table.',
+            'description_ar' => 'مقبلات كلاسيكية لمنتصف الطاولة.',
+            'icon' => 'mezze',
+        ],
+        'hot mezzah' => [
+            'slug' => 'hot-mezze',
+            'name_en' => 'Hot Mezze',
+            'name_ar' => 'المقبلات الساخنة',
+            'description_en' => 'Straight from the pan and the grill.',
+            'description_ar' => 'من المقلاة والشواية مباشرة.',
+            'icon' => 'pan',
+        ],
+        'fattat' => [
+            'slug' => 'fatteh',
+            'name_en' => 'Fatteh',
+            'name_ar' => 'الفتات',
+            'description_en' => 'Layers of crisp bread, warm yoghurt and toppings.',
+            'description_ar' => 'طبقات من الخبز المحمص واللبن الدافئ.',
+            'icon' => 'bowl',
+        ],
+        'main course' => [
+            'slug' => 'main-course',
+            'name_en' => 'Main Course',
+            'name_ar' => 'الأطباق الرئيسية',
+            'description_en' => 'Clay-pot fakhara and Turkish kebab classics.',
+            'description_ar' => 'فخارات وأطباق الكباب التركية.',
+            'icon' => 'pot',
+        ],
+        'cold drinks' => [
+            'slug' => 'cold-drinks',
+            'name_en' => 'Cold Drinks',
+            'name_ar' => 'المشروبات الباردة',
+            'description_en' => 'Fresh juices, ayran and coolers.',
+            'description_ar' => 'عصائر طازجة وعيران ومشروبات منعشة.',
+            'icon' => 'juice',
+        ],
+        'hot drinks' => [
+            'slug' => 'hot-drinks',
+            'name_en' => 'Hot Drinks',
+            'name_ar' => 'المشروبات الساخنة',
+            'description_en' => 'Turkish coffee, espresso and tea.',
+            'description_ar' => 'قهوة تركية وإسبريسو وشاي.',
+            'icon' => 'coffee',
+        ],
+        'dessert' => [
+            'slug' => 'desserts',
+            'name_en' => 'Desserts',
+            'name_ar' => 'الحلويات',
+            'description_en' => 'Something sweet to finish.',
+            'description_ar' => 'ختامها حلو.',
+            'icon' => 'dessert',
+        ],
+    ],
+
+    // Dishes highlighted in the "Chef's picks" strip on first import (matched on English name).
+    'featured' => [
+        'Borek ALL / 3Pcs with Turkish Tea',
+        'Doner Borek Beef',
+        'Iskandar Kebab',
+        'Ali Nazik',
+        'Fattet Mozat',
+        'Osmaliyya with Fresh Cream',
+    ],
+
+    // Tags applied on first import (matched on English name).
+    'tags' => [
+        'Breakfast / 2 Persons' => ['sharing'],
+        'Mix Cold Mezzah 5 Types' => ['sharing'],
+        'Hot Potato' => ['spicy'],
+    ],
+
+    'default_settings' => [
+        'name_en' => 'Börek Time',
+        'name_ar' => 'بوريك تايم',
+        'tagline_en' => 'Restaurant & Cafe · Since 2020',
+        'tagline_ar' => 'مطعم ومقهى · منذ 2020',
+        'currency_en' => 'JOD',
+        'currency_ar' => 'د.أ',
+        'phone' => null,
+        'whatsapp' => null,
+        'instagram' => null,
+        'facebook' => null,
+        'address_en' => null,
+        'address_ar' => null,
+        'hours_en' => null,
+        'hours_ar' => null,
+        'map_url' => null,
+        'note_en' => 'Prices are in Jordanian Dinar.',
+        'note_ar' => 'الأسعار بالدينار الأردني.',
+    ],
+
+];
