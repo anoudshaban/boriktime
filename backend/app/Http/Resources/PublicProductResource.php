@@ -28,6 +28,7 @@ class PublicProductResource extends JsonResource
             'tags' => $this->tags ?? [],
             'image' => ImageStore::url($this->image_path),
             'image_credit' => $this->image_credit,
+            'video' => ImageStore::url($this->video_path),
             'featured' => $this->is_featured,
         ];
     }

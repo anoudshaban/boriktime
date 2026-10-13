@@ -92,6 +92,26 @@ class AdminApiTest extends TestCase
         $this->assertSame(1200, $width);
     }
 
+    public function test_admin_can_upload_and_remove_a_dish_video(): void
+    {
+        Storage::fake('public');
+        Sanctum::actingAs(User::factory()->create());
+        $product = Product::factory()->create();
+
+        $url = $this->post("/api/admin/products/{$product->id}/video", [
+            'video' => UploadedFile::fake()->create('loop.mp4', 500, 'video/mp4'),
+        ], ['Accept' => 'application/json'])->assertOk()->json('data.video');
+
+        $this->assertNotNull($url);
+        $this->getJson('/api/menu')->assertJsonPath('groups.0.sections.0.products.0.video', $url);
+
+        $this->deleteJson("/api/admin/products/{$product->id}/video")->assertOk()->assertJsonPath('data.video', null);
+        $this->assertSame([], Storage::disk('public')->allFiles('videos'));
+
+        $this->post("/api/admin/products/{$product->id}/video", ['video' => UploadedFile::fake()->create('x.pdf', 10)], ['Accept' => 'application/json'])
+            ->assertUnprocessable();
+    }
+
     public function test_categories_can_be_reordered(): void
     {
         Sanctum::actingAs(User::factory()->create());

@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('products/reorder', [ProductController::class, 'reorder'])->name('products.reorder');
         Route::post('products/{product}/image', [ProductController::class, 'uploadImage'])->name('products.image');
         Route::delete('products/{product}/image', [ProductController::class, 'deleteImage'])->name('products.image.delete');
+        Route::post('products/{product}/video', [ProductController::class, 'uploadVideo'])->name('products.video');
+        Route::delete('products/{product}/video', [ProductController::class, 'deleteVideo'])->name('products.video.delete');
         Route::apiResource('products', ProductController::class)->except('show');
 
         Route::post('offers/reorder', [OfferController::class, 'reorder'])->name('offers.reorder');

@@ -33,6 +33,7 @@ class ProductResource extends JsonResource
             'tags' => $this->tags ?? [],
             'image' => ImageStore::url($this->image_path),
             'image_credit' => $this->image_credit,
+            'video' => ImageStore::url($this->video_path),
             'is_featured' => $this->is_featured,
             'is_available' => $this->is_available,
             'sort_order' => $this->sort_order,

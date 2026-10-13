@@ -18,6 +18,8 @@ export type Product = {
   image: string | null
   /** Credit for openly licensed starter photos, e.g. "Jane Doe · CC BY 2.0". */
   image_credit?: string | null
+  /** Short looping clip (MP4/WebM/GIF) uploaded in the admin. */
+  video?: string | null
   featured: boolean
 }
 
@@ -120,6 +122,7 @@ export type AdminProduct = {
   calories: number | null
   tags: Tag[]
   image: string | null
+  video?: string | null
   is_featured: boolean
   is_available: boolean
   sort_order: number

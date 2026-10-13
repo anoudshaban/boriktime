@@ -130,32 +130,48 @@ function Welcome({ groups, settings, firstVisit }: { groups: Group[]; settings: 
 /** Every section of the menu as a quiet, tappable index: thumbnail, both names, count. */
 function SectionIndex({ groups, delay }: { groups: Group[]; delay: number }) {
   const { lang, pick, other, t } = useI18n()
-  const rows = groups.flatMap((g) => g.sections.map((s) => ({ g, s })))
   const thumb = (s: Group['sections'][number]) => s.image ?? s.products.find((p) => p.image)?.image ?? null
+  let n = 0
 
   return (
     <motion.nav className="sindex" aria-label={t('sections')} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay, ease: EASE }}>
-      <p className="lux-eyebrow lux-eyebrow--sm sindex__title">{t('theMenu')}</p>
-      <ul>
-        {rows.map(({ g, s }, i) => {
-          const img = thumb(s)
-          return (
-            <motion.li key={s.slug} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: delay + 0.15 + i * 0.05, ease: EASE }}>
-              <Link to={`/menu/${g.slug}`} state={{ section: s.slug }} className="sindex__row">
-                <span className="sindex__thumb">{img ? <img src={img} alt="" loading="lazy" /> : null}</span>
-                <span className="sindex__names">
-                  <span className="sindex__name">{pick(s.name)}</span>
-                  <span className="sindex__alt" lang={lang === 'en' ? 'ar' : 'en'}>
-                    {other(s.name)}
-                  </span>
-                </span>
-                <span className="sindex__count">{formatInt(s.products.length, lang)}</span>
-                <ChevronIcon size={14} className="flip-fwd sindex__chev" />
-              </Link>
-            </motion.li>
-          )
-        })}
-      </ul>
+      <header className="sindex__head">
+        <span className="sindex__orn" aria-hidden="true" />
+        <p className="lux-eyebrow lux-eyebrow--sm">{t('theMenu')}</p>
+        <span className="sindex__orn" aria-hidden="true" />
+      </header>
+
+      {groups.map((g) => (
+        <div key={g.slug} className="sindex__group">
+          <Link to={`/menu/${g.slug}`} className="sindex__gname">
+            {pick(g.name)}
+          </Link>
+          <ul>
+            {g.sections.map((s) => {
+              const img = thumb(s)
+              const i = n++
+              return (
+                <motion.li key={s.slug} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: delay + 0.15 + i * 0.05, ease: EASE }}>
+                  <Link to={`/menu/${g.slug}`} state={{ section: s.slug }} className="sindex__row">
+                    <span className="sindex__num">{formatInt(i + 1, lang).padStart(2, lang === 'ar' ? '٠' : '0')}</span>
+                    <span className="sindex__thumb">{img ? <img src={img} alt="" loading="lazy" /> : null}</span>
+                    <span className="sindex__names">
+                      <span className="sindex__name">{pick(s.name)}</span>
+                      <span className="sindex__alt" lang={lang === 'en' ? 'ar' : 'en'}>
+                        {other(s.name)}
+                      </span>
+                    </span>
+                    <span className="sindex__count">
+                      {formatInt(s.products.length, lang)} {t(s.products.length === 1 ? 'item' : 'items')}
+                    </span>
+                    <ChevronIcon size={14} className="flip-fwd sindex__chev" />
+                  </Link>
+                </motion.li>
+              )
+            })}
+          </ul>
+        </div>
+      ))}
     </motion.nav>
   )
 }

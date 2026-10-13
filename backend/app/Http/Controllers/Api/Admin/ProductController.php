@@ -70,6 +70,29 @@ class ProductController extends Controller
         return new ProductResource($product);
     }
 
+    /**
+     * Short looping clip (MP4, WebM or animated GIF) played in place of the photo.
+     * Stored as uploaded so GIF animation and video quality are kept.
+     */
+    public function uploadVideo(Request $request, Product $product): ProductResource
+    {
+        $request->validate(['video' => ['required', 'file', 'mimes:mp4,webm,gif,mov', 'max:20480']]);
+
+        $old = $product->video_path;
+        $product->update(['video_path' => $request->file('video')->store('videos', 'public')]);
+        $this->images->delete($old);
+
+        return new ProductResource($product);
+    }
+
+    public function deleteVideo(Product $product): ProductResource
+    {
+        $this->images->delete($product->video_path);
+        $product->update(['video_path' => null]);
+
+        return new ProductResource($product);
+    }
+
     public function deleteImage(Product $product): ProductResource
     {
         $this->images->delete($product->image_path);

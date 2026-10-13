@@ -158,7 +158,7 @@ function DishCard({ group, section, product, settings, index }: { group: Group; 
             variants={{ hidden: { clipPath: 'inset(100% 0% 0% 0%)' }, show: { clipPath: 'inset(0% 0% 0% 0%)' } }}
             transition={{ duration: 1.1, delay: (index % 4) * 0.08, ease: [0.76, 0, 0.24, 1] }}
           >
-            <DishMedia product={product} icon={section.icon} size="fill" />
+            <DishMedia product={product} icon={section.icon} size="fill" live section={section.slug} />
           </motion.span>
           {onSale ? <span className="lcard__tag lcard__tag--offer">{t('offer')}</span> : product.featured && <span className="lcard__tag">✦ {t('signature')}</span>}
         </span>

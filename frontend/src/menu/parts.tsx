@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { TagIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatPrice } from '../lib/text'
@@ -44,13 +44,51 @@ export function Tags({ tags }: { tags: Tag[] }) {
 }
 
 /** The dish photo when uploaded, otherwise the turning porcelain plate. */
-export function DishMedia({ product, icon, size = 'm', spin = true }: { product: Product; icon: string; size?: 'g' | 'm' | 'xl' | 'fill'; spin?: boolean }) {
+/** Sections whose dishes are served hot: their photos get rising steam. */
+const HOT = new Set(['breakfast', 'bakery', 'hot-mezze', 'fatteh', 'main-course', 'hot-drinks'])
+
+export function DishMedia({
+  product,
+  icon,
+  size = 'm',
+  spin = true,
+  live = false,
+  section,
+}: {
+  product: Product
+  icon: string
+  size?: 'g' | 'm' | 'xl' | 'fill'
+  spin?: boolean
+  /** Slow zoom/pan loop (and steam for hot dishes), like a GIF. */
+  live?: boolean
+  section?: string
+}) {
   const [loaded, setLoaded] = useState(false)
+
+  if (product.video && size !== 'g') {
+    const gif = /\.gif(\?|$)/i.test(product.video)
+    return (
+      <div className={`photo photo--${size} is-loaded photo--video`}>
+        {gif ? (
+          <img src={product.video} alt="" />
+        ) : (
+          <video src={product.video} poster={product.image ?? undefined} autoPlay muted loop playsInline preload="metadata" />
+        )}
+      </div>
+    )
+  }
 
   if (product.image) {
     return (
-      <div className={`photo photo--${size}${loaded ? ' is-loaded' : ''}`}>
+      <div className={`photo photo--${size}${loaded ? ' is-loaded' : ''}${live ? ' photo--live' : ''}`} style={live ? ({ '--live-delay': `${-(product.id % 9) * 1.7}s` } as CSSProperties) : undefined}>
         <img src={product.image} alt="" loading={size === 'xl' ? 'eager' : 'lazy'} decoding="async" onLoad={() => setLoaded(true)} />
+        {live && section && HOT.has(section) && (
+          <span className="steam" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        )}
       </div>
     )
   }

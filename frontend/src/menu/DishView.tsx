@@ -184,7 +184,7 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
               >
                 {product.image ? (
                   <button className="dish__zoom" onClick={() => setZoom(true)} aria-label={t('tapToZoom')}>
-                    <DishMedia product={product} icon={section.icon} size="fill" />
+                    <DishMedia product={product} icon={section.icon} size="fill" live section={section.slug} />
                   </button>
                 ) : (
                   <DishMedia product={product} icon={section.icon} size="fill" />

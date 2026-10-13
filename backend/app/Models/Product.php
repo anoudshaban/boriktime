@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'category_id', 'code', 'name_en', 'name_ar', 'description_en', 'description_ar',
-    'price', 'sale_price', 'calories', 'tags', 'image_path', 'image_credit', 'is_featured', 'is_available', 'sort_order',
+    'price', 'sale_price', 'calories', 'tags', 'image_path', 'image_credit', 'video_path', 'is_featured', 'is_available', 'sort_order',
 ])]
 class Product extends Model
 {

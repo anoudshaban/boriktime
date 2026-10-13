@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { TAG_KEYS, TagIcon } from '../components/icons'
 import { api, ApiError } from '../lib/api'
 import type { AdminCategory, AdminProduct, Tag } from '../types'
@@ -150,7 +150,10 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
     >
       <form className="a-form" onSubmit={save}>
         {product ? (
-          <ImageDrop src={image} onFile={upload} onRemove={removeImage} busy={uploading} />
+          <>
+            <ImageDrop src={image} onFile={upload} onRemove={removeImage} busy={uploading} />
+            <VideoField product={product} onSaved={onSaved} />
+          </>
         ) : (
           <p className="a-note">Save the dish first, then add its photo.</p>
         )}
@@ -223,5 +226,63 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
         <button type="submit" hidden />
       </form>
     </Drawer>
+  )
+}
+
+/** Optional moving photo: an animated GIF or short MP4/WebM that loops on the menu. */
+function VideoField({ product, onSaved }: { product: AdminProduct; onSaved: (p: AdminProduct) => void }) {
+  const toast = useToast()
+  const input = useRef<HTMLInputElement>(null)
+  const [video, setVideo] = useState<string | null>(product.video ?? null)
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => setVideo(product.video ?? null), [product])
+
+  const upload = async (file?: File) => {
+    if (!file) return
+    setBusy(true)
+    const form = new FormData()
+    form.append('video', file)
+    try {
+      const res = await api<{ data: AdminProduct }>(`/admin/products/${product.id}/video`, { method: 'POST', body: form })
+      setVideo(res.data.video ?? null)
+      onSaved(res.data)
+      toast('Moving photo added')
+    } catch (error) {
+      toast(error instanceof ApiError ? error.firstError : 'Upload failed', 'error')
+    } finally {
+      setBusy(false)
+      if (input.current) input.current.value = ''
+    }
+  }
+
+  const remove = async () => {
+    const res = await api<{ data: AdminProduct }>(`/admin/products/${product.id}/video`, { method: 'DELETE' })
+    setVideo(null)
+    onSaved(res.data)
+  }
+
+  return (
+    <div className="a-field a-field--wide">
+      <span className="a-field__label">Moving photo (GIF or short video)</span>
+      <div className="a-video">
+        {video ? (
+          /\.gif(\?|$)/i.test(video) ? <img src={video} alt="" /> : <video src={video} autoPlay muted loop playsInline />
+        ) : (
+          <span className="a-muted">Optional — plays on repeat instead of the photo. GIF, MP4 or WebM, up to 20 MB, 3–8 seconds works best.</span>
+        )}
+        <div className="a-drop__actions">
+          <button type="button" className="a-btn a-btn--ghost" onClick={() => input.current?.click()} disabled={busy}>
+            {busy ? 'Uploading…' : video ? 'Replace' : 'Choose GIF / video'}
+          </button>
+          {video && (
+            <button type="button" className="a-btn a-btn--ghost a-btn--danger" onClick={remove}>
+              Remove
+            </button>
+          )}
+        </div>
+        <input ref={input} type="file" accept="image/gif,video/mp4,video/webm,video/quicktime" hidden onChange={(e) => upload(e.target.files?.[0])} />
+      </div>
+    </div>
   )
 }
