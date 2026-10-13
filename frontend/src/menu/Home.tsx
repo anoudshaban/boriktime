@@ -1,5 +1,5 @@
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { useMemo, useRef, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
@@ -40,7 +40,7 @@ export function Home({ groups, settings, firstVisit }: Props) {
 
   return (
     <main className="home lux">
-      <Welcome slides={showcase.slice(0, 6)} settings={settings} firstVisit={firstVisit} />
+      <Welcome groups={groups} settings={settings} firstVisit={firstVisit} />
 
       <Ticker names={all.map((d) => d.product.name)} />
 
@@ -69,26 +69,17 @@ export function Home({ groups, settings, firstVisit }: Props) {
 /* ---------------------------------------------------------------- */
 
 /** Full-screen welcome: logo, story, and an arched window of slowly changing dishes. */
-function Welcome({ slides, settings, firstVisit }: { slides: DishRef[]; settings: Settings | null; firstVisit: boolean }) {
-  const { lang, pick, t } = useI18n()
+function Welcome({ groups, settings, firstVisit }: { groups: Group[]; settings: Settings | null; firstVisit: boolean }) {
+  const { lang, t } = useI18n()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLElement>(null)
-  const [index, setIndex] = useState(0)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '18%'])
-  const textY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -60])
-
-  useEffect(() => {
-    if (slides.length < 2 || reduce) return
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), 5500)
-    return () => window.clearInterval(id)
-  }, [slides.length, reduce])
+  const textY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : -40])
 
   const base = firstVisit && !reduce ? PRELOAD_MS / 1000 + 0.1 : 0.1
   const about = (lang === 'ar' ? settings?.about_ar || settings?.about_en : settings?.about_en || settings?.about_ar) ?? ''
   const motto = (lang === 'ar' ? settings?.motto_ar || settings?.motto_en : settings?.motto_en || settings?.motto_ar) ?? ''
   const go = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-  const current = slides[index]
 
   return (
     <section className="welcome" ref={ref}>
@@ -127,50 +118,45 @@ function Welcome({ slides, settings, firstVisit }: { slides: DishRef[]; settings
         </motion.div>
       </motion.div>
 
-      {current && (
-        <motion.div className="window" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: base + 0.2 }}>
-          <motion.div
-            className="window__frame"
-            initial={{ clipPath: 'inset(100% 0% 0% 0% round 999px 999px 24px 24px)' }}
-            animate={{ clipPath: 'inset(0% 0% 0% 0% round 999px 999px 24px 24px)' }}
-            transition={{ duration: 1.6, delay: base + 0.2, ease: [0.76, 0, 0.24, 1] }}
-          >
-            <motion.div className="window__inner" style={{ y: imgY }}>
-              <AnimatePresence initial={false}>
-                <motion.img
-                  key={current.product.id}
-                  src={current.product.image as string}
-                  alt=""
-                  initial={{ opacity: 0, scale: 1.12 }}
-                  animate={{ opacity: 1, scale: 1.02 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ opacity: { duration: 1.4 }, scale: { duration: 7, ease: 'linear' } }}
-                />
-              </AnimatePresence>
-            </motion.div>
-            <AnimatePresence mode="wait">
-            <motion.div key={current.product.id} className="window__caption" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.6 }}>
-              <span>{pick(current.section.name)}</span>
-              <Link to={dishPath(current)} state={{ modal: true }}>
-                {pick(current.product.name)}
-              </Link>
-            </motion.div>
-            </AnimatePresence>
-          </motion.div>
-          {slides.length > 1 && (
-            <div className="window__dots" aria-hidden="true">
-              {slides.map((s, i) => (
-                <span key={s.product.id} className={i === index ? 'is-on' : ''} />
-              ))}
-            </div>
-          )}
-        </motion.div>
-      )}
+      <SectionIndex groups={groups} delay={base + 0.3} />
 
       <button className="welcome__scroll" onClick={() => go('menu-groups')} aria-label={t('scroll')}>
         <i />
       </button>
     </section>
+  )
+}
+
+/** Every section of the menu as a quiet, tappable index: thumbnail, both names, count. */
+function SectionIndex({ groups, delay }: { groups: Group[]; delay: number }) {
+  const { lang, pick, other, t } = useI18n()
+  const rows = groups.flatMap((g) => g.sections.map((s) => ({ g, s })))
+  const thumb = (s: Group['sections'][number]) => s.image ?? s.products.find((p) => p.image)?.image ?? null
+
+  return (
+    <motion.nav className="sindex" aria-label={t('sections')} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay, ease: EASE }}>
+      <p className="lux-eyebrow lux-eyebrow--sm sindex__title">{t('theMenu')}</p>
+      <ul>
+        {rows.map(({ g, s }, i) => {
+          const img = thumb(s)
+          return (
+            <motion.li key={s.slug} initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: delay + 0.15 + i * 0.05, ease: EASE }}>
+              <Link to={`/menu/${g.slug}`} state={{ section: s.slug }} className="sindex__row">
+                <span className="sindex__thumb">{img ? <img src={img} alt="" loading="lazy" /> : null}</span>
+                <span className="sindex__names">
+                  <span className="sindex__name">{pick(s.name)}</span>
+                  <span className="sindex__alt" lang={lang === 'en' ? 'ar' : 'en'}>
+                    {other(s.name)}
+                  </span>
+                </span>
+                <span className="sindex__count">{formatInt(s.products.length, lang)}</span>
+                <ChevronIcon size={14} className="flip-fwd sindex__chev" />
+              </Link>
+            </motion.li>
+          )
+        })}
+      </ul>
+    </motion.nav>
   )
 }
 

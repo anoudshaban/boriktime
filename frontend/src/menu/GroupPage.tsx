@@ -1,6 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ChevronIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt } from '../lib/text'
@@ -25,6 +25,16 @@ export function GroupPage({ group, settings }: Props) {
     TABS_OFFSET,
   )
   const activeSlug = active?.replace(/^sec-/, '') ?? group.sections[0]?.slug
+
+  // Arriving from the home index: jump to the chosen section.
+  const location = useLocation()
+  const target = (location.state as { section?: string } | null)?.section
+  useEffect(() => {
+    if (!target) return
+    const id = window.setTimeout(() => scrollToSection(sectionId(target), TABS_OFFSET - 4), 450)
+    return () => window.clearTimeout(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target])
 
   // Keep the active tab centred in the strip (works in LTR and RTL).
   useEffect(() => {

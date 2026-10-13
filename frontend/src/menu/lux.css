@@ -1194,3 +1194,113 @@ body:has(.menu) {
   transform: scale(1.04) !important;
   transition: transform 1.2s var(--ease);
 }
+
+/* ============================================================
+   Welcome: section index instead of a single big photo
+   ============================================================ */
+.sindex {
+  width: 100%;
+  max-width: 480px;
+  justify-self: center;
+}
+
+.sindex__title {
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.sindex ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--gold-line);
+}
+
+.sindex__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 6px;
+  border-bottom: 1px solid var(--line-2);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.35s, padding 0.35s var(--ease);
+}
+
+.sindex__thumb {
+  width: 52px;
+  height: 52px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-3);
+}
+
+.sindex__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease);
+}
+
+.sindex__names {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sindex__name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.15;
+  transition: color 0.3s;
+}
+
+:root[lang='ar'] .sindex__name {
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.sindex__alt {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.sindex__count {
+  min-width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--gold-line);
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--gold);
+}
+
+.sindex__chev {
+  flex: none;
+  color: var(--muted);
+  transition: transform 0.35s var(--ease), color 0.3s;
+}
+
+@media (hover: hover) {
+  .sindex__row:hover {
+    background: rgba(255, 255, 255, 0.7);
+    padding-inline: 14px;
+  }
+  .sindex__row:hover .sindex__name,
+  .sindex__row:hover .sindex__chev {
+    color: var(--wine);
+  }
+  .sindex__row:hover .sindex__thumb img {
+    transform: scale(1.12);
+  }
+  .sindex__row:hover .sindex__chev {
+    transform: translateX(4px);
+  }
+  [dir='rtl'] .sindex__row:hover .sindex__chev {
+    transform: scaleX(-1) translateX(4px);
+  }
+}
