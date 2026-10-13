@@ -126,40 +126,20 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
   const flip = dir === 'rtl' ? -1 : 1
 
   return (
-    <motion.div
-      className="dish"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="dish-title"
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
-      transition={{ duration: 0.4, ease: EASE }}
-    >
-      {/* Soft colour glow taken from the photo itself. */}
-      <AnimatePresence>
-        {product.image && (
-          <motion.div
-            key={product.image}
-            className="dish__ambient"
-            style={{ backgroundImage: `url("${product.image}")` }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-          />
-        )}
-      </AnimatePresence>
+    <div className="dish dish--pop" role="dialog" aria-modal="true" aria-labelledby="dish-title">
+      <motion.div className="dish__backdrop" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }} />
 
-      <header className="dish__chrome">
-        <button className="pill-btn pill-btn--glass" onClick={onClose}>
-          <ChevronIcon size={15} className="flip-back" />
-          {t('back')}
-        </button>
-        <button className="round-btn round-btn--glass" onClick={onClose} aria-label={t('close')}>
-          <CloseIcon size={18} />
-        </button>
-      </header>
+      <motion.div
+        className="dish__panel"
+        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 60, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={reduce ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.98 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 30 }}
+      >
+      <span className="dish__grab" aria-hidden="true" />
+      <button className="round-btn dish__close" onClick={onClose} aria-label={t('close')}>
+        <CloseIcon size={18} />
+      </button>
 
       <div className="dish__scroll" ref={scroller}>
         <AnimatePresence mode="wait" initial={false} custom={direction}>
@@ -282,6 +262,7 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
           <Strip title={t('youMayAlsoLike')} refs={related.map((p) => ({ product: p, section, group }))} settings={settings} />
         )}
       </div>
+      </motion.div>
 
       <AnimatePresence>
         {zoom && product.image && (
@@ -308,7 +289,7 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
 

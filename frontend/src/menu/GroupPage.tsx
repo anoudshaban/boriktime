@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
+import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronIcon } from '../components/icons'
@@ -95,44 +95,52 @@ export function GroupPage({ group, settings }: Props) {
 function GroupHeader({ group }: { group: Group }) {
   const { lang, pick, t } = useI18n()
   const reduce = useReducedMotion()
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-12%', '12%'])
-  const img = groupImage(group)
   const dishes = group.sections.reduce((n, s) => n + s.products.length, 0)
+
+  // Up to three photos for the fanned collage: section photos first, then dishes.
+  const photos: string[] = []
+  const add = (src?: string | null) => src && !photos.includes(src) && photos.length < 3 && photos.push(src)
+  add(groupImage(group))
+  group.sections.forEach((s) => add(s.image))
+  group.sections.forEach((s) => s.products.forEach((p) => add(p.image)))
 
   return (
     <header className="gheader container">
-      <motion.nav className="crumbs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-        <Link to="/">{t('menu')}</Link>
-        <ChevronIcon size={11} className="flip-fwd" />
-        <span>{pick(group.name)}</span>
-      </motion.nav>
-      <h1 className="gheader__title">
-        <SplitText text={pick(group.name)} delay={0.25} stagger={0.09} />
-      </h1>
-      <motion.span className="hairline hairline--short" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.5, ease: EASE }} />
-      {pick(group.description) && (
-        <motion.p className="gheader__desc" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.55, ease: EASE }}>
-          {pick(group.description)}
+      <div className="gheader__text">
+        <motion.nav className="crumbs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+          <Link to="/">{t('menu')}</Link>
+          <ChevronIcon size={11} className="flip-fwd" />
+          <span>{pick(group.name)}</span>
+        </motion.nav>
+        <h1 className="gheader__title">
+          <SplitText text={pick(group.name)} delay={0.2} stagger={0.09} />
+        </h1>
+        <motion.span className="hairline hairline--short gheader__rule" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.4, ease: EASE }} />
+        {pick(group.description) && (
+          <motion.p className="gheader__desc" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.45, ease: EASE }}>
+            {pick(group.description)}
+          </motion.p>
+        )}
+        <motion.p className="lux-eyebrow lux-eyebrow--sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+          {group.sections.length > 1 && `${formatInt(group.sections.length, lang)} ${t('sectionsWord')} · `}
+          {formatInt(dishes, lang)} {t('items')}
         </motion.p>
-      )}
-      <motion.p className="lux-eyebrow lux-eyebrow--sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
-        {group.sections.length > 1 && `${formatInt(group.sections.length, lang)} ${t('sectionsWord')} · `}
-        {formatInt(dishes, lang)} {t('items')}
-      </motion.p>
+      </div>
 
-      {img && (
-        <motion.div
-          ref={ref}
-          className="gheader__photo"
-          initial={reduce ? false : { clipPath: 'inset(0% 50% 0% 50% round 28px)' }}
-          animate={{ clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
-          transition={{ duration: 1.5, delay: 0.35, ease: [0.76, 0, 0.24, 1] }}
-        >
-          <motion.img src={img} alt="" style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.08 }} transition={{ duration: 2.4, ease: EASE }} />
-          {group.image && group.image_credit && <span className="banner__credit">{group.image_credit}</span>}
-        </motion.div>
+      {photos.length > 0 && (
+        <div className="collage" aria-hidden="true">
+          {photos.map((src, i) => (
+            <motion.span
+              key={src}
+              className={`collage__card collage__card--${i}`}
+              initial={reduce ? false : { opacity: 0, y: 40, rotate: 0 }}
+              animate={{ opacity: 1, y: 0, rotate: [-6, 4, -1][i] }}
+              transition={{ duration: 1.1, delay: 0.3 + i * 0.15, ease: EASE }}
+            >
+              <img src={src} alt="" />
+            </motion.span>
+          ))}
+        </div>
       )}
     </header>
   )

@@ -27,7 +27,7 @@ export function SectionBanner({ section, headingId, index }: Props) {
   const count = section.products.length
 
   return (
-    <motion.div className="sbanner" initial={reduce ? false : 'hidden'} whileInView="show" viewport={{ once: true, margin: '-80px' }}>
+    <motion.div className={`sbanner${(index ?? 0) % 2 ? ' sbanner--flip' : ''}${section.image ? '' : ' sbanner--noimg'}`} initial={reduce ? false : 'hidden'} whileInView="show" viewport={{ once: true, margin: '-80px' }}>
       {section.image ? (
         <motion.div
           ref={ref}
