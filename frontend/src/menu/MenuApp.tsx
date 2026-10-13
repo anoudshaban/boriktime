@@ -8,8 +8,13 @@ import { GroupPage } from './GroupPage'
 import { Home } from './Home'
 import { SearchOverlay } from './SearchOverlay'
 import { TopNav } from './TopNav'
+import { MenuDataProvider } from './menuData'
+import { MyListProvider } from './myList'
+import { MyListButton } from './MyListSheet'
+import { OfferView } from './Offers'
 import { useMenu } from './useMenu'
 import './menu.css'
+import './features.css'
 
 const SEEN_KEY = 'bt_logo_drawn'
 
@@ -29,6 +34,17 @@ function takeFirstVisit(): boolean {
  */
 export default function MenuApp() {
   const { menu, status, offline, retry } = useMenu()
+
+  return (
+    <MenuDataProvider menu={menu}>
+      <MyListProvider>
+        <MenuShell menu={menu} status={status} offline={offline} retry={retry} />
+      </MyListProvider>
+    </MenuDataProvider>
+  )
+}
+
+function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>) {
   const { lang, pick, t } = useI18n()
   const location = useLocation()
   const navigate = useNavigate()
@@ -41,6 +57,9 @@ export default function MenuApp() {
   const dishMatch = matchPath('/menu/:group/:dish', location.pathname)
   const groupMatch = dishMatch ?? matchPath('/menu/:group', location.pathname)
   const group = groupMatch ? groups.find((g) => g.slug === groupMatch.params.group) : undefined
+
+  const offerMatch = matchPath('/offers/:offer', location.pathname)
+  const offer = offerMatch ? menu?.offers?.find((o) => o.id === Number(offerMatch.params.offer)) : undefined
 
   const dish = useMemo(() => {
     if (!group || !dishMatch) return null
@@ -60,15 +79,20 @@ export default function MenuApp() {
 
   useEffect(() => {
     const brand = lang === 'ar' ? (settings?.name_ar ?? 'بوريك تايم') : (settings?.name_en ?? 'Börek Time')
-    const page = dish ? pick(dish.product.name) : group ? pick(group.name) : t('menu')
+    const page = dish ? pick(dish.product.name) : offer ? pick(offer.title) : group ? pick(group.name) : t('menu')
     document.title = `${page} — ${brand}`
-  }, [lang, settings, group, dish, pick, t])
+  }, [lang, settings, group, dish, offer, pick, t])
 
   const closeDish = useCallback(() => {
     if (!group) return
     if ((location.state as { modal?: boolean } | null)?.modal) navigate(-1)
     else navigate(`/menu/${group.slug}`, { replace: true })
   }, [group, location.state, navigate])
+
+  const closeOffer = useCallback(() => {
+    if ((location.state as { modal?: boolean } | null)?.modal) navigate(-1)
+    else navigate('/', { replace: true })
+  }, [location.state, navigate])
 
   const openSearch = useCallback(() => setSearchOpen(true), [])
   const closeSearch = useCallback(() => setSearchOpen(false), [])
@@ -87,7 +111,7 @@ export default function MenuApp() {
 
   return (
     <div className="menu">
-      <TopNav backTo={groupMatch ? '/' : undefined} showLogo={Boolean(groupMatch)} onSearch={openSearch} />
+      <TopNav backTo={groupMatch ? '/' : undefined} showLogo={Boolean(groupMatch)} logoUrl={settings?.logo_url} onSearch={openSearch} />
 
       {status === 'loading' && (
         <div className="state">
@@ -127,6 +151,10 @@ export default function MenuApp() {
           <DishView key="dish" group={group} section={dish.section} product={dish.product} settings={settings} onClose={closeDish} />
         )}
       </AnimatePresence>
+
+      <AnimatePresence>{offer && <OfferView key="offer" offer={offer} onClose={closeOffer} />}</AnimatePresence>
+
+      <MyListButton />
 
       <SearchOverlay open={searchOpen} groups={groups} settings={settings} onClose={closeSearch} />
 

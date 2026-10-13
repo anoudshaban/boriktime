@@ -9,12 +9,14 @@ type Props = {
   open: boolean
   categories: (AdminCategory & { label?: string })[]
   defaultCategory?: number
+  currency?: string
   onClose: () => void
   onSaved: (product: AdminProduct, deleted?: boolean) => void
 }
 
-type Draft = Omit<AdminProduct, 'id' | 'image' | 'sort_order' | 'price' | 'calories' | 'code'> & {
+type Draft = Omit<AdminProduct, 'id' | 'image' | 'sort_order' | 'price' | 'sale_price' | 'calories' | 'code'> & {
   price: string
+  sale_price: string
   calories: string
   code: string
 }
@@ -39,6 +41,7 @@ function toDraft(p: AdminProduct | null, categoryId?: number): Draft {
     description_en: p?.description_en ?? '',
     description_ar: p?.description_ar ?? '',
     price: p ? String(p.price) : '',
+    sale_price: p?.sale_price != null ? String(p.sale_price) : '',
     calories: p?.calories != null ? String(p.calories) : '',
     tags: p?.tags ?? [],
     is_featured: p?.is_featured ?? false,
@@ -46,7 +49,7 @@ function toDraft(p: AdminProduct | null, categoryId?: number): Draft {
   }
 }
 
-export function ProductEditor({ product, open, categories, defaultCategory, onClose, onSaved }: Props) {
+export function ProductEditor({ product, open, categories, defaultCategory, currency = 'JD', onClose, onSaved }: Props) {
   const toast = useToast()
   const [draft, setDraft] = useState<Draft>(() => toDraft(product, defaultCategory))
   const [image, setImage] = useState<string | null>(product?.image ?? null)
@@ -72,6 +75,7 @@ export function ProductEditor({ product, open, categories, defaultCategory, onCl
       ...draft,
       code: draft.code === '' ? null : Number(draft.code),
       price: Number(draft.price),
+      sale_price: draft.sale_price.trim() === '' ? null : Number(draft.sale_price),
       calories: draft.calories === '' ? null : Number(draft.calories),
       description_en: draft.description_en || null,
       description_ar: draft.description_ar || null,
@@ -183,13 +187,17 @@ export function ProductEditor({ product, open, categories, defaultCategory, onCl
         </Field>
 
         <div className="a-grid-2">
-          <Field label="Price (JOD)" error={err('price')}>
+          <Field label={`Price (${currency})`} error={err('price')}>
             <input inputMode="decimal" value={draft.price} onChange={(e) => set('price', e.target.value.replace(',', '.'))} required />
           </Field>
-          <Field label="Calories" hint="Optional" error={err('calories')}>
-            <input inputMode="numeric" value={draft.calories} onChange={(e) => set('calories', e.target.value.replace(/\D/g, ''))} />
+          <Field label={`Offer price (${currency})`} hint="Optional — the price is then shown crossed out" error={err('sale_price')}>
+            <input inputMode="decimal" value={draft.sale_price} onChange={(e) => set('sale_price', e.target.value.replace(',', '.'))} />
           </Field>
         </div>
+
+        <Field label="Calories" hint="Optional" error={err('calories')}>
+          <input inputMode="numeric" value={draft.calories} onChange={(e) => set('calories', e.target.value.replace(/\D/g, ''))} />
+        </Field>
 
         <div className="a-field a-field--wide">
           <span className="a-field__label">Tags</span>

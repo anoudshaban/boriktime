@@ -1,9 +1,10 @@
-import { motion, useReducedMotion } from 'motion/react'
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useI18n } from '../lib/i18n'
 import type { Group, Settings } from '../types'
 import { DishMedia, Price } from './parts'
+import { SectionBanner } from './SectionBanner'
 import { scrollToSection, useScrollSpy } from './useScrollSpy'
 
 const CHIPS_OFFSET = 66
@@ -42,6 +43,8 @@ export function GroupPage({ group, settings }: Props) {
         {pick(group.description) && <p className="note">{pick(group.description)}</p>}
       </div>
 
+      {group.image && <GroupCover src={group.image} />}
+
       {group.sections.length > 1 && (
         <div className="chips-bar">
           <div className="chips container" ref={chipsRef} role="tablist" aria-label={t('sections')}>
@@ -68,15 +71,7 @@ export function GroupPage({ group, settings }: Props) {
       <div className="container">
         {group.sections.map((section) => (
           <section key={section.slug} id={sectionId(section.slug)} className="sec" aria-labelledby={`${section.slug}-h`}>
-            <h2 id={`${section.slug}-h`}>{pick(section.name)}</h2>
-            <motion.div
-              className="sec__line"
-              initial={reduce ? false : { scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.9, ease: EASE }}
-            />
-            {pick(section.description) && <p className="sec__note">{pick(section.description)}</p>}
+            <SectionBanner section={section} headingId={`${section.slug}-h`} />
 
             <div className="grid">
               {section.products.map((product, i) => (
@@ -88,10 +83,14 @@ export function GroupPage({ group, settings }: Props) {
                   transition={{ duration: 0.55, delay: (i % 4) * 0.06, ease: EASE }}
                 >
                   <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="card">
-                    {product.featured && <span className="card__badge">★ {t('signature')}</span>}
+                    {product.sale_price != null && product.sale_price < product.price ? (
+                      <span className="card__badge card__badge--offer">{t('offer')}</span>
+                    ) : (
+                      product.featured && <span className="card__badge">★ {t('signature')}</span>
+                    )}
                     <DishMedia product={product} icon={section.icon} />
                     <span className="card__name">{pick(product.name)}</span>
-                    <Price value={product.price} settings={settings} className="card__price" />
+                    <Price value={product.price} sale={product.sale_price} settings={settings} className="card__price" />
                     <span className="card__btn">{t('viewDish')}</span>
                   </Link>
                 </motion.div>
@@ -101,5 +100,27 @@ export function GroupPage({ group, settings }: Props) {
         ))}
       </div>
     </main>
+  )
+}
+
+/** Wide group photo under the title, drifting slower than the page. */
+function GroupCover({ src }: { src: string }) {
+  const reduce = useReducedMotion()
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-10%', '10%'])
+
+  return (
+    <div className="container">
+      <motion.div
+        ref={ref}
+        className="cover"
+        initial={reduce ? false : { opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: EASE }}
+      >
+        <motion.img src={src} alt="" style={{ y }} />
+      </motion.div>
+    </div>
   )
 }

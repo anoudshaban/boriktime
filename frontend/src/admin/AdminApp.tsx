@@ -2,10 +2,15 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { api, auth } from '../lib/api'
 import './admin.css'
+import './admin-pages.css'
+import { AccountPage } from './AccountPage'
 import { CategoriesPage } from './CategoriesPage'
+import { Dashboard } from './Dashboard'
 import { ImportPage } from './ImportPage'
 import { Layout } from './Layout'
 import { Login } from './Login'
+import { OffersPage } from './OffersPage'
+import { PhotosPage } from './PhotosPage'
 import { ProductsPage } from './ProductsPage'
 import { SettingsPage } from './SettingsPage'
 import { ToastProvider } from './ui'
@@ -55,7 +60,11 @@ export default function AdminApp() {
           <Route path="login" element={user ? <Navigate to="/admin" replace /> : <Login />} />
           <Route element={<RequireAuth />}>
             <Route element={<Layout />}>
-              <Route index element={<ProductsPage />} />
+              <Route index element={<Dashboard />} />
+              <Route path="dishes" element={<ProductsPage />} />
+              <Route path="photos" element={<PhotosPage />} />
+              <Route path="offers" element={<OffersPage />} />
+              <Route path="account" element={<AccountPage />} />
               <Route path="categories" element={<CategoriesPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="import" element={<ImportPage />} />

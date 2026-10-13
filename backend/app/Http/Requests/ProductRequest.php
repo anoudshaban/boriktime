@@ -28,6 +28,8 @@ class ProductRequest extends FormRequest
             'description_en' => ['nullable', 'string', 'max:1000'],
             'description_ar' => ['nullable', 'string', 'max:1000'],
             'price' => [$required, 'numeric', 'min:0', 'max:99999'],
+            // Optional offer price shown with the regular price crossed out.
+            'sale_price' => ['nullable', 'numeric', 'min:0', 'max:99999'],
             'calories' => ['nullable', 'integer', 'min:0', 'max:20000'],
             'tags' => ['sometimes', 'array'],
             'tags.*' => ['string', Rule::in(Product::TAGS)],

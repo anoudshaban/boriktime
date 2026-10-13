@@ -5,6 +5,7 @@ import { Logo } from '../components/brand/Logo'
 import { CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import type { Group, Settings } from '../types'
+import { OffersSlider } from './Offers'
 
 const EASE = [0.2, 0.7, 0.3, 1] as const
 
@@ -27,7 +28,11 @@ export function Home({ groups, settings, firstVisit }: Props) {
     <main className="view container home">
       <section className="brief">
         <motion.div className="brief__logo" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
-          <Logo motionMode={firstVisit ? 'intro' : 'none'} title={settings?.name_en ?? 'Börek Time'} />
+          {settings?.logo_url ? (
+            <img src={settings.logo_url} alt={settings.name_en} className="brand-img" />
+          ) : (
+            <Logo motionMode={firstVisit ? 'intro' : 'none'} title={settings?.name_en ?? 'Börek Time'} />
+          )}
         </motion.div>
         {about && <motion.p {...rise(0)}>{about}</motion.p>}
         {motto && (
@@ -37,6 +42,10 @@ export function Home({ groups, settings, firstVisit }: Props) {
         )}
       </section>
 
+      <motion.div {...rise(0.12)}>
+        <OffersSlider settings={settings} />
+      </motion.div>
+
       <motion.div className="rule" {...rise(0.16)}>
         <span>{t('theMenu')}</span>
       </motion.div>
@@ -44,7 +53,8 @@ export function Home({ groups, settings, firstVisit }: Props) {
       <nav className="groups" aria-label={t('menu')}>
         {groups.map((group, i) => (
           <motion.div key={group.slug} {...rise(0.22 + i * 0.08)}>
-            <Link to={`/menu/${group.slug}`} className="group">
+            <Link to={`/menu/${group.slug}`} className={`group${group.image ? ' group--photo' : ''}`}>
+              {group.image && <img className="group__bg" src={group.image} alt="" loading="lazy" />}
               <span className="ico">
                 <CategoryIcon name={group.icon} strokeWidth={1.4} />
               </span>

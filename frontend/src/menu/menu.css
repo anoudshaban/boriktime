@@ -157,6 +157,13 @@
   border-color: rgba(166, 124, 51, 0.6);
 }
 
+.brand-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
 /* ---------- Top row ---------- */
 .top {
   position: relative;

@@ -11,10 +11,25 @@ export type Product = {
   name: Localized
   description: LocalizedOptional
   price: number
+  /** Offer price; when set the regular price is shown crossed out. */
+  sale_price: number | null
   calories: number | null
   tags: Tag[]
   image: string | null
   featured: boolean
+}
+
+/** A promotion shown on the menu home. */
+export type Offer = {
+  id: number
+  title: Localized
+  description: LocalizedOptional
+  badge: LocalizedOptional
+  image: string | null
+  price: number | null
+  old_price: number | null
+  ends_at: string | null
+  product_ids: number[]
 }
 
 export type Category = {
@@ -60,12 +75,15 @@ export type Settings = {
   map_url: string | null
   note_en: string | null
   note_ar: string | null
+  /** Uploaded logo; when null the built-in animated logo is used. */
+  logo_url: string | null
 }
 
 export type Menu = {
   version: string
   settings: Settings
   groups: Group[]
+  offers: Offer[]
 }
 
 /* Admin (flat) shapes */
@@ -94,10 +112,30 @@ export type AdminProduct = {
   description_en: string | null
   description_ar: string | null
   price: number
+  sale_price: number | null
   calories: number | null
   tags: Tag[]
   image: string | null
   is_featured: boolean
   is_available: boolean
   sort_order: number
+}
+
+export type AdminOffer = {
+  id: number
+  title_en: string
+  title_ar: string
+  description_en: string | null
+  description_ar: string | null
+  badge_en: string | null
+  badge_ar: string | null
+  image: string | null
+  price: number | null
+  old_price: number | null
+  starts_at: string | null
+  ends_at: string | null
+  is_active: boolean
+  is_running: boolean
+  sort_order: number
+  product_ids: number[]
 }

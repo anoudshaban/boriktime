@@ -102,6 +102,44 @@ class AdminApiTest extends TestCase
         $this->assertSame([$c->id, $a->id, $b->id], Category::query()->ordered()->pluck('id')->all());
     }
 
+    public function test_admin_can_change_password_with_current_password(): void
+    {
+        $user = User::factory()->create(['email' => 'chef@borektime.com', 'password' => 'old-password']);
+        $token = $user->createToken('admin')->plainTextToken;
+
+        $this->withToken($token)->putJson('/api/auth/me', [
+            'current_password' => 'wrong',
+            'password' => 'new-password-1',
+            'password_confirmation' => 'new-password-1',
+        ])->assertUnprocessable()->assertJsonValidationErrors('current_password');
+
+        $this->withToken($token)->putJson('/api/auth/me', [
+            'email' => 'owner@borektime.com',
+            'current_password' => 'old-password',
+            'password' => 'new-password-1',
+            'password_confirmation' => 'new-password-1',
+        ])->assertOk()->assertJsonPath('email', 'owner@borektime.com');
+
+        $this->app['auth']->forgetGuards();
+        $this->postJson('/api/auth/login', ['email' => 'owner@borektime.com', 'password' => 'new-password-1'])->assertOk();
+    }
+
+    public function test_admin_can_upload_and_remove_a_logo(): void
+    {
+        Storage::fake('public');
+        Sanctum::actingAs(User::factory()->create());
+
+        $url = $this->post('/api/admin/settings/logo', ['logo' => UploadedFile::fake()->image('logo.png', 800, 400)], ['Accept' => 'application/json'])
+            ->assertOk()
+            ->json('logo_url');
+
+        $this->assertNotNull($url);
+        $this->getJson('/api/menu')->assertJsonPath('settings.logo_url', $url);
+
+        $this->deleteJson('/api/admin/settings/logo')->assertOk()->assertJsonPath('logo_url', null);
+        $this->assertSame([], Storage::disk('public')->allFiles('brand'));
+    }
+
     public function test_settings_can_be_updated(): void
     {
         Sanctum::actingAs(User::factory()->create());

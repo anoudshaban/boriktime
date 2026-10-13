@@ -7,11 +7,13 @@ type Props = {
   /** Where the back button goes; omitted on the home page. */
   backTo?: string
   showLogo?: boolean
+  /** Uploaded logo from the admin, if any. */
+  logoUrl?: string | null
   onSearch: () => void
 }
 
 /** Thin top row shared by every page: back · logo · search · language. */
-export function TopNav({ backTo, showLogo = true, onSearch }: Props) {
+export function TopNav({ backTo, showLogo = true, logoUrl, onSearch }: Props) {
   const { lang, t, toggle } = useI18n()
 
   return (
@@ -27,7 +29,7 @@ export function TopNav({ backTo, showLogo = true, onSearch }: Props) {
       <div className="top__center">
         {showLogo && (
           <Link to="/" aria-label="Börek Time" className="top__logo">
-            <Logo />
+            {logoUrl ? <img src={logoUrl} alt="" className="brand-img" /> : <Logo />}
           </Link>
         )}
       </div>

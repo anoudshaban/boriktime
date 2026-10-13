@@ -28,6 +28,7 @@ class ProductResource extends JsonResource
             'description_en' => $this->description_en,
             'description_ar' => $this->description_ar,
             'price' => (float) $this->price,
+            'sale_price' => $this->sale_price !== null ? (float) $this->sale_price : null,
             'calories' => $this->calories,
             'tags' => $this->tags ?? [],
             'image' => ImageStore::url($this->image_path),

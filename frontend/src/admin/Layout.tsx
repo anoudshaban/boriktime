@@ -4,10 +4,14 @@ import { Logo } from '../components/brand/Logo'
 import { useAuth } from './AdminApp'
 
 const LINKS = [
-  { to: '/admin', label: 'Dishes', end: true },
+  { to: '/admin', label: 'Dashboard', end: true },
+  { to: '/admin/dishes', label: 'Dishes & prices' },
+  { to: '/admin/photos', label: 'Photos' },
+  { to: '/admin/offers', label: 'Offers' },
   { to: '/admin/categories', label: 'Sections' },
   { to: '/admin/settings', label: 'Restaurant info' },
   { to: '/admin/import', label: 'Import Excel' },
+  { to: '/admin/account', label: 'Account' },
 ]
 
 export function Layout() {

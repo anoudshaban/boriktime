@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { api, ApiError } from '../lib/api'
 import type { Settings } from '../types'
-import { Field, useToast } from './ui'
+import { Field, ImageDrop, useToast } from './ui'
 
 type Key = keyof Settings
 type Row = { key: Key; label: string; rtl?: boolean; multiline?: boolean; hint?: string; type?: string }
@@ -28,7 +28,7 @@ const GROUPS: { title: string; rows: Row[] }[] = [
   {
     title: 'Currency',
     rows: [
-      { key: 'currency_en', label: 'Currency (English)', hint: 'e.g. JOD' },
+      { key: 'currency_en', label: 'Currency (English)', hint: 'e.g. JD' },
       { key: 'currency_ar', label: 'العملة (عربي)', rtl: true, hint: 'مثال: د.أ' },
     ],
   },
@@ -65,12 +65,38 @@ export function SettingsPage() {
   const [values, setValues] = useState<Partial<Record<Key, string>>>({})
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [busy, setBusy] = useState(false)
+  const [logo, setLogo] = useState<string | null>(null)
+  const [logoBusy, setLogoBusy] = useState(false)
 
   useEffect(() => {
     api<Settings>('/admin/settings')
-      .then((s) => setValues(Object.fromEntries(Object.entries(s).map(([k, v]) => [k, v ?? '']))))
+      .then((s) => {
+        setLogo(s.logo_url)
+        setValues(Object.fromEntries(Object.entries(s).map(([k, v]) => [k, v ?? ''])))
+      })
       .catch(() => toast('Could not load settings', 'error'))
   }, [toast])
+
+  const uploadLogo = async (file: File) => {
+    setLogoBusy(true)
+    const form = new FormData()
+    form.append('logo', file)
+    try {
+      const s = await api<Settings>('/admin/settings/logo', { method: 'POST', body: form })
+      setLogo(s.logo_url)
+      toast('Logo updated')
+    } catch (error) {
+      toast(error instanceof ApiError ? error.firstError : 'Upload failed', 'error')
+    } finally {
+      setLogoBusy(false)
+    }
+  }
+
+  const removeLogo = async () => {
+    await api<Settings>('/admin/settings/logo', { method: 'DELETE' })
+    setLogo(null)
+    toast('Back to the original animated logo')
+  }
 
   const save = async (e: FormEvent) => {
     e.preventDefault()
@@ -99,6 +125,15 @@ export function SettingsPage() {
           {busy ? 'Saving…' : 'Save changes'}
         </button>
       </header>
+
+      <fieldset className="a-card">
+        <legend>Logo</legend>
+        <p className="a-muted">
+          By default the menu uses the original Börek Time logo, which draws itself when the menu opens. Upload a PNG (transparent background works best) to
+          replace it, or remove it to go back.
+        </p>
+        <ImageDrop src={logo} onFile={uploadLogo} onRemove={removeLogo} busy={logoBusy} />
+      </fieldset>
 
       {GROUPS.map((group) => (
         <fieldset key={group.title} className="a-card">

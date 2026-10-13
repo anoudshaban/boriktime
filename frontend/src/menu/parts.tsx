@@ -5,13 +5,23 @@ import { formatPrice } from '../lib/text'
 import type { Product, Settings, Tag } from '../types'
 import { Plate } from './Plate'
 
-export function Price({ value, settings, className = 'price' }: { value: number; settings: Settings | null; className?: string }) {
+type PriceProps = {
+  value: number
+  /** Offer price: shown instead of `value`, which is then crossed out. */
+  sale?: number | null
+  settings: Settings | null
+  className?: string
+}
+
+export function Price({ value, sale, settings, className = 'price' }: PriceProps) {
   const { lang } = useI18n()
   const currency = lang === 'ar' ? settings?.currency_ar : settings?.currency_en
+  const onSale = sale != null && sale < value
 
   return (
-    <span className={className}>
-      {formatPrice(value, lang)}
+    <span className={`${className}${onSale ? ' is-sale' : ''}`}>
+      {onSale && <s className="price__was">{formatPrice(value, lang)}</s>}
+      {formatPrice(onSale ? sale : value, lang)}
       {currency && <span className="price__cur"> {currency}</span>}
     </span>
   )

@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Http\Resources\PublicCategoryResource;
 use App\Models\Category;
+use App\Models\Offer;
 use App\Models\Setting;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -17,19 +18,27 @@ use Illuminate\Support\Facades\Cache;
  */
 class MenuCache
 {
-    private const KEY = 'menu.public.v2';
+    private const KEY = 'menu.public.v3';
 
     /**
-     * @return array{version: string, settings: array<string, mixed>, groups: array<int, mixed>}
+     * Offers depend on the date, so the payload is cached per day and
+     * expires at midnight even when nothing was edited.
+     *
+     * @return array{version: string, settings: array<string, mixed>, groups: array<int, mixed>, offers: array<int, mixed>}
      */
     public static function get(): array
     {
-        return Cache::rememberForever(self::KEY, fn () => self::build());
+        return Cache::remember(self::key(), now()->endOfDay(), fn () => self::build());
     }
 
     public static function flush(): void
     {
-        Cache::forget(self::KEY);
+        Cache::forget(self::key());
+    }
+
+    private static function key(): string
+    {
+        return self::KEY.'.'.today()->toDateString();
     }
 
     /**
@@ -63,9 +72,36 @@ class MenuCache
         $json = json_encode([
             'settings' => Setting::allWithDefaults(),
             'groups' => $groups,
+            'offers' => self::offers(),
         ], JSON_THROW_ON_ERROR);
 
         return ['version' => substr(sha1($json), 0, 16)] + json_decode($json, true);
+    }
+
+    /**
+     * Offers running today, with the ids of their (available) dishes.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private static function offers(): array
+    {
+        return Offer::query()
+            ->running()
+            ->ordered()
+            ->with(['products' => fn ($q) => $q->where('is_available', true)->select('products.id')])
+            ->get()
+            ->map(fn (Offer $offer) => [
+                'id' => $offer->id,
+                'title' => ['en' => $offer->title_en, 'ar' => $offer->title_ar],
+                'description' => ['en' => $offer->description_en, 'ar' => $offer->description_ar],
+                'badge' => ['en' => $offer->badge_en, 'ar' => $offer->badge_ar],
+                'image' => ImageStore::url($offer->image_path),
+                'price' => $offer->price !== null ? (float) $offer->price : null,
+                'old_price' => $offer->old_price !== null ? (float) $offer->old_price : null,
+                'ends_at' => $offer->ends_at?->toDateString(),
+                'product_ids' => $offer->products->pluck('id')->all(),
+            ])
+            ->all();
     }
 
     /**

@@ -4,6 +4,7 @@ import { CategoryIcon, SearchIcon } from '../components/icons'
 import { api, ApiError } from '../lib/api'
 import { normalize } from '../lib/text'
 import type { AdminCategory, AdminProduct } from '../types'
+import { loadAdminData } from './data'
 import { ProductEditor } from './ProductEditor'
 import { Switch, useToast } from './ui'
 
@@ -12,21 +13,16 @@ export function ProductsPage() {
   const [categories, setCategories] = useState<(AdminCategory & { label: string })[]>([])
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [loading, setLoading] = useState(true)
+  const [currency, setCurrency] = useState('JD')
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<number | 'all'>('all')
   const [editing, setEditing] = useState<AdminProduct | 'new' | null>(null)
 
   const load = useCallback(async () => {
-    const [c, p] = await Promise.all([api<{ data: AdminCategory[] }>('/admin/categories'), api<{ data: AdminProduct[] }>('/admin/products')])
-    // Only sections hold dishes: drop groups that have sections under them, and label "Group › Section".
-    const names = new Map(c.data.map((x) => [x.id, x.name_en]))
-    const parents = new Set(c.data.map((x) => x.parent_id).filter(Boolean))
-    setCategories(
-      c.data
-        .filter((x) => !parents.has(x.id))
-        .map((x) => ({ ...x, label: x.parent_id ? `${names.get(x.parent_id)} › ${x.name_en}` : x.name_en })),
-    )
-    setProducts(p.data)
+    const data = await loadAdminData()
+    setCategories(data.sections)
+    setProducts(data.products)
+    setCurrency(data.settings.currency_en || 'JD')
     setLoading(false)
   }, [])
 
@@ -161,7 +157,7 @@ export function ProductsPage() {
                     </span>
                   </button>
 
-                  <PriceInput value={p.price} onSave={(price) => patch(p, { price }, `${p.name_en}: price updated`)} />
+                  <PriceInput value={p.price} currency={currency} onSave={(price) => patch(p, { price }, `${p.name_en}: price updated`)} />
 
                   <div className="a-item__toggles">
                     <label title="Visible on the menu">
@@ -184,6 +180,7 @@ export function ProductsPage() {
         product={editing === 'new' ? null : editing}
         open={editing !== null}
         categories={categories}
+        currency={currency}
         defaultCategory={filter === 'all' ? categories[0]?.id : filter}
         onClose={() => setEditing(null)}
         onSaved={(saved, deleted) => {
@@ -199,7 +196,7 @@ export function ProductsPage() {
 }
 
 /** Price that saves itself on blur / Enter. */
-function PriceInput({ value, onSave }: { value: number; onSave: (v: number) => void }) {
+function PriceInput({ value, currency, onSave }: { value: number; currency: string; onSave: (v: number) => void }) {
   const [draft, setDraft] = useState(String(value))
   useEffect(() => setDraft(String(value)), [value])
 
@@ -219,7 +216,7 @@ function PriceInput({ value, onSave }: { value: number; onSave: (v: number) => v
         onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
         aria-label="Price"
       />
-      <span>JOD</span>
+      <span>{currency}</span>
     </label>
   )
 }
