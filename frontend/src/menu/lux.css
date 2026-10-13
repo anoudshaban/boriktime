@@ -1125,3 +1125,72 @@ body:has(.menu) {
   border-color: var(--line);
   box-shadow: 0 20px 40px -32px rgba(70, 25, 15, 0.5);
 }
+
+/* ============================================================
+   Calm version: no arches, no wipes, no drifting photos.
+   ============================================================ */
+
+/* Straight rectangles with soft corners everywhere. */
+.window__frame,
+.room__photo,
+.sigs__photo,
+.gheader__photo,
+.sbanner__photo {
+  border-radius: 18px;
+}
+
+.window::before {
+  display: none;
+}
+
+.window__frame {
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 30px 60px -40px rgba(70, 25, 15, 0.45);
+}
+
+.room__photo {
+  aspect-ratio: 4 / 3;
+  max-height: none;
+}
+
+.sigs__photo {
+  aspect-ratio: 4 / 5;
+}
+
+/* Turn off the reveal wipes and scroll drift; the parents still fade in softly. */
+.window__frame,
+.room__photo,
+.gheader__photo,
+.sbanner__photo,
+.lcard__reveal {
+  clip-path: none !important;
+}
+
+.window__inner,
+.gheader__photo img,
+.sbanner__photo img,
+.room__photo img {
+  transform: none !important;
+}
+
+.window__inner {
+  inset: 0;
+}
+
+.gheader__photo img,
+.sbanner__photo img {
+  inset: 0;
+  height: 100%;
+}
+
+/* Titles appear with their section instead of word by word. */
+.split__i {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+/* Gentle hover zoom stays. */
+.room__link:hover .room__photo img {
+  transform: scale(1.04) !important;
+  transition: transform 1.2s var(--ease);
+}
