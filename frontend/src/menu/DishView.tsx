@@ -35,7 +35,7 @@ function pairsFor(product: Product, group: Group, groups: Group[]): DishRef[] {
 
 /** Full-screen "quick view" of one dish, layered over its group page. */
 export function DishView({ group, section, product, settings, onClose }: Props) {
-  const { lang, dir, pick, t } = useI18n()
+  const { lang, dir, pick, other, t } = useI18n()
   const { groups, offersFor } = useMenuData()
   const list = useMyList()
   const navigate = useNavigate()
@@ -150,16 +150,12 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
         )}
       </AnimatePresence>
 
-      <header className="dish__bar">
-        <button className="pill-btn" onClick={onClose}>
+      <header className="dish__chrome">
+        <button className="pill-btn pill-btn--glass" onClick={onClose}>
           <ChevronIcon size={15} className="flip-back" />
           {t('back')}
         </button>
-        <div className="dish__bar-title">
-          <span className="eyebrow eyebrow--sm">{t('quickView')}</span>
-          <span className="dish__bar-name">{pick(product.name)}</span>
-        </div>
-        <button className="round-btn round-btn--dark" onClick={onClose} aria-label={t('close')}>
+        <button className="round-btn round-btn--glass" onClick={onClose} aria-label={t('close')}>
           <CloseIcon size={18} />
         </button>
       </header>
@@ -168,7 +164,7 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.article
             key={product.id}
-            className="dish__layout container"
+            className="dish__layout"
             initial={reduce ? { opacity: 0 } : { opacity: 0, x: 40 * direction * flip }}
             animate={{ opacity: 1, x: 0 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, x: -40 * direction * flip }}
@@ -187,10 +183,10 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
               >
                 {product.image ? (
                   <button className="dish__zoom" onClick={() => setZoom(true)} aria-label={t('tapToZoom')}>
-                    <DishMedia product={product} icon={section.icon} size="xl" />
+                    <DishMedia product={product} icon={section.icon} size="fill" />
                   </button>
                 ) : (
-                  <DishMedia product={product} icon={section.icon} size="xl" />
+                  <DishMedia product={product} icon={section.icon} size="fill" />
                 )}
                 {onSale && <span className="dish__sale">{t('offer')}</span>}
               </motion.div>
@@ -219,6 +215,9 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
               <h1 id="dish-title" className="dish__name">
                 {pick(product.name)}
               </h1>
+              <p className="dish__alt" lang={lang === 'en' ? 'ar' : 'en'}>
+                {other(product.name)}
+              </p>
               <p className="eyebrow dish__eyebrow">
                 {pick(section.name)}
                 {product.code != null && (

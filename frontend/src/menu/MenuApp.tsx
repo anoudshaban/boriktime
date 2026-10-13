@@ -13,8 +13,8 @@ import { MyListProvider } from './myList'
 import { MyListButton } from './MyListSheet'
 import { OfferView } from './Offers'
 import { useMenu } from './useMenu'
-import './menu.css'
-import './features.css'
+import './theme.css'
+import './theme-extras.css'
 
 const SEEN_KEY = 'bt_logo_drawn'
 

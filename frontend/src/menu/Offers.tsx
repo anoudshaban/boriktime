@@ -175,16 +175,12 @@ export function OfferView({ offer, onClose }: { offer: Offer; onClose: () => voi
       exit={reduce ? { opacity: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.4, ease: EASE }}
     >
-      <header className="dish__bar">
-        <button className="pill-btn" onClick={onClose}>
+      <header className="dish__chrome">
+        <button className="pill-btn pill-btn--glass" onClick={onClose}>
           <ChevronIcon size={15} className="flip-back" />
           {t('back')}
         </button>
-        <div className="dish__bar-title">
-          <span className="eyebrow eyebrow--sm">{t('offer')}</span>
-          <span className="dish__bar-name">{pick(offer.title)}</span>
-        </div>
-        <button className="round-btn round-btn--dark" onClick={onClose} aria-label={t('close')}>
+        <button className="round-btn round-btn--glass" onClick={onClose} aria-label={t('close')}>
           <CloseIcon size={18} />
         </button>
       </header>

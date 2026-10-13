@@ -10,8 +10,8 @@ const EASE = [0.2, 0.7, 0.3, 1] as const
 type Props = {
   section: Category
   headingId: string
-  /** Larger variant used at the top of a group page. */
-  hero?: boolean
+  /** Position in the group, shown as a large outlined number. */
+  index?: number
 }
 
 /**
@@ -19,7 +19,7 @@ type Props = {
  * it reveals, slowly zooms out and drifts with the scroll; without one it is
  * a wine panel with the section's motif.
  */
-export function SectionBanner({ section, headingId, hero = false }: Props) {
+export function SectionBanner({ section, headingId, index }: Props) {
   const { lang, pick, t } = useI18n()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
@@ -30,7 +30,7 @@ export function SectionBanner({ section, headingId, hero = false }: Props) {
   return (
     <motion.div
       ref={ref}
-      className={`banner${hero ? ' banner--hero' : ''}${section.image ? '' : ' banner--art'}`}
+      className={`banner${section.image ? '' : ' banner--art'}`}
       initial={reduce ? false : { clipPath: 'inset(8% 6% 8% 6% round 22px)', opacity: 0 }}
       whileInView={{ clipPath: 'inset(0% 0% 0% 0% round 22px)', opacity: 1 }}
       viewport={{ once: true, margin: '0px 0px -60px 0px' }}
@@ -57,6 +57,11 @@ export function SectionBanner({ section, headingId, hero = false }: Props) {
       )}
 
       <span className="banner__shade" />
+      {index != null && (
+        <span className="banner__num" aria-hidden="true">
+          {formatInt(index + 1, lang).padStart(2, lang === 'ar' ? '٠' : '0')}
+        </span>
+      )}
       {section.image && section.image_credit && <span className="banner__credit">{section.image_credit}</span>}
 
       <div className="banner__text">

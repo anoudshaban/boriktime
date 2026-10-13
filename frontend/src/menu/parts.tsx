@@ -44,7 +44,7 @@ export function Tags({ tags }: { tags: Tag[] }) {
 }
 
 /** The dish photo when uploaded, otherwise the turning porcelain plate. */
-export function DishMedia({ product, icon, size = 'm', spin = true }: { product: Product; icon: string; size?: 'g' | 'm' | 'xl'; spin?: boolean }) {
+export function DishMedia({ product, icon, size = 'm', spin = true }: { product: Product; icon: string; size?: 'g' | 'm' | 'xl' | 'fill'; spin?: boolean }) {
   const [loaded, setLoaded] = useState(false)
 
   if (product.image) {
@@ -55,5 +55,12 @@ export function DishMedia({ product, icon, size = 'm', spin = true }: { product:
     )
   }
 
+  if (size === 'fill') {
+    return (
+      <div className="photo photo--fill photo--empty">
+        <Plate icon={icon} seed={product.id} size="m" spin={spin} />
+      </div>
+    )
+  }
   return <Plate icon={icon} seed={product.id} size={size} spin={spin} />
 }
