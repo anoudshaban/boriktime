@@ -5,14 +5,14 @@ import { ChevronIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt } from '../lib/text'
 import type { Category, Group, Product, Settings } from '../types'
+import { SplitText } from './fx'
 import { groupImage, SiteFooter } from './Home'
-import { SplitText, useTilt } from './fx'
 import { DishMedia, Price } from './parts'
 import { SectionBanner } from './SectionBanner'
 import { scrollToSection, useScrollSpy } from './useScrollSpy'
 
 const TABS_OFFSET = 132
-const EASE = [0.2, 0.7, 0.3, 1] as const
+const EASE = [0.22, 1, 0.36, 1] as const
 
 type Props = { group: Group; settings: Settings | null }
 
@@ -36,16 +36,14 @@ export function GroupPage({ group, settings }: Props) {
     strip.scrollBy({ left: a.left + a.width / 2 - (b.left + b.width / 2), behavior: 'smooth' })
   }, [activeSlug, lang])
 
-  const dishes = group.sections.reduce((n, s) => n + s.products.length, 0)
-
   return (
-    <main className="gpage">
-      <GroupHero group={group} dishes={dishes} />
+    <main className="gpage lux">
+      <GroupHeader group={group} />
 
       {group.sections.length > 1 && (
-        <div className="tabs">
-          <div className="tabs__strip container" ref={tabsRef} role="tablist" aria-label={t('sections')}>
-            {group.sections.map((section, i) => {
+        <div className="ltabs">
+          <div className="ltabs__strip container" ref={tabsRef} role="tablist" aria-label={t('sections')}>
+            {group.sections.map((section) => {
               const on = section.slug === activeSlug
               return (
                 <button
@@ -53,12 +51,11 @@ export function GroupPage({ group, settings }: Props) {
                   data-slug={section.slug}
                   role="tab"
                   aria-selected={on}
-                  className={`tab${on ? ' is-on' : ''}`}
+                  className={`ltab${on ? ' is-on' : ''}`}
                   onClick={() => scrollToSection(sectionId(section.slug), TABS_OFFSET - 4)}
                 >
-                  {on && <motion.span layoutId="tab-on" className="tab__on" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
-                  <span className="tab__num">{formatInt(i + 1, lang)}</span>
-                  <span className="tab__label">{pick(section.name)}</span>
+                  {pick(section.name)}
+                  {on && <motion.span layoutId="ltab-line" className="ltab__line" transition={{ type: 'spring', stiffness: 380, damping: 34 }} />}
                 </button>
               )
             })}
@@ -66,11 +63,11 @@ export function GroupPage({ group, settings }: Props) {
         </div>
       )}
 
-      <div className="container gpage__body">
+      <div className="container">
         {group.sections.map((section, si) => (
-          <section key={section.slug} id={sectionId(section.slug)} className="sec" aria-labelledby={`${section.slug}-h`}>
+          <section key={section.slug} id={sectionId(section.slug)} className="lsec" aria-labelledby={`${section.slug}-h`}>
             <SectionBanner section={section} headingId={`${section.slug}-h`} index={si} />
-            <div className="dgrid">
+            <div className="lgrid">
               {section.products.map((product, i) => (
                 <DishCard key={product.id} group={group} section={section} product={product} settings={settings} index={i} />
               ))}
@@ -84,51 +81,49 @@ export function GroupPage({ group, settings }: Props) {
   )
 }
 
-/** Full-bleed photo header that drifts slower than the page. */
-function GroupHero({ group, dishes }: { group: Group; dishes: number }) {
+/** Centered editorial title over a wide framed photo that drifts with the scroll. */
+function GroupHeader({ group }: { group: Group }) {
   const { lang, pick, t } = useI18n()
   const reduce = useReducedMotion()
-  const ref = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', reduce ? '0%' : '25%'])
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-12%', '12%'])
   const img = groupImage(group)
+  const dishes = group.sections.reduce((n, s) => n + s.products.length, 0)
 
   return (
-    <header className="ghero" ref={ref}>
-      <motion.div className="ghero__bg" style={{ y }} aria-hidden="true">
-        {img && (
-          <motion.img src={img} alt="" initial={{ scale: 1.2, opacity: 0 }} animate={{ scale: 1.05, opacity: 1 }} transition={{ duration: 2.2, ease: EASE }} />
-        )}
-      </motion.div>
-      <div className="ghero__veil" />
-      {group.image && group.image_credit && <span className="banner__credit">{group.image_credit}</span>}
-
-      <motion.div className="ghero__content container" style={{ opacity: fade }}>
-        <motion.nav className="crumbs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-          <Link to="/">{t('menu')}</Link>
-          <ChevronIcon size={12} className="flip-fwd" />
-          <span>{pick(group.name)}</span>
-        </motion.nav>
-        <h1 className="ghero__title">
-          <SplitText text={pick(group.name)} delay={0.35} stagger={0.1} />
-        </h1>
-        {pick(group.description) && (
-          <motion.p className="ghero__desc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.25, ease: EASE }}>
-            {pick(group.description)}
-          </motion.p>
-        )}
-        <motion.p className="ghero__meta" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }}>
-          {group.sections.length > 1 && (
-            <span>
-              {formatInt(group.sections.length, lang)} {t('sectionsWord')}
-            </span>
-          )}
-          <span>
-            {formatInt(dishes, lang)} {t('items')}
-          </span>
+    <header className="gheader container">
+      <motion.nav className="crumbs" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+        <Link to="/">{t('menu')}</Link>
+        <ChevronIcon size={11} className="flip-fwd" />
+        <span>{pick(group.name)}</span>
+      </motion.nav>
+      <h1 className="gheader__title">
+        <SplitText text={pick(group.name)} delay={0.25} stagger={0.09} />
+      </h1>
+      <motion.span className="hairline hairline--short" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 0.5, ease: EASE }} />
+      {pick(group.description) && (
+        <motion.p className="gheader__desc" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.55, ease: EASE }}>
+          {pick(group.description)}
         </motion.p>
-      </motion.div>
+      )}
+      <motion.p className="lux-eyebrow lux-eyebrow--sm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
+        {group.sections.length > 1 && `${formatInt(group.sections.length, lang)} ${t('sectionsWord')} · `}
+        {formatInt(dishes, lang)} {t('items')}
+      </motion.p>
+
+      {img && (
+        <motion.div
+          ref={ref}
+          className="gheader__photo"
+          initial={reduce ? false : { clipPath: 'inset(0% 50% 0% 50% round 28px)' }}
+          animate={{ clipPath: 'inset(0% 0% 0% 0% round 28px)' }}
+          transition={{ duration: 1.5, delay: 0.35, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <motion.img src={img} alt="" style={{ y }} initial={{ scale: 1.2 }} animate={{ scale: 1.08 }} transition={{ duration: 2.4, ease: EASE }} />
+          {group.image && group.image_credit && <span className="banner__credit">{group.image_credit}</span>}
+        </motion.div>
+      )}
     </header>
   )
 }
@@ -137,8 +132,6 @@ function DishCard({ group, section, product, settings, index }: { group: Group; 
   const { pick, other, t } = useI18n()
   const reduce = useReducedMotion()
   const onSale = product.sale_price != null && product.sale_price < product.price
-  const description = pick(product.description)
-  const tilt = useTilt<HTMLAnchorElement>(6)
 
   return (
     <motion.div
@@ -146,34 +139,23 @@ function DishCard({ group, section, product, settings, index }: { group: Group; 
       whileInView="show"
       viewport={{ once: true, margin: '0px 0px -40px 0px' }}
       variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }}
-      transition={{ duration: 0.7, delay: (index % 4) * 0.07, ease: EASE }}
+      transition={{ duration: 0.9, delay: (index % 4) * 0.08, ease: EASE }}
     >
-      <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="dcard" ref={tilt} data-cursor={t('view')}>
-        <span className="glare" />
-        <span className="dcard__media">
+      <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="lcard">
+        <span className="lcard__photo">
           <motion.span
-            className="dcard__reveal"
-            variants={{ hidden: { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.25 }, show: { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 } }}
+            className="lcard__reveal"
+            variants={{ hidden: { clipPath: 'inset(100% 0% 0% 0%)' }, show: { clipPath: 'inset(0% 0% 0% 0%)' } }}
             transition={{ duration: 1.1, delay: (index % 4) * 0.08, ease: [0.76, 0, 0.24, 1] }}
           >
             <DishMedia product={product} icon={section.icon} size="fill" />
           </motion.span>
-          <span className="dcard__shade" />
-          {onSale ? (
-            <span className="dcard__badge dcard__badge--offer">{t('offer')}</span>
-          ) : (
-            product.featured && <span className="dcard__badge">★ {t('signature')}</span>
-          )}
-          <Price value={product.price} sale={product.sale_price} settings={settings} className="dcard__price" />
+          {onSale ? <span className="lcard__tag lcard__tag--offer">{t('offer')}</span> : product.featured && <span className="lcard__tag">✦ {t('signature')}</span>}
         </span>
-        <span className="dcard__body">
-          <span className="dcard__name">{pick(product.name)}</span>
-          <span className="dcard__alt">{other(product.name)}</span>
-          {description && <span className="dcard__desc">{description}</span>}
-        </span>
-        <span className="dcard__go" aria-hidden="true">
-          <ChevronIcon size={14} className="flip-fwd" />
-        </span>
+        <span className="lcard__name">{pick(product.name)}</span>
+        <span className="lcard__alt">{other(product.name)}</span>
+        <span className="lcard__rule" />
+        <Price value={product.price} sale={product.sale_price} settings={settings} className="lcard__price" />
       </Link>
     </motion.div>
   )

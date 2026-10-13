@@ -8,7 +8,7 @@ import { GroupPage } from './GroupPage'
 import { Home } from './Home'
 import { SearchOverlay } from './SearchOverlay'
 import { TopNav } from './TopNav'
-import { Cursor, PageWipe, Preloader, ScrollProgress } from './fx'
+import { PageWipe, Preloader, ScrollProgress } from './fx'
 import { MenuDataProvider } from './menuData'
 import { MyListProvider } from './myList'
 import { MyListButton } from './MyListSheet'
@@ -17,6 +17,7 @@ import { useMenu } from './useMenu'
 import './theme.css'
 import './theme-extras.css'
 import './fx.css'
+import './lux.css'
 
 const SEEN_KEY = 'bt_logo_drawn'
 
@@ -120,7 +121,6 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
     <div className="menu">
       <Preloader show={firstVisit} />
       <ScrollProgress />
-      <Cursor />
       {firstPage.current !== pageKey && <PageWipe key={pageKey} />}
       <TopNav backTo={groupMatch ? '/' : undefined} showLogo={Boolean(groupMatch)} logoUrl={settings?.logo_url} onSearch={openSearch} />
 

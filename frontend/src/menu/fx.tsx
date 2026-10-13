@@ -159,16 +159,16 @@ export function ScrollProgress() {
 }
 
 /* ---------------------------------------------------------------
-   Burgundy + gold curtain that lifts off each new page.
+   Page transition: an ivory veil fades away while a gold hairline
+   draws across the middle.
    --------------------------------------------------------------- */
 export function PageWipe() {
   const reduce = useReducedMotion()
   if (reduce) return null
   return (
-    <>
-      <motion.div className="wipe wipe--gold" initial={{ y: '0%' }} animate={{ y: '-100%' }} transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.12 }} />
-      <motion.div className="wipe" initial={{ y: '0%' }} animate={{ y: '-100%' }} transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }} />
-    </>
+    <motion.div className="veil" initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.7, delay: 0.35, ease: 'easeOut' }}>
+      <motion.span className="veil__line" initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }} />
+    </motion.div>
   )
 }
 
