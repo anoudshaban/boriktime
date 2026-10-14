@@ -1,0 +1,23 @@
+# Runs on the codak-prod server next to the Codak stack. Its nginx reaches this
+# container as http://borektime-app:8080 over the shared codak-prod_codak network.
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: borektime-app:latest
+    container_name: borektime-app
+    restart: unless-stopped
+    env_file: .env.production
+    volumes:
+      - storage:/var/www/html/storage
+    networks:
+      - codak
+
+volumes:
+  storage:
+
+networks:
+  codak:
+    name: codak-prod_codak
+    external: true
