@@ -7,7 +7,7 @@ import { useI18n } from '../lib/i18n'
 import { formatPrice } from '../lib/text'
 import type { Offer, Settings } from '../types'
 import { dishPath, useMenuData } from './menuData'
-import { DishMedia, Price } from './parts'
+import { DishPlate, Price } from './parts'
 
 const EASE = [0.2, 0.7, 0.3, 1] as const
 const AUTOPLAY_MS = 5500
@@ -220,7 +220,7 @@ export function OfferView({ offer, onClose }: { offer: Offer; onClose: () => voi
               <div className="strip strip--wrap">
                 {included.map((ref) => (
                   <Link key={ref.product.id} to={dishPath(ref)} className="card card--mini">
-                    <DishMedia product={ref.product} icon={ref.section.icon} size="g" />
+                    <DishPlate product={ref.product} icon={ref.section.icon} size="s" />
                     <span className="card__name">{pick(ref.product.name)}</span>
                     <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" />
                   </Link>

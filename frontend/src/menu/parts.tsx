@@ -102,3 +102,34 @@ export function DishMedia({
   }
   return <Plate icon={icon} seed={product.id} size={size} spin={spin} />
 }
+
+/**
+ * Direction A: the dish served on a round porcelain plate, tilted toward the
+ * guest and turning slowly. Shows the uploaded GIF/video, the photo, or the
+ * illustrated plate when there is neither.
+ */
+export function DishPlate({ product, icon, size = 'm', spin = true }: { product: Product; icon: string; size?: 's' | 'm' | 'l' | 'xl'; spin?: boolean }) {
+  const delay = { '--d': `${-(product.id % 11) * 4}s` } as CSSProperties
+  const media = product.video ? (
+    /\.gif(\?|$)/i.test(product.video) ? (
+      <img src={product.video} alt="" />
+    ) : (
+      <video src={product.video} poster={product.image ?? undefined} autoPlay muted loop playsInline preload="metadata" />
+    )
+  ) : product.image ? (
+    <img src={product.image} alt="" loading={size === 'xl' ? 'eager' : 'lazy'} decoding="async" className={spin ? 'dp__spin' : undefined} />
+  ) : null
+
+  if (!media) return <Plate icon={icon} seed={product.id} size={size === 'xl' ? 'xl' : size === 's' ? 'g' : 'm'} spin={spin} />
+
+  return (
+    <span className={`dp dp--${size}`} style={delay} aria-hidden="true">
+      <span className="dp__shadow" />
+      <span className="dp__tilt">
+        <span className="dp__rim">
+          <span className="dp__food">{media}</span>
+        </span>
+      </span>
+    </span>
+  )
+}

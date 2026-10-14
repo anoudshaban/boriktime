@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { useI18n } from '../lib/i18n'
@@ -8,7 +8,6 @@ import { GroupPage } from './GroupPage'
 import { Home } from './Home'
 import { SearchOverlay } from './SearchOverlay'
 import { TopNav } from './TopNav'
-import { PageWipe, Preloader, ScrollProgress } from './fx'
 import { MenuDataProvider } from './menuData'
 import { MyListProvider } from './myList'
 import { MyListButton } from './MyListSheet'
@@ -16,8 +15,7 @@ import { OfferView } from './Offers'
 import { useMenu } from './useMenu'
 import './theme.css'
 import './theme-extras.css'
-import './fx.css'
-import './lux.css'
+import './stone.css'
 
 const SEEN_KEY = 'bt_logo_drawn'
 
@@ -79,11 +77,6 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
   }, [pageKey])
-  // The curtain wipe plays on navigation, not on the very first page load.
-  const firstPage = useRef<string | null>(pageKey)
-  useEffect(() => {
-    if (firstPage.current !== pageKey) firstPage.current = null
-  }, [pageKey])
 
   useEffect(() => {
     const brand = lang === 'ar' ? (settings?.name_ar ?? 'بوريك تايم') : (settings?.name_en ?? 'Börek Time')
@@ -119,9 +112,6 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
   return (
     <div className="menu">
-      <Preloader show={firstVisit} />
-      <ScrollProgress />
-      {firstPage.current !== pageKey && <PageWipe key={pageKey} />}
       <TopNav backTo={groupMatch ? '/' : undefined} showLogo={Boolean(groupMatch)} logoUrl={settings?.logo_url} onSearch={openSearch} />
 
       {status === 'loading' && (

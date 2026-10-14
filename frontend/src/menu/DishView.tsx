@@ -8,7 +8,7 @@ import type { Category, Group, Product, Settings } from '../types'
 import { dishPath, useMenuData, type DishRef } from './menuData'
 import { useMyList } from './myList'
 import { SplitText } from './fx'
-import { DishMedia, Price, Tags } from './parts'
+import { DishPlate, Price, Tags } from './parts'
 
 type Props = {
   group: Group
@@ -164,10 +164,10 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
               >
                 {product.image ? (
                   <button className="dish__zoom" onClick={() => setZoom(true)} aria-label={t('tapToZoom')}>
-                    <DishMedia product={product} icon={section.icon} size="fill" live section={section.slug} />
+                    <DishPlate product={product} icon={section.icon} size="xl" />
                   </button>
                 ) : (
-                  <DishMedia product={product} icon={section.icon} size="fill" />
+                  <DishPlate product={product} icon={section.icon} size="xl" />
                 )}
                 {onSale && <span className="dish__sale">{t('offer')}</span>}
               </motion.div>
@@ -301,7 +301,7 @@ function Strip({ title, refs, settings }: { title: string; refs: DishRef[]; sett
       <div className="strip">
         {refs.map((ref) => (
           <Link key={ref.product.id} to={dishPath(ref)} replace state={{ modal: true }} className="card card--mini">
-            <DishMedia product={ref.product} icon={ref.section.icon} size="g" />
+            <DishPlate product={ref.product} icon={ref.section.icon} size="s" />
             <span className="card__name">{pick(ref.product.name)}</span>
             <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" />
           </Link>
