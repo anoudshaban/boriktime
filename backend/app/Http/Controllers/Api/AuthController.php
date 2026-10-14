@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'string', 'max:190'],
             'password' => ['required', 'string'],
         ]);
 
@@ -52,7 +52,7 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'name' => ['sometimes', 'required', 'string', 'max:120'],
-            'email' => ['sometimes', 'required', 'email', 'max:190', Rule::unique('users', 'email')->ignore($user)],
+            'email' => ['sometimes', 'required', 'string', 'min:3', 'max:190', Rule::unique('users', 'email')->ignore($user)],
             'current_password' => ['required', 'current_password:sanctum'],
             'password' => ['nullable', 'string', Password::min(8), 'confirmed'],
         ]);

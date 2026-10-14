@@ -44,8 +44,8 @@ export function Login() {
       >
         <Logo className="a-login__logo" motionMode="intro" />
         <h1>Menu admin</h1>
-        <Field label="Email">
-          <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
+        <Field label="Username">
+          <input type="text" autoCapitalize="none" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus />
         </Field>
         <Field label="Password">
           <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />

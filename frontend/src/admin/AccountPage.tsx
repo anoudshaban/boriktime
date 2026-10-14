@@ -59,8 +59,8 @@ export function AccountPage() {
           <Field label="Name" error={errors.name?.[0]}>
             <input value={name} onChange={(e) => setName(e.target.value)} required />
           </Field>
-          <Field label="Email (used to sign in)" error={errors.email?.[0]}>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" />
+          <Field label="Username (used to sign in)" error={errors.email?.[0]}>
+            <input type="text" autoCapitalize="none" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" />
           </Field>
         </div>
       </fieldset>
