@@ -173,6 +173,12 @@ return [
         'map_url' => null,
         'note_en' => 'Prices are in Jordanian Dinar.',
         'note_ar' => 'الأسعار بالدينار الأردني.',
+        // Online table booking
+        'reservations_enabled' => '1',
+        'reservation_open' => '12:00',
+        'reservation_last' => '23:00',
+        'reservation_interval' => '30',
+        'reservation_max_guests' => '20',
     ],
 
 ];

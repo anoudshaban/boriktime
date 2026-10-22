@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
-import { CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
+import { CalendarIcon, CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt } from '../lib/text'
 import type { Group, Settings } from '../types'
@@ -61,6 +61,13 @@ export function Home({ groups, settings, firstVisit }: Props) {
           <motion.p className="st-brief__motto" {...rise(base + 0.1, reduce)}>
             {motto}
           </motion.p>
+        )}
+        {settings?.reservations_enabled !== '0' && (
+          <motion.div {...rise(base + 0.15, reduce)}>
+            <Link to="/reserve" className="st-brief__book">
+              <CalendarIcon size={15} /> {t('bookTable')}
+            </Link>
+          </motion.div>
         )}
       </section>
 

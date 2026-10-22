@@ -119,3 +119,11 @@ They are stand-ins, not photos of Börek Time dishes. Each one's author and lice
 ```bash
 cd backend && php artisan test
 ```
+
+## QR code & table booking
+
+- The table QR code opens **`/welcome`**: the logo and two choices, **Menu** (`/`) and **Book a table** (`/reserve`).
+- Guests pick party size, date, time, an optional occasion and special requests; the booking arrives as a *new request*.
+- Staff handle bookings in **Admin → Reservations** (confirm, mark arrived, cancel, staff note). Booking hours, time steps,
+  maximum party size and an on/off switch are at the bottom of that page.
+- **Admin → QR code** downloads the code (PNG / SVG) and prints a table card.

@@ -4,13 +4,19 @@ use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\ImportController;
 use App\Http\Controllers\Api\Admin\OfferController;
 use App\Http\Controllers\Api\Admin\ProductController;
+use App\Http\Controllers\Api\Admin\ReservationController as AdminReservationController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 // Public
 Route::get('/menu', MenuController::class)->name('menu');
+
+Route::post('/reservations', [ReservationController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('reservations.store');
 
 Route::post('/auth/login', [AuthController::class, 'login'])
     ->middleware('throttle:6,1')
@@ -39,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('offers/{offer}/image', [OfferController::class, 'uploadImage'])->name('offers.image');
         Route::delete('offers/{offer}/image', [OfferController::class, 'deleteImage'])->name('offers.image.delete');
         Route::apiResource('offers', OfferController::class)->except('show');
+
+        Route::apiResource('reservations', AdminReservationController::class)->only(['index', 'update', 'destroy']);
 
         Route::get('settings', [SettingController::class, 'show'])->name('settings.show');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');

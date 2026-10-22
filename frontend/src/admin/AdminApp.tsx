@@ -12,6 +12,8 @@ import { Login } from './Login'
 import { OffersPage } from './OffersPage'
 import { PhotosPage } from './PhotosPage'
 import { ProductsPage } from './ProductsPage'
+import { QrPage } from './QrPage'
+import { ReservationsPage } from './ReservationsPage'
 import { SettingsPage } from './SettingsPage'
 import { ToastProvider } from './ui'
 
@@ -61,6 +63,8 @@ export default function AdminApp() {
           <Route element={<RequireAuth />}>
             <Route element={<Layout />}>
               <Route index element={<Dashboard />} />
+              <Route path="reservations" element={<ReservationsPage />} />
+              <Route path="qr" element={<QrPage />} />
               <Route path="dishes" element={<ProductsPage />} />
               <Route path="photos" element={<PhotosPage />} />
               <Route path="offers" element={<OffersPage />} />

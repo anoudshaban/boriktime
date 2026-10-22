@@ -83,6 +83,12 @@ export type Settings = {
   note_ar: string | null
   /** Uploaded logo; when null the built-in animated logo is used. */
   logo_url: string | null
+  /** Online table booking ("1"/"0"), first and last bookable time (HH:MM), slot minutes, party size. */
+  reservations_enabled?: string | null
+  reservation_open?: string | null
+  reservation_last?: string | null
+  reservation_interval?: string | null
+  reservation_max_guests?: string | null
 }
 
 export type Menu = {

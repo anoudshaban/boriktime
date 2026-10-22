@@ -5,6 +5,8 @@ import { loadAdminData, type AdminData } from './data'
 import { useToast } from './ui'
 
 const ACTIONS = [
+  { to: '/admin/reservations', title: 'Reservations', text: 'Table requests from guests — confirm, mark arrived or cancel.', icon: '📅' },
+  { to: '/admin/qr', title: 'QR code', text: 'Download or print the table QR: menu + book a table.', icon: '🔳' },
   { to: '/admin/photos', title: 'Add food photos', text: 'Dish photos and the big section banners.', icon: '📷' },
   { to: '/admin/offers', title: 'Offers', text: 'Weekend deals, combos and launches — with start and end dates.', icon: '🏷️' },
   { to: '/admin/dishes', title: 'Dishes & prices', text: 'Edit names, prices, descriptions, tags; add or hide dishes.', icon: '🍽️' },
