@@ -717,3 +717,50 @@
     print-color-adjust: exact;
   }
 }
+
+/* Dashboard: reservations panel */
+.a-dash-res {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-color: rgba(123, 20, 22, 0.25);
+}
+
+.a-dash-res__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.a-dash-res__head .a-muted {
+  margin: 0;
+}
+
+.a-dash-res__alert {
+  color: var(--burgundy);
+}
+
+.a-dash-res__empty {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--line-strong);
+}
+
+.a-dash-res__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.a-dash-res__day {
+  display: block;
+  margin: 0 0 4px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}

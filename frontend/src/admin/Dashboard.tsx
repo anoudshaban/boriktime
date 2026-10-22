@@ -1,7 +1,9 @@
 import { motion } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { loadAdminData, type AdminData } from './data'
+import { dayLabel, ReservationRow, useBookings } from './ReservationsPage'
 import { useToast } from './ui'
 
 const ACTIONS = [
@@ -53,6 +55,8 @@ export function Dashboard() {
           View live menu ↗
         </a>
       </header>
+
+      <DashboardBookings />
 
       <div className="a-stats">
         {[
@@ -110,5 +114,59 @@ export function Dashboard() {
         ))}
       </div>
     </div>
+  )
+}
+
+const DASH_BOOKINGS = 6
+
+/** Upcoming bookings right on the dashboard: new requests first, then the next confirmed tables. */
+function DashboardBookings() {
+  const { list, busyId, update, remove } = useBookings('upcoming')
+  const active = (list?.data ?? []).filter((r) => r.status === 'pending' || r.status === 'confirmed')
+  const shown = [...active.filter((r) => r.status === 'pending'), ...active.filter((r) => r.status === 'confirmed')].slice(0, DASH_BOOKINGS)
+  const counts = list?.counts
+
+  return (
+    <section className="a-card a-dash-res">
+      <header className="a-dash-res__head">
+        <div>
+          <h2 className="a-card__title">Reservations</h2>
+          <p className="a-muted">
+            {counts ? (
+              <>
+                <strong className={counts.pending > 0 ? 'a-dash-res__alert' : undefined}>
+                  {counts.pending} new {counts.pending === 1 ? 'request' : 'requests'}
+                </strong>{' '}
+                · {counts.today} {counts.today === 1 ? 'booking' : 'bookings'} today · {counts.today_guests} guests today
+              </>
+            ) : (
+              'Loading…'
+            )}
+          </p>
+        </div>
+        <Link to="/admin/reservations" className="a-btn a-btn--ghost">
+          All reservations →
+        </Link>
+      </header>
+
+      {list && shown.length === 0 && <p className="a-muted a-dash-res__empty">No upcoming bookings yet. Guests book from the QR code or the “Book a table” button on the menu — they appear here automatically.</p>}
+
+      <div className="a-dash-res__list">
+        <AnimatePresence initial={false}>
+          {shown.map((r) => (
+            <div key={r.id} className="a-dash-res__item">
+              <span className="a-dash-res__day">{dayLabel(r.date, list!.today).split(' · ')[0]}</span>
+              <ReservationRow r={r} busy={busyId === r.id} onUpdate={(patch) => update(r, patch)} onDelete={() => remove(r)} />
+            </div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {active.length > shown.length && (
+        <Link to="/admin/reservations" className="a-link">
+          + {active.length - shown.length} more upcoming
+        </Link>
+      )}
+    </section>
   )
 }

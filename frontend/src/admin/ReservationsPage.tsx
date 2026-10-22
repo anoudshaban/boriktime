@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { api, ApiError } from '../lib/api'
 import type { Settings } from '../types'
 import { Field, Switch, useToast } from './ui'
@@ -24,7 +24,7 @@ export type Reservation = {
 
 type Counts = { pending: number; today: number; today_guests: number }
 type ListResponse = { data: Reservation[]; counts: Counts; today: string }
-type View = 'upcoming' | 'today' | 'past' | 'all'
+export type View = 'upcoming' | 'today' | 'past' | 'all'
 
 const VIEWS: { key: View; label: string }[] = [
   { key: 'upcoming', label: 'Upcoming' },
@@ -50,7 +50,10 @@ const OCCASION_LABEL: Record<string, string> = {
 
 const REFRESH_MS = 30_000
 
-function dayLabel(date: string, today: string): string {
+/** Fired after a booking changes or a new one arrives, so every list and badge reloads at once. */
+export const BOOKINGS_CHANGED = 'bt:bookings-changed'
+
+export function dayLabel(date: string, today: string): string {
   const [y, m, d] = date.split('-').map(Number)
   const nice = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(y, m - 1, d)))
   const diff = Math.round((Date.UTC(y, m - 1, d) - Date.parse(`${today}T00:00:00Z`)) / 86_400_000)
@@ -76,20 +79,19 @@ function ago(iso: string): string {
   return `${Math.round(mins / 1440)} days ago`
 }
 
-export function ReservationsPage() {
+/**
+ * Bookings for one view, refreshed every 30 seconds, with the confirm / cancel / delete actions.
+ * Shared by the Reservations page and the Dashboard.
+ */
+export function useBookings(view: View) {
   const toast = useToast()
-  const [view, setView] = useState<View>('upcoming')
   const [list, setList] = useState<ListResponse | null>(null)
   const [busyId, setBusyId] = useState<number | null>(null)
-  const lastPending = useRef<number | null>(null)
 
   const load = useCallback(
     async (quiet = false) => {
       try {
-        const res = await api<ListResponse>(`/admin/reservations?view=${view}`)
-        if (lastPending.current !== null && res.counts.pending > lastPending.current) toast('New booking request received')
-        lastPending.current = res.counts.pending
-        setList(res)
+        setList(await api<ListResponse>(`/admin/reservations?view=${view}`))
       } catch {
         if (!quiet) toast('Could not load reservations', 'error')
       }
@@ -100,7 +102,14 @@ export function ReservationsPage() {
   useEffect(() => {
     load()
     const id = window.setInterval(() => load(true), REFRESH_MS)
-    return () => window.clearInterval(id)
+    window.addEventListener(BOOKINGS_CHANGED, onChanged)
+    function onChanged() {
+      load(true)
+    }
+    return () => {
+      window.clearInterval(id)
+      window.removeEventListener(BOOKINGS_CHANGED, onChanged)
+    }
   }, [load])
 
   const update = async (r: Reservation, patch: Partial<Pick<Reservation, 'status' | 'admin_note'>>) => {
@@ -109,7 +118,7 @@ export function ReservationsPage() {
       const saved = await api<Reservation>(`/admin/reservations/${r.id}`, { method: 'PUT', body: patch })
       setList((l) => l && { ...l, data: l.data.map((x) => (x.id === r.id ? saved : x)) })
       if (patch.status) toast(`${r.reference} · ${STATUS_LABEL[patch.status]}`)
-      load(true)
+      window.dispatchEvent(new Event(BOOKINGS_CHANGED))
     } catch (error) {
       toast(error instanceof ApiError ? error.firstError : 'Save failed', 'error')
     } finally {
@@ -122,8 +131,15 @@ export function ReservationsPage() {
     await api(`/admin/reservations/${r.id}`, { method: 'DELETE' })
     setList((l) => l && { ...l, data: l.data.filter((x) => x.id !== r.id) })
     toast('Booking deleted')
-    load(true)
+    window.dispatchEvent(new Event(BOOKINGS_CHANGED))
   }
+
+  return { list, busyId, update, remove }
+}
+
+export function ReservationsPage() {
+  const [view, setView] = useState<View>('upcoming')
+  const { list, busyId, update, remove } = useBookings(view)
 
   const groups: [string, Reservation[]][] = []
   for (const r of list?.data ?? []) {
@@ -192,7 +208,7 @@ export function ReservationsPage() {
   )
 }
 
-function ReservationRow({ r, busy, onUpdate, onDelete }: { r: Reservation; busy: boolean; onUpdate: (p: Partial<Pick<Reservation, 'status' | 'admin_note'>>) => void; onDelete: () => void }) {
+export function ReservationRow({ r, busy, onUpdate, onDelete }: { r: Reservation; busy: boolean; onUpdate: (p: Partial<Pick<Reservation, 'status' | 'admin_note'>>) => void; onDelete: () => void }) {
   const [note, setNote] = useState(r.admin_note ?? '')
   const digits = r.phone.replace(/[^\d]/g, '')
   const wa = digits.startsWith('0') ? `962${digits.slice(1)}` : digits
