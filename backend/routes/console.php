@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\MenuImporter;
+use App\Support\MenuSync;
 use App\Support\StarterPhotos;
 use Illuminate\Support\Facades\Artisan;
 
@@ -27,3 +28,19 @@ Artisan::command('menu:photos {--force : Replace photos that were already upload
 
     return 0;
 })->purpose('Attach the starter photos from database/data/photos to dishes and sections without a photo');
+
+Artisan::command('menu:sync {path? : Path to the price list (defaults to database/data/menu.json)}', function (MenuSync $sync) {
+    $stats = $sync->sync($this->argument('path') ?? database_path('data/menu.json'));
+
+    $this->components->info("Menu synced: {$stats['updated']} updated, {$stats['created']} new, {$stats['hidden']} hidden.");
+
+    return 0;
+})->purpose('Apply the latest price list: names, prices, new dishes, and hide dishes no longer listed');
+
+Artisan::command('menu:clear-photos', function (MenuSync $sync) {
+    $deleted = $sync->clearPhotos();
+
+    $this->components->info("Removed all menu photos ({$deleted} files deleted).");
+
+    return 0;
+})->purpose('Remove every dish photo, section banner, video and offer image');

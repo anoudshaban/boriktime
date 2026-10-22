@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Setting;
 use App\Models\User;
 use App\Support\MenuImporter;
-use App\Support\StarterPhotos;
+use App\Support\MenuSync;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(MenuImporter $importer, StarterPhotos $photos): void
+    public function run(MenuImporter $importer, MenuSync $sync): void
     {
         User::query()->updateOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@borektime.com')],
@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
 
         $this->command?->info("Menu: {$stats['categories']} sections, {$stats['created']} new / {$stats['updated']} updated dishes.");
 
-        $photos = $photos->attach();
-        $this->command?->info("Starter photos: {$photos['dishes']} dishes, {$photos['banners']} banners.");
+        // Latest prices and names (FINAL menu 22-10-2026). Photos are added from the dashboard.
+        $latest = $sync->sync(database_path('data/menu.json'));
+        $this->command?->info("Price list: {$latest['updated']} updated, {$latest['created']} new, {$latest['hidden']} hidden.");
     }
 }

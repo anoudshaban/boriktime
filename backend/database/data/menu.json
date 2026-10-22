@@ -1,0 +1,136 @@
+{
+  "source": "FINAL nenu 22-10-2026.pdf",
+  "sections": [
+    {
+      "slug": "breakfast",
+      "items": [
+        {
+          "code": 1,
+          "name_en": "Breakfast / 2 Persons",
+          "name_ar": "فطور / من 2-3 شخص",
+          "description_en": "Mix Borek 3pcs · Sumit · Cheese Pie · Zaatar Pie · Shakshoka · Homos Mohamara · Sojok and Potato · Labnah · Mix Cheese · Mix Turkey · Mix Veg. · Tahina and Dibs · Butter and Tatle · Honey and Cream Fresh",
+          "description_ar": "بوريك مشكل 3 قطع · سميت · فطيرة جبنة · فطيرة زعتر · شكشوكة او بيض وسجق · حمص · فول · لبنة · اجبان منوعة · تيركي ومرتديلا · خضار منوعة · طحينة ودبس · زبدة ومربى · قشطة وعسل",
+          "price": 14
+        }
+      ]
+    },
+    {
+      "slug": "bakery",
+      "items": [
+        { "code": 2, "name_en": "Borek ALL / 3Pcs with Turkish Tea", "name_ar": "بوريك 3 قطع مع شاي تركي مخمّر", "price": 3.5 },
+        { "code": 3, "name_en": "Doner Borek Chicken", "name_ar": "دونر بوريك دجاج", "price": 5 },
+        { "code": 4, "name_en": "Doner Borek Beef", "name_ar": "دونر بوريك لحم - ساوردو", "price": 6 },
+        { "code": 5, "name_en": "Akkawi Cheese Pie", "name_ar": "فطيرة جبنة عكاوي - ساوردو", "price": 3 },
+        { "code": 6, "name_en": "Halloumi Cheese with Pesto and Dry Tomato Pie", "name_ar": "فطيرة جبنة حلوم مع البيستو والطماطم المجففة - ساوردو", "price": 3 },
+        { "code": 7, "name_en": "Kashkawan Cheese With Olives Pie", "name_ar": "فطيرة جبنة قشقوان مع الزيتون - ساوردو", "price": 3 },
+        { "code": 8, "name_en": "Mix Cheese Pie", "name_ar": "فطيرة اجبان منوعة - ساوردو", "price": 3 },
+        { "code": 9, "name_en": "Veg and Cheese Pie", "name_ar": "فطيرة خضار مع جبنة - ساوردو", "price": 3 },
+        { "code": 10, "name_en": "Lahm Be ajeen Pie", "name_ar": "فطيرة لحم بالعجين - ساوردو", "price": 3.5 },
+        { "code": 11, "name_en": "Sojok and Kashkawan Pie", "name_ar": "فطيرة سجق مع جبنة قشقوان - ساوردو", "price": 3.5 },
+        { "code": 12, "name_en": "Basterma and Kashkawan Pie", "name_ar": "فطيرة باسطرما مع جبنة قشقوان - ساوردو", "price": 3.5 },
+        { "code": 13, "name_en": "Araees Special", "name_ar": "عرايس سبيشل", "price": 3.5 },
+        { "code": 14, "name_en": "Sfaiha Special", "name_ar": "صفيحة سبيشل", "price": 0.7 }
+      ]
+    },
+    {
+      "slug": "salads",
+      "items": [
+        { "code": 15, "name_en": "Bomali Salad", "name_ar": "سلطة البوملي", "price": 4.5 },
+        { "code": 16, "name_en": "Kisir Salad", "name_ar": "سلطة الكسير", "price": 4.5 },
+        { "code": 17, "name_en": "Quinoa Taboula Salad", "name_ar": "تبولة بالكينوا", "price": 4.5 },
+        { "code": 18, "name_en": "Chicken Caesar Salad", "name_ar": "سلطة سيزر بالدجاج المشوي", "price": 5.5 },
+        { "code": 19, "name_en": "Jabal Alnour", "name_ar": "جبل النور", "price": 5.5 }
+      ]
+    },
+    {
+      "slug": "cold-mezze",
+      "items": [
+        { "code": 20, "name_en": "Homos", "name_ar": "حمص", "price": 2 },
+        { "code": 21, "name_en": "Motabal", "name_ar": "متبل", "price": 2 },
+        { "code": 22, "name_en": "Homos Bairoti", "name_ar": "حمص بيروتي", "price": 2.5 },
+        { "code": 23, "name_en": "Baba Ghanoog", "name_ar": "بابا غنوج", "price": 2.5 },
+        { "code": 24, "name_en": "Shamandar With Haloum", "name_ar": "شمندر مع شرائح الحلوم", "price": 3.5 },
+        { "code": 25, "name_en": "Mohammarah", "name_ar": "محمرة بالجوز", "price": 3.5 },
+        { "code": 26, "name_en": "Grape Leaves", "name_ar": "ورق عنب يلانجي", "price": 3.5 },
+        { "code": 27, "name_en": "Mix Cold Mezzah 5 Types", "name_ar": "مقبلات منوعة / 5 أنواع", "price": 6 }
+      ]
+    },
+    {
+      "slug": "hot-mezze",
+      "items": [
+        { "code": 28, "name_en": "Fried Potato", "name_ar": "بطاطا", "price": 2 },
+        { "code": 29, "name_en": "Hot Potato", "name_ar": "بطاطا حارة", "price": 3.75 },
+        { "code": 30, "name_en": "Grilled Halloum with Pesto Sauce", "name_ar": "حلوم مشوي مع صلصة الريحان", "price": 3.75 },
+        { "code": 31, "name_en": "Special Chicken Liver", "name_ar": "كبدة دجاج سبيشل", "price": 3.75 },
+        { "code": 32, "name_en": "Fried Kebbah 4 Pcs", "name_ar": "كبة مقلية 4 حبة", "price": 3.75 },
+        { "code": 33, "name_en": "Grilled Kebbah - Sajeih", "name_ar": "كبة مشوية - صاجية", "price": 4.5 },
+        { "code": 37, "name_en": "Mottafa Mushroom", "name_ar": "فطر مطفى بالثوم والليمون", "price": 4.5 },
+        { "code": 34, "name_en": "Friekah with Cream and Mushroom", "name_ar": "فريكة بالفطر والكريمة", "price": 5 },
+        { "code": 35, "name_en": "Homos With Minced Meat and Nuts", "name_ar": "حمص مع اللحمة والمكسرات", "price": 5 },
+        { "code": 36, "name_en": "Turkey Sojok", "name_ar": "سجق تركي", "price": 5 },
+        { "code": 38, "name_en": "Manty", "name_ar": "مانتي", "price": 6 },
+        { "code": 39, "name_en": "Ali Nazik", "name_ar": "علي نازك", "price": 7 }
+      ]
+    },
+    {
+      "slug": "fatteh",
+      "items": [
+        { "code": 40, "name_en": "Fatteh Yalanji", "name_ar": "فتة يلانجي", "price": 5 },
+        { "code": 41, "name_en": "Fatteh Chicken", "name_ar": "فتة دجاج", "price": 5 },
+        { "code": 42, "name_en": "Fattet Maqdous", "name_ar": "فتة مكدوس", "price": 7 },
+        { "code": 43, "name_en": "Fattet Mozat", "name_ar": "فتة موزات", "price": 10 }
+      ]
+    },
+    {
+      "slug": "main-course",
+      "items": [
+        { "code": 44, "name_en": "Chicken Fakhara with Cream and Cheese", "name_ar": "فخارة دجاج مع الجبنة والكريمة", "price": 9 },
+        { "code": 45, "name_en": "Mottafa Chicken Fakhara with Lemon and Garlic", "name_ar": "فخارة دجاج مطفى مع الثوم والليمون", "price": 9 },
+        { "code": 46, "name_en": "Fakhara Mozat with Mushroom", "name_ar": "فخارة موزات مع الفطر", "price": 12 },
+        { "code": 47, "name_en": "Iskandar Kebab", "name_ar": "إسكندر كباب", "price": 12 },
+        { "code": null, "name_en": "Hardal Steak", "name_ar": "هاردل ستيك مع بطاطا", "price": 14 }
+      ]
+    },
+    {
+      "slug": "cold-drinks",
+      "items": [
+        { "code": 48, "name_en": "Laban Ayran", "name_ar": "لبن عيران", "price": 2 },
+        { "code": 49, "name_en": "Fresh Lemon Juice", "name_ar": "عصير ليمون", "price": 3.25 },
+        { "code": 50, "name_en": "Fresh Lemon Mint Juice", "name_ar": "عصير ليمون مع النعنع", "price": 3.25 },
+        { "code": 51, "name_en": "Fresh Mango Juice", "name_ar": "عصير مانجو", "price": 3.25 },
+        { "code": 52, "name_en": "Fresh Strawberry Juice", "name_ar": "عصير فراولة", "price": 3.25 },
+        { "code": 53, "name_en": "Fresh Orange Juice", "name_ar": "عصير برتقال", "price": 3.25 },
+        { "code": 54, "name_en": "Mojito", "name_ar": "موهيتو", "price": 3.25 },
+        { "code": 55, "name_en": "Soft Drink ( Pepsi - Seven up - Merinda )", "name_ar": "مشروبات غازية", "price": 1.5 },
+        { "code": 56, "name_en": "Iced Tea", "name_ar": "شاي مثلج", "price": 2.5 },
+        { "code": 57, "name_en": "Iced Coffee", "name_ar": "قهوة مثلجة", "price": 2.5 },
+        { "code": 58, "name_en": "Sparkling Water Perrier", "name_ar": "مياه بيريه", "price": 3 },
+        { "code": 59, "name_en": "Water Small", "name_ar": "ماء صغير", "price": 0.75 }
+      ]
+    },
+    {
+      "slug": "hot-drinks",
+      "items": [
+        { "code": 60, "name_en": "Turkish Coffee", "name_ar": "قهوة تركية", "price": 2.5 },
+        { "code": 61, "name_en": "American Coffee", "name_ar": "قهوة امريكان", "price": 3 },
+        { "code": 63, "name_en": "Cappuccino", "name_ar": "كابتشينو", "price": 3.5 },
+        { "code": 64, "name_en": "Latte", "name_ar": "لاتية", "price": 3.5 },
+        { "code": 65, "name_en": "Hot Chocolate", "name_ar": "هوت شوكليت", "price": 3.5 },
+        { "code": 66, "name_en": "V60 Coffee", "name_ar": "قهوة مقطرة V60", "price": 3.5 },
+        { "code": 67, "name_en": "Espresso single", "name_ar": "اسبريسو سنجل", "price": 2.5 },
+        { "code": 68, "name_en": "Espresso Double", "name_ar": "اسبريسو دبل", "price": 3.5 },
+        { "code": 69, "name_en": "Green Tea / Green Tea with Mint", "name_ar": "شاي اخضر / شاي اخضر مع النعناع", "price": 2.5 }
+      ]
+    },
+    {
+      "slug": "desserts",
+      "items": [
+        { "code": 70, "name_en": "Apple Borek with Cinnamon / 3Pcs", "name_ar": "بوريك مع التفاح والقرفة والجوز / 3 قطع", "price": 3.5 },
+        { "code": 71, "name_en": "Special Arabic Icecream with pistachio", "name_ar": "ايسكريم عربية مع الفستق الحلبي", "price": 4 },
+        { "code": 72, "name_en": "Brownie with Dandurma", "name_ar": "براوني مع ايسكريم", "price": 4.5 },
+        { "code": 73, "name_en": "Bqlawa Special with dandurma", "name_ar": "بقلاوة خاصة مع الايسكريم والفستق الحلبي", "price": 4.5 },
+        { "code": 74, "name_en": "Osmaliyya with Fresh Cream", "name_ar": "عصلية مع القشطة البلدي والفستق الحلبي", "price": 6 }
+      ]
+    }
+  ]
+}
