@@ -93,7 +93,9 @@ Arabic section names, icons, taglines and the home-page groups live in `backend/
 
 ## Starter photos
 
-`backend/database/data/photos` holds openly licensed photos from Wikimedia Commons (one per dish, by menu number, plus section banners). `php artisan db:seed` attaches them, or run:
+The live menu currently has **no photos** (removed on 22-10-2026; dishes show the plate illustration until real photos are uploaded in Admin → Photos). `php artisan menu:clear-photos` removes every photo again.
+
+`backend/database/data/photos` still holds openly licensed stand-in photos from Wikimedia Commons (one per dish, by menu number, plus section banners). They are no longer attached by the seeder; to use them anyway:
 
 ```bash
 php artisan menu:photos            # only fills dishes/sections without a photo
