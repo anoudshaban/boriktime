@@ -11,7 +11,8 @@ use InvalidArgumentException;
 
 /**
  * Applies a full price list (database/data/menu.json) to the menu:
- * dishes are matched by menu number (or English name when there is none),
+ * dishes are matched by English name (or an old name listed under "was", for
+ * renamed dishes) because menu numbers shift between price lists; numbers,
  * names, Arabic names and prices are updated, new dishes are added, and
  * dishes no longer on the list are hidden rather than deleted.
  */
@@ -36,11 +37,17 @@ class MenuSync
                 $category = Category::query()->where('slug', $section['slug'])->firstOrFail();
 
                 foreach ($section['items'] as $index => $item) {
-                    $product = ($item['code'] ?? null) !== null
-                        ? Product::query()->where('code', $item['code'])->first()
-                        : Product::query()->whereRaw('lower(name_en) = ?', [mb_strtolower($item['name_en'])])->first();
+                    $names = array_map('mb_strtolower', [$item['name_en'], ...(array) ($item['was'] ?? [])]);
+                    $product = Product::query()
+                        ->whereIn(DB::raw('lower(name_en)'), $names)
+                        ->whereNotIn('id', $seen)
+                        ->orderByRaw('lower(name_en) = ? desc', [$names[0]])
+                        ->first();
 
-                    $product ??= new Product(['tags' => [], 'is_featured' => false]);
+                    $product ??= new Product([
+                        'tags' => [],
+                        'is_featured' => in_array($item['name_en'], config('menu.featured'), true),
+                    ]);
                     $stats[$product->exists ? 'updated' : 'created']++;
 
                     $product->fill([

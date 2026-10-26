@@ -49,7 +49,7 @@ backend/                      Laravel 13, PHP 8.4, SQLite, Sanctum tokens
   app/Http/Controllers/Api/   MenuController (public /api/menu), ReservationController (public POST),
                               AuthController, Admin/* (categories, products, offers, settings, import, reservations)
   routes/api.php, routes/console.php (artisan menu:* commands), routes/web.php (SPA fallback)
-  database/data/menu.json     ← latest price list (FINAL menu 22-10-2026). Edit this to change names/prices.
+  database/data/menu.json     ← latest price list (FINAL menu 26-10-2026). Edit this to change names/prices.
   database/data/menu.xlsx     original spreadsheet (seeder imports it, then applies menu.json)
   tests/Feature/              36 tests — run `php artisan test`
 frontend/                     React 19 + TS + Vite, motion/react, react-router 7
@@ -73,8 +73,10 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
 
 ## Common jobs
 
-- **New price list / menu changes:** edit `backend/database/data/menu.json` (matched by menu number `code`, or by
-  English name when `code` is null; dishes missing from the file get hidden, not deleted). Locally
+- **New price list / menu changes:** edit `backend/database/data/menu.json` (matched by English name, since the
+  owner's lists renumber dishes; for a renamed dish add `"was": "Old Name"` so it keeps its tags/photo; dishes missing
+  from the file get hidden, not deleted). Before deploying, try it on a copy of the live database
+  (`docker exec borektime-app cat storage/app/database.sqlite` → `DB_DATABASE=<copy> php artisan menu:sync`). Locally
   `php artisan menu:sync`; after deploying, run it on the server:
   `sudo docker exec borektime-app php artisan menu:sync`. Admins can also edit single dishes in Admin → Dishes.
 - **Photos:** none on the live site right now (owner asked to remove them). Owner uploads real ones in
@@ -84,7 +86,8 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
 
 ## Run locally
 
-PHP 8.4 (pdo_sqlite, gd, intl, zip, mbstring, fileinfo), Composer, Node 20+.
+PHP 8.4 (pdo_sqlite, gd, intl, zip, mbstring, fileinfo), Composer, Node 20+. The owner's PC has PHP 8.3 (WAMP), which
+Composer refuses; a portable PHP 8.4 zip from windows.php.net (enable those extensions in php.ini) works for tests.
 
 ```bash
 cd backend && composer install && cp .env.example .env && php artisan key:generate
@@ -150,8 +153,10 @@ Production admin username is `admin` (password: ask the owner — not stored in 
 
 ## State on 26-10-2026 and open ideas
 
-Done and live: menu updated to "FINAL menu 22-10-2026" (74 dishes on the menu, Arabian Coffee hidden, Hardal Steak and Jabal
-Alnour added), all photos removed, QR welcome page, table booking, admin reservations (dashboard panel, chime +
+Done and live: menu updated to "FINAL menu 26-10-2026" (68 dishes; Zaatar Pie and Akkawi & Zaatar Pie added; 8 dropped
+dishes hidden; Fatteh Yalanji / Fattet Maqdous moved into Hot Mezzah so the Fatteh tab no longer shows; Hardal steak
+replaces Fattet Mozat as a featured dish; the PDF's Breakfast heading says "يتم ادراجه لاحقا" — breakfast left visible
+pending the owner's answer), all photos removed, QR welcome page, table booking, admin reservations (dashboard panel, chime +
 badge + tab title for new requests, confirm/arrived/cancel, staff notes), QR code page.
 
 Not done / ideas the owner may ask for:

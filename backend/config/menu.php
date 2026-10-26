@@ -140,7 +140,7 @@ return [
         'Doner Borek Beef',
         'Iskandar Kebab',
         'Ali Nazik',
-        'Fattet Mozat',
+        'Hardal Beef Steak with Fries',
         'Osmaliyya with Fresh Cream',
     ],
 
