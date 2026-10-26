@@ -14,7 +14,8 @@ use InvalidArgumentException;
  * dishes are matched by English name (or an old name listed under "was", for
  * renamed dishes) because menu numbers shift between price lists; numbers,
  * names, Arabic names and prices are updated, new dishes are added, and
- * dishes no longer on the list are hidden rather than deleted.
+ * dishes no longer on the list are hidden rather than deleted. A dish marked
+ * "available": false stays in the file but is hidden (e.g. "coming soon").
  */
 class MenuSync
 {
@@ -57,7 +58,7 @@ class MenuSync
                         'name_ar' => $item['name_ar'],
                         'price' => $item['price'],
                         'sort_order' => $index,
-                        'is_available' => true,
+                        'is_available' => $item['available'] ?? true,
                     ]);
 
                     foreach (['description_en', 'description_ar'] as $field) {

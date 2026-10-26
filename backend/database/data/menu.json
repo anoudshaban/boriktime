@@ -9,6 +9,7 @@
           "name_en": "Breakfast / 2 Persons",
           "name_ar": "فطور / من 2-3 شخص",
           "price": 14,
+          "available": false,
           "description_en": "Mix Borek 3pcs · Sumit · Cheese Pie · Zaatar Pie · Shakshoka · Homos Mohamara · Sojok and Potato · Labnah · Mix Cheese · Mix Turkey · Mix Veg. · Tahina and Dibs · Butter and Tatle · Honey and Cream Fresh",
           "description_ar": "بوريك مشكل 3 قطع · سميت · فطيرة جبنة · فطيرة زعتر · شكشوكة او بيض وسجق · حمص · فول · لبنة · اجبان منوعة · تيركي ومرتديلا · خضار منوعة · طحينة ودبس · زبدة ومربى · قشطة وعسل"
         }

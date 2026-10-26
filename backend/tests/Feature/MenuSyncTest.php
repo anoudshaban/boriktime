@@ -23,7 +23,8 @@ class MenuSyncTest extends TestCase
         $stats = app(MenuSync::class)->sync(database_path('data/menu.json'));
 
         $this->assertSame(['updated' => 64, 'created' => 4, 'hidden' => 10], $stats);
-        $this->assertSame(68, Product::where('is_available', true)->count());
+        $this->assertSame(67, Product::where('is_available', true)->count());
+        $this->assertFalse((bool) Product::where('name_en', 'Breakfast / 2 Persons')->value('is_available'));
 
         // Renumbered dishes are matched by name, renamed ones by their old name.
         $this->assertSame(7, Product::find($akkawi)->code);
@@ -39,7 +40,8 @@ class MenuSyncTest extends TestCase
 
         $this->getJson('/api/menu')->assertOk()
             ->assertJsonMissing(['name_en' => 'Fattet Mozat'])
-            ->assertJsonMissing(['slug' => 'fatteh']);
+            ->assertJsonMissing(['slug' => 'fatteh'])
+            ->assertJsonMissing(['slug' => 'breakfast']);
     }
 
     public function test_clearing_photos_removes_files_and_links(): void
