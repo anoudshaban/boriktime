@@ -52,7 +52,7 @@ class CategoryController extends Controller
 
     public function uploadImage(Request $request, Category $category): CategoryResource
     {
-        $request->validate(['image' => ['required', 'image', 'max:8192']]);
+        $request->validate(['image' => ImageStore::RULES], ImageStore::messages('image'));
 
         $old = $category->image_path;
         $category->update(['image_path' => $this->images->store($request->file('image'), 'categories'), 'image_credit' => null]);

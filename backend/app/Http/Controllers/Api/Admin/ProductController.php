@@ -61,7 +61,7 @@ class ProductController extends Controller
 
     public function uploadImage(Request $request, Product $product): ProductResource
     {
-        $request->validate(['image' => ['required', 'image', 'max:8192']]);
+        $request->validate(['image' => ImageStore::RULES], ImageStore::messages('image'));
 
         $old = $product->image_path;
         $product->update(['image_path' => $this->images->store($request->file('image'), 'products'), 'image_credit' => null]);

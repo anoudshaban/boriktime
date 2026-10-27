@@ -5,6 +5,7 @@ namespace App\Support;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Stores menu photos on the public disk, downscaled and re-encoded as WebP
@@ -16,12 +17,36 @@ class ImageStore
 
     private const QUALITY = 82;
 
-    public function store(UploadedFile $file, string $folder): string
+    /** Validation for an uploaded photo (the admin also shrinks photos before sending). */
+    public const RULES = ['required', 'image', 'max:20480'];
+
+    /**
+     * Plain-language errors for the admin's upload box.
+     *
+     * @return array<string, string>
+     */
+    public static function messages(string $field): array
+    {
+        return [
+            "{$field}.image" => 'This file is not a photo we can use. Please choose a JPG, PNG or WebP photo. (iPhone HEIC photos: on the iPhone go to Settings → Camera → Formats → Most Compatible, or share the photo as JPG.)',
+            "{$field}.mimes" => 'Please choose a PNG, JPG or WebP picture.',
+            "{$field}.max" => 'This photo is too big (over 20 MB). Please choose a smaller photo.',
+            "{$field}.uploaded" => 'The photo did not finish uploading. Please try again.',
+        ];
+    }
+
+    public function store(UploadedFile $file, string $folder, string $field = 'image'): string
     {
         $name = $folder.'/'.Str::ulid()->toBase32();
         $source = @imagecreatefromstring((string) file_get_contents($file->getRealPath()));
 
-        if ($source === false || ! function_exists('imagewebp')) {
+        // Files that pass validation but can't be decoded (e.g. iPhone HEIC) would
+        // be stored as a picture no browser shows — refuse them instead.
+        if ($source === false) {
+            throw ValidationException::withMessages([$field => self::messages($field)["{$field}.image"]]);
+        }
+
+        if (! function_exists('imagewebp')) {
             return $file->storeAs($folder, basename($name).'.'.$file->extension(), 'public');
         }
 

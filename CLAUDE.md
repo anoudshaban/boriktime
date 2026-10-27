@@ -80,7 +80,9 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   `php artisan menu:sync`; after deploying, run it on the server:
   `sudo docker exec borektime-app php artisan menu:sync`. Admins can also edit single dishes in Admin → Dishes.
 - **Photos:** none on the live site right now (owner asked to remove them). Owner uploads real ones in
-  Admin → Photos. `php artisan menu:clear-photos` wipes all photos/banners/videos/offer images.
+  Admin → Photos. `php artisan menu:clear-photos` wipes all photos/banners/videos/offer images. The admin's
+  `ImageDrop` shrinks photos in the browser (max 2000px, WebP) before upload; the server allows 20 MB
+  (`ImageStore::RULES`) and refuses files GD can't decode (iPhone HEIC) with a plain message.
 - **Booking hours** etc.: Admin → Reservations → Booking settings (stored as settings above).
 - **QR code:** Admin → QR code (PNG/SVG/print card) — points to `https://borektime.codak-tech.com/welcome`.
 

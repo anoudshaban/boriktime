@@ -9,13 +9,15 @@
 
 .admin {
   display: grid;
+  /* minmax(0, …) so the long top menu scrolls on phones instead of widening the page */
+  grid-template-columns: minmax(0, 1fr);
   min-height: 100vh;
   font-family: 'Jost', system-ui, sans-serif;
 }
 
 @media (min-width: 900px) {
   .admin {
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 260px minmax(0, 1fr);
   }
 }
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
+use App\Support\ImageStore;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -90,6 +91,25 @@ class AdminApiTest extends TestCase
         Storage::disk('public')->assertExists($product->fresh()->image_path);
         [$width] = getimagesizefromstring(Storage::disk('public')->get($product->fresh()->image_path));
         $this->assertSame(1200, $width);
+    }
+
+    public function test_large_phone_photos_are_accepted_and_bad_files_get_a_clear_message(): void
+    {
+        Storage::fake('public');
+        Sanctum::actingAs(User::factory()->create());
+        $product = Product::factory()->create();
+        $url = "/api/admin/products/{$product->id}/image";
+
+        $this->post($url, ['image' => UploadedFile::fake()->image('phone.jpg', 400, 300)->size(15000)], ['Accept' => 'application/json'])
+            ->assertOk();
+
+        $this->post($url, ['image' => UploadedFile::fake()->image('huge.jpg', 400, 300)->size(25000)], ['Accept' => 'application/json'])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.image.0', ImageStore::messages('image')['image.max']);
+
+        $this->post($url, ['image' => UploadedFile::fake()->create('photo.heic', 500, 'image/heic')], ['Accept' => 'application/json'])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.image.0', ImageStore::messages('image')['image.image']);
     }
 
     public function test_admin_can_upload_and_remove_a_dish_video(): void

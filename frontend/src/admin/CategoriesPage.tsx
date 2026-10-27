@@ -191,9 +191,14 @@ function CategoryEditor({
     if (!category) return
     const form = new FormData()
     form.append('image', file)
-    const res = await api<{ data: AdminCategory }>(`/admin/categories/${category.id}/image`, { method: 'POST', body: form })
-    setImage(res.data.image)
-    onSaved(res.data)
+    try {
+      const res = await api<{ data: AdminCategory }>(`/admin/categories/${category.id}/image`, { method: 'POST', body: form })
+      setImage(res.data.image)
+      onSaved(res.data)
+      toast('Photo uploaded')
+    } catch (error) {
+      toast(error instanceof ApiError ? error.firstError : 'Upload failed', 'error')
+    }
   }
 
   const removeImage = async () => {

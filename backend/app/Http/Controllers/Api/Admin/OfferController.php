@@ -61,7 +61,7 @@ class OfferController extends Controller
 
     public function uploadImage(Request $request, Offer $offer): OfferResource
     {
-        $request->validate(['image' => ['required', 'image', 'max:8192']]);
+        $request->validate(['image' => ImageStore::RULES], ImageStore::messages('image'));
 
         $old = $offer->image_path;
         $offer->update(['image_path' => $this->images->store($request->file('image'), 'offers')]);

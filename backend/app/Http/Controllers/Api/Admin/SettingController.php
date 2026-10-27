@@ -30,10 +30,10 @@ class SettingController extends Controller
      */
     public function uploadLogo(Request $request): JsonResponse
     {
-        $request->validate(['logo' => ['required', 'file', 'mimes:png,jpg,jpeg,webp', 'max:4096']]);
+        $request->validate(['logo' => ['required', 'file', 'mimes:png,jpg,jpeg,webp', 'max:20480']], ImageStore::messages('logo'));
 
         $old = Setting::find(Setting::LOGO)?->value;
-        Setting::putMany([Setting::LOGO => $this->images->store($request->file('logo'), 'brand')]);
+        Setting::putMany([Setting::LOGO => $this->images->store($request->file('logo'), 'brand', 'logo')]);
         $this->images->delete($old);
 
         return response()->json(Setting::allWithDefaults());

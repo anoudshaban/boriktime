@@ -104,18 +104,58 @@ export function Drawer({ open, title, onClose, children, footer }: { open: boole
 
 /* ---------- Image drop zone ---------- */
 
+const MAX_EDGE = 2000
+
+/**
+ * Phone photos are often 10–20 MB; the server keeps 1200px at most, so shrink
+ * them here first — uploads become quick and never hit the size limit.
+ * GIFs (animation) and files the browser can't decode (e.g. HEIC) pass through.
+ */
+async function shrink(file: File): Promise<File> {
+  if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file
+  let bitmap: ImageBitmap
+  try {
+    bitmap = await createImageBitmap(file)
+  } catch {
+    return file
+  }
+  const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height))
+  if (scale === 1 && file.size < 2_000_000) return file
+
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  canvas.getContext('2d')?.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  bitmap.close()
+
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.9))
+  const ok = blob && blob.type === 'image/webp' ? blob : await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
+  if (!ok || ok.size >= file.size) return file
+  const name = file.name.replace(/\.[^.]+$/, '') + (ok.type === 'image/webp' ? '.webp' : '.png')
+  return new File([ok], name, { type: ok.type })
+}
+
 export function ImageDrop({ src, onFile, onRemove, busy }: { src: string | null; onFile: (file: File) => void; onRemove: () => void; busy?: boolean }) {
   const input = useRef<HTMLInputElement>(null)
   const [over, setOver] = useState(false)
+  const [preparing, setPreparing] = useState(false)
 
-  const take = (files: FileList | null) => {
+  const take = async (files: FileList | null) => {
     const file = files?.[0]
-    if (file && file.type.startsWith('image/')) onFile(file)
+    if (!file || !(file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name))) return
+    setPreparing(true)
+    try {
+      onFile(await shrink(file))
+    } finally {
+      setPreparing(false)
+      if (input.current) input.current.value = ''
+    }
   }
+  const working = busy || preparing
 
   return (
     <div
-      className={`a-drop${over ? ' is-over' : ''}${busy ? ' is-busy' : ''}`}
+      className={`a-drop${over ? ' is-over' : ''}${working ? ' is-busy' : ''}`}
       onDragOver={(e) => {
         e.preventDefault()
         setOver(true)
@@ -129,11 +169,11 @@ export function ImageDrop({ src, onFile, onRemove, busy }: { src: string | null;
     >
       {src ? <img src={src} alt="" /> : <span className="a-drop__empty">Drop a photo here</span>}
       <div className="a-drop__actions">
-        <button type="button" className="a-btn a-btn--ghost" onClick={() => input.current?.click()} disabled={busy}>
-          {busy ? 'Uploading…' : src ? 'Replace photo' : 'Choose photo'}
+        <button type="button" className="a-btn a-btn--ghost" onClick={() => input.current?.click()} disabled={working}>
+          {working ? 'Uploading…' : src ? 'Replace photo' : 'Choose photo'}
         </button>
         {src && (
-          <button type="button" className="a-btn a-btn--ghost a-btn--danger" onClick={onRemove} disabled={busy}>
+          <button type="button" className="a-btn a-btn--ghost a-btn--danger" onClick={onRemove} disabled={working}>
             Remove
           </button>
         )}
