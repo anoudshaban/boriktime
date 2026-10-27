@@ -27,9 +27,15 @@ function pairsFor(product: Product, group: Group, groups: Group[]): DishRef[] {
     .flatMap((g) => g.sections.flatMap((s) => s.products.map((p) => ({ product: p, section: s, group: g }))))
   if (!pool.length) return []
   const picks: DishRef[] = []
-  for (let i = 0; picks.length < Math.min(3, pool.length); i++) {
+  // Spread the picks with a stride of 13, then fill in order; both passes are
+  // bounded, since the stride alone can revisit the same few items forever
+  // (e.g. a pool of 26 only ever reaches 2).
+  for (let i = 0; i < pool.length && picks.length < 3; i++) {
     const ref = pool[(product.id * 7 + i * 13) % pool.length]
     if (!picks.includes(ref)) picks.push(ref)
+  }
+  for (let i = 0; i < pool.length && picks.length < 3; i++) {
+    if (!picks.includes(pool[i])) picks.push(pool[i])
   }
   return picks
 }
