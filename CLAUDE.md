@@ -27,7 +27,9 @@ since 2020** (Jordan, prices in JD). Laravel 13 API + React 19 app, one Docker c
 ### Design rules (direction A "Stone & Wine" — chosen by the owner after many rounds)
 
 Calm stone background `#ecebe6`, deep wine `#5a1214` cards, gold hairlines `#a67c33`, Cormorant Garamond / Jost
-(Amiri / Tajawal in Arabic). Dishes sit on round porcelain plates that turn slowly; a dish opens as a **pop-up**
+(Amiri / Tajawal in Arabic). Dish **photos** are plain, still rectangles with soft corners (`.dshot`), and the
+pop-up shows the **whole photo uncropped** — the owner rejected round/turning photos (27-10-2026). Dishes without a
+photo show a still porcelain plate drawing (no turning). A dish opens as a **pop-up**
 (bottom sheet on phones), never a separate page. Styles: `frontend/src/menu/stone.css`, `reserve.css`.
 
 The owner explicitly **rejected** (do not bring back): dark theme, crossed/marquee text bands, arched or curved

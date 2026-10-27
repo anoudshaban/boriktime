@@ -51,7 +51,7 @@ export function DishMedia({
   product,
   icon,
   size = 'm',
-  spin = true,
+  spin = false,
   live = false,
   section,
 }: {
@@ -104,12 +104,11 @@ export function DishMedia({
 }
 
 /**
- * Direction A: the dish served on a round porcelain plate, tilted toward the
- * guest and turning slowly. Shows the uploaded GIF/video, the photo, or the
- * illustrated plate when there is neither.
+ * The uploaded GIF/video or photo as a plain, still picture with soft corners
+ * (whole and uncropped in the pop-up), or the illustrated porcelain plate when
+ * the dish has no picture yet. The owner asked for no round or turning photos.
  */
-export function DishPlate({ product, icon, size = 'm', spin = true }: { product: Product; icon: string; size?: 's' | 'm' | 'l' | 'xl'; spin?: boolean }) {
-  const delay = { '--d': `${-(product.id % 11) * 4}s` } as CSSProperties
+export function DishPlate({ product, icon, size = 'm', spin = false }: { product: Product; icon: string; size?: 's' | 'm' | 'l' | 'xl'; spin?: boolean }) {
   const media = product.video ? (
     /\.gif(\?|$)/i.test(product.video) ? (
       <img src={product.video} alt="" />
@@ -117,19 +116,14 @@ export function DishPlate({ product, icon, size = 'm', spin = true }: { product:
       <video src={product.video} poster={product.image ?? undefined} autoPlay muted loop playsInline preload="metadata" />
     )
   ) : product.image ? (
-    <img src={product.image} alt="" loading={size === 'xl' ? 'eager' : 'lazy'} decoding="async" className={spin ? 'dp__spin' : undefined} />
+    <img src={product.image} alt="" loading={size === 'xl' ? 'eager' : 'lazy'} decoding="async" />
   ) : null
 
   if (!media) return <Plate icon={icon} seed={product.id} size={size === 'xl' ? 'xl' : size === 's' ? 'g' : 'm'} spin={spin} />
 
   return (
-    <span className={`dp dp--${size}`} style={delay} aria-hidden="true">
-      <span className="dp__shadow" />
-      <span className="dp__tilt">
-        <span className="dp__rim">
-          <span className="dp__food">{media}</span>
-        </span>
-      </span>
+    <span className={`dshot dshot--${size}`} aria-hidden="true">
+      {media}
     </span>
   )
 }

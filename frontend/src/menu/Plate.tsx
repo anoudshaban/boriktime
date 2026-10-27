@@ -16,7 +16,7 @@ type Props = {
  * Stand-in for dishes without a photo: a porcelain plate tilted in 3D and
  * slowly turning, with a burgundy rim and the section's motif in the well.
  */
-export function Plate({ icon, seed, size = 'm', spin = true }: Props) {
+export function Plate({ icon, seed, size = 'm', spin = false }: Props) {
   const id = useId().replace(/:/g, '')
   const variant = seed % 3
   const style = {
