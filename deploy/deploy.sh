@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy Börek Time to the codak-prod server (borektime.codak-tech.com).
+# Deploy Börek Time to the codak-prod server (borektime.com).
 #
 #   SSH_USER=codaktech93_gmail_com SSH_KEY=~/.ssh/borektime_deploy deploy/deploy.sh
 #
@@ -52,5 +52,5 @@ sudo docker exec borektime-app php artisan tinker --execute "App\Support\MenuCac
 
 echo "→ Checking"
 for path in welcome reserve admin api/menu; do
-  printf '%-10s %s\n' "$path" "$(curl -s -o /dev/null -w '%{http_code}' "https://borektime.codak-tech.com/$path")"
+  printf '%-10s %s\n' "$path" "$(curl -s -o /dev/null -w '%{http_code}' "https://borektime.com/$path")"
 done

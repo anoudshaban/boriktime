@@ -8,7 +8,7 @@ what exists, how to run and deploy it, the server, and what the owner likes and 
 
 Bilingual (English / Arabic, full RTL) digital menu + table booking for **Börek Time — Restaurant & Cafe
 since 2020** (Jordan, prices in JD). Laravel 13 API + React 19 app, one Docker container, live at
-**https://borektime.codak-tech.com** on the owner's Google Cloud VM. Guests scan a table QR code →
+**https://borektime.com** (old address borektime.codak-tech.com redirects there) on the owner's Google Cloud VM. Guests scan a table QR code →
 `/welcome` → **Menu** or **Book a table**. Staff manage everything at `/admin`.
 
 - Repo: https://github.com/anoudshaban/boriktime (GitHub user `anoudshaban`). **The repo is public — never commit
@@ -86,7 +86,7 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   `ImageDrop` shrinks photos in the browser (max 2000px, WebP) before upload; the server allows 20 MB
   (`ImageStore::RULES`) and refuses files GD can't decode (iPhone HEIC) with a plain message.
 - **Booking hours** etc.: Admin → Reservations → Booking settings (stored as settings above).
-- **QR code:** Admin → QR code (PNG/SVG/print card) — points to `https://borektime.codak-tech.com/welcome`.
+- **QR code:** Admin → QR code (PNG/SVG/print card) — uses the address the admin is open on, i.e. `https://borektime.com/welcome` (old printed codes still work via the redirect).
 
 ## Run locally
 
@@ -112,13 +112,13 @@ Edit tool), `tar` needs `/c/...` paths not `C:/...`, Python is not installed (us
 
 | | |
 |---|---|
-| URL | https://borektime.codak-tech.com (admin: `/admin`) |
+| URL | https://borektime.com (admin: `/admin`) |
 | Server | Google Cloud VM **codak-prod**, IP `34.18.197.141`, project `project-ec4579f5-343c-418f-bea`, zone `me-central1-a` |
 | Google account | codaktech93@gmail.com — the project uses **OS Login**, so SSH user is `codaktech93_gmail_com` |
 | App | `/srv/borektime` (`backend/`, `deploy/`), container `borektime-app` (serversideup/php:8.4-fpm-nginx, port 8080) |
 | Data | Docker volume `deploy_storage` → `/var/www/html/storage` (SQLite at `storage/app/database.sqlite`, uploads) |
 | Secrets | `/srv/borektime/deploy/.env.production` on the server only (never in git) |
-| DNS | `borektime` A record → 34.18.197.141 at Hostinger (domain codak-tech.com) |
+| DNS | Hostinger: `borektime.com` A `@` → 34.18.197.141, `www` CNAME → borektime.com; old `borektime` A record on codak-tech.com kept for the redirect |
 
 **The VM is shared with the owner's other sites** (codak-tech.com, codigoo-tech.com, api.codigoo-tech.com — the
 `codak-prod` Docker stack in `/srv/codak`). Don't restart or edit their containers. After any nginx change, check
@@ -129,9 +129,16 @@ those still answer.
   are pasted in it, marked by the comment `# ---- Börek Time menu`. To change it: back up the template, edit,
   re-render inside the container with `/docker-entrypoint.d/20-envsubst-on-templates.sh`, `nginx -t`, then
   `nginx -s reload` (restore the backup if the test fails). Backups exist as `prod.conf.template.bak-2026…`.
-- **HTTPS:** Let's Encrypt certs in `/srv/codak/infra/letsencrypt` (webroot `/srv/codak/infra/certbot-webroot`).
-  Auto-renewal for all three domains: `/etc/cron.d/letsencrypt-renew` (Mondays 03:17, log
-  `/var/log/letsencrypt-renew.log`).
+  **Gotcha:** the template is a single-file, read-only bind mount. `sed -i` / editors that replace the file give it a
+  new inode, so the running container keeps seeing the old copy (that happened on 29-10-2026, so it is stale now).
+  Either edit in place (`cat new > template`), or render the host template inside the container with
+  `envsubst` (vars `${SITE_DOMAIN} ${API_DOMAIN} ${MEDIA_DOMAIN}` only) into `/etc/nginx/conf.d/default.conf`,
+  `nginx -t`, reload. A restart of that container re-renders from the host file, which is up to date.
+- **HTTPS:** Let's Encrypt certs in `/srv/codak/infra/letsencrypt` (webroot `/srv/codak/infra/certbot-webroot`):
+  `borektime.com` (+www), `borektime.codak-tech.com` (only for the redirect), codak-tech.com, codigoo-tech.com.
+  Auto-renewal for all: `/etc/cron.d/letsencrypt-renew` (Mondays 03:17, log `/var/log/letsencrypt-renew.log`).
+- codak-tech.com itself redirects to codigoo-tech.com and shows the codigoo certificate (owner's change, Sept 2026,
+  not ours).
 
 ### Getting deploy access on a new computer
 
