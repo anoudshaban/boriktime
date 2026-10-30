@@ -5,6 +5,7 @@ import { api, ApiError } from '../lib/api'
 import { normalize } from '../lib/text'
 import type { AdminCategory, AdminProduct } from '../types'
 import { loadAdminData } from './data'
+import { DeliverySettings } from './DeliverySettings'
 import { ProductEditor } from './ProductEditor'
 import { Switch, useToast } from './ui'
 
@@ -42,6 +43,18 @@ export function ProductsPage() {
     }
   }
 
+  const deliverySection = async (category: AdminCategory, on: boolean) => {
+    const before = products
+    setProducts((list) => list.map((p) => (p.category_id === category.id ? { ...p, is_delivery: on } : p)))
+    try {
+      await api('/admin/products/delivery', { method: 'POST', body: { category_id: category.id, on } })
+      toast(on ? `${category.name_en}: all dishes available for delivery` : `${category.name_en}: delivery off`)
+    } catch (err) {
+      setProducts(before)
+      toast(err instanceof ApiError ? err.firstError : 'Save failed', 'error')
+    }
+  }
+
   const move = async (category: AdminCategory, index: number, delta: number) => {
     const list = products.filter((p) => p.category_id === category.id)
     const target = index + delta
@@ -72,6 +85,7 @@ export function ProductsPage() {
       hidden: products.filter((p) => !p.is_available).length,
       photos: products.filter((p) => p.image).length,
       featured: products.filter((p) => p.is_featured).length,
+      delivery: products.filter((p) => p.is_delivery).length,
     }),
     [products],
   )
@@ -94,6 +108,7 @@ export function ProductsPage() {
           ['Hidden', stats.hidden],
           ['With photo', stats.photos],
           ["Chef's picks", stats.featured],
+          ['Delivery', stats.delivery],
         ].map(([label, value], i) => (
           <motion.div key={label} className="a-stat" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <span className="a-stat__value">{value}</span>
@@ -101,6 +116,8 @@ export function ProductsPage() {
           </motion.div>
         ))}
       </div>
+
+      {!loading && <DeliverySettings currency={currency} />}
 
       <div className="a-toolbar">
         <label className="a-search">
@@ -128,6 +145,14 @@ export function ProductsPage() {
               {category.name_ar}
             </span>
             {!category.is_active && <span className="a-pill a-pill--muted">Section hidden</span>}
+            <span className="a-group__actions">
+              <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => deliverySection(category, true)}>
+                Delivery: all on
+              </button>
+              <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => deliverySection(category, false)}>
+                all off
+              </button>
+            </span>
           </h2>
 
           <ul className="a-list">
@@ -157,12 +182,22 @@ export function ProductsPage() {
                     </span>
                   </button>
 
-                  <PriceInput value={p.price} currency={currency} onSave={(price) => patch(p, { price }, `${p.name_en}: price updated`)} />
+                  {p.sizes?.length ? (
+                    <button className="a-item__sizes" onClick={() => setEditing(p)} title="Edit the sizes in the dish">
+                      {p.sizes.map((s) => s.price).join(' / ')} {currency}
+                    </button>
+                  ) : (
+                    <PriceInput value={p.price} currency={currency} onSave={(price) => patch(p, { price }, `${p.name_en}: price updated`)} />
+                  )}
 
                   <div className="a-item__toggles">
                     <label title="Visible on the menu">
                       <Switch checked={p.is_available} label="Available" onChange={(v) => patch(p, { is_available: v }, v ? 'Dish is visible' : 'Dish hidden')} />
                       <span>Visible</span>
+                    </label>
+                    <label title="Can be ordered for delivery">
+                      <Switch checked={p.is_delivery} label="Delivery" onChange={(v) => patch(p, { is_delivery: v }, v ? 'Available for delivery' : 'Not for delivery')} />
+                      <span>Delivery</span>
                     </label>
                     <label title="Show in Chef's picks">
                       <Switch checked={p.is_featured} label="Chef's pick" onChange={(v) => patch(p, { is_featured: v })} />

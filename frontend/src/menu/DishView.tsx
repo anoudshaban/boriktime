@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ChevronIcon, CloseIcon, ShareIcon } from '../components/icons'
+import { ChevronIcon, CloseIcon, DeliveryIcon, ShareIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt, formatPrice } from '../lib/text'
 import type { Category, Group, Product, Settings } from '../types'
@@ -245,6 +245,11 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
                 <p className="dish__save">
                   {t('save')} {formatPrice(product.price - product.sale_price!, lang)} {currency}
                 </p>
+              )}
+              {product.delivery && (
+                <Link to="/delivery" className="dish__dlv">
+                  <DeliveryIcon size={15} /> {t('deliveryAvailable')}
+                </Link>
               )}
               {product.calories != null && (
                 <p className="kcal">

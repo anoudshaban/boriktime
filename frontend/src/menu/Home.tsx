@@ -2,7 +2,7 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useMemo, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
-import { CalendarIcon, CategoryIcon, ChevronIcon, ClockIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
+import { CalendarIcon, CategoryIcon, ChevronIcon, ClockIcon, DeliveryIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt } from '../lib/text'
 import type { Group, Settings } from '../types'
@@ -36,6 +36,8 @@ export function Home({ groups, settings, firstVisit }: Props) {
   const about = (lang === 'ar' ? settings?.about_ar || settings?.about_en : settings?.about_en || settings?.about_ar) ?? ''
   const motto = (lang === 'ar' ? settings?.motto_ar || settings?.motto_en : settings?.motto_en || settings?.motto_ar) ?? ''
 
+  const deliveryOn = useMemo(() => [...dishes.values()].some((d) => d.product.delivery), [dishes])
+
   const picks = useMemo(() => {
     const all = [...dishes.values()]
     const featured = all.filter((d) => d.product.featured)
@@ -62,11 +64,18 @@ export function Home({ groups, settings, firstVisit }: Props) {
             {motto}
           </motion.p>
         )}
-        {settings?.reservations_enabled !== '0' && (
-          <motion.div {...rise(base + 0.15, reduce)}>
-            <Link to="/reserve" className="st-brief__book">
-              <CalendarIcon size={15} /> {t('bookTable')}
-            </Link>
+        {(settings?.reservations_enabled !== '0' || deliveryOn) && (
+          <motion.div className="st-brief__links" {...rise(base + 0.15, reduce)}>
+            {settings?.reservations_enabled !== '0' && (
+              <Link to="/reserve" className="st-brief__book">
+                <CalendarIcon size={15} /> {t('bookTable')}
+              </Link>
+            )}
+            {deliveryOn && (
+              <Link to="/delivery" className="st-brief__book">
+                <DeliveryIcon size={15} /> {t('delivery')}
+              </Link>
+            )}
           </motion.div>
         )}
       </section>

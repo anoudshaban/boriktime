@@ -25,6 +25,8 @@ export type Product = {
   /** Short looping clip (MP4/WebM/GIF) uploaded in the admin. */
   video?: string | null
   featured: boolean
+  /** Can be ordered for delivery (listed on /delivery). */
+  delivery?: boolean
 }
 
 /** A promotion shown on the menu home. */
@@ -93,6 +95,11 @@ export type Settings = {
   reservation_last?: string | null
   reservation_interval?: string | null
   reservation_max_guests?: string | null
+  /** Delivery orders go to this WhatsApp number; minimum order in the currency; hours "HH:mm". */
+  delivery_whatsapp?: string | null
+  delivery_min?: string | null
+  delivery_from?: string | null
+  delivery_until?: string | null
 }
 
 export type Menu = {
@@ -136,6 +143,7 @@ export type AdminProduct = {
   video?: string | null
   is_featured: boolean
   is_available: boolean
+  is_delivery: boolean
   sort_order: number
 }
 

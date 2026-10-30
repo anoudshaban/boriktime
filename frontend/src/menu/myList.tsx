@@ -9,7 +9,7 @@ type Entry = { id: number; qty: number; size?: number }
 
 const same = (e: Entry, id: number, size?: number) => e.id === id && (e.size ?? null) === (size ?? null)
 
-type MyList = {
+export type MyList = {
   entries: Entry[]
   count: number
   qtyOf: (id: number, size?: number) => number
@@ -23,26 +23,27 @@ type MyList = {
 const KEY = 'bt_my_list'
 const Ctx = createContext<MyList | null>(null)
 
-function read(): Entry[] {
+function read(key: string): Entry[] {
   try {
-    const raw = JSON.parse(localStorage.getItem(KEY) ?? '[]')
+    const raw = JSON.parse(localStorage.getItem(key) ?? '[]')
     return Array.isArray(raw) ? raw.filter((e) => Number.isInteger(e?.id) && e.qty > 0) : []
   } catch {
     return []
   }
 }
 
-export function MyListProvider({ children }: { children: ReactNode }) {
-  const [entries, setEntries] = useState<Entry[]>(read)
+/** A list of dishes (with quantity and size) kept on the phone under `key`; also used for the delivery basket. */
+export function useDishList(key: string): MyList {
+  const [entries, setEntries] = useState<Entry[]>(() => read(key))
   const [pulse, setPulse] = useState(0)
 
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify(entries))
+      localStorage.setItem(key, JSON.stringify(entries))
     } catch {
       /* private mode: list lasts for this visit */
     }
-  }, [entries])
+  }, [key, entries])
 
   const add = useCallback((id: number, size?: number) => {
     setEntries((list) =>
@@ -57,7 +58,7 @@ export function MyListProvider({ children }: { children: ReactNode }) {
 
   const clear = useCallback(() => setEntries([]), [])
 
-  const value = useMemo<MyList>(
+  return useMemo<MyList>(
     () => ({
       entries,
       count: entries.reduce((n, e) => n + e.qty, 0),
@@ -69,7 +70,10 @@ export function MyListProvider({ children }: { children: ReactNode }) {
     }),
     [entries, add, remove, clear, pulse],
   )
+}
 
+export function MyListProvider({ children }: { children: ReactNode }) {
+  const value = useDishList(KEY)
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 

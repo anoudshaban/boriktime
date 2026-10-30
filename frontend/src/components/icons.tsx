@@ -287,3 +287,10 @@ export const MinusIcon = (p: IconProps) => (
     <path d="M5 12h14" />
   </Svg>
 )
+export const DeliveryIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="6.5" cy="17.5" r="2.5" />
+    <circle cx="17.5" cy="17.5" r="2.5" />
+    <path d="M9 17.5h6M15 17.5 13 9h-2.5M13 9h3l1.5 8.5M3 13.5h6.5l1.5 4M4 7h6v6" />
+  </Svg>
+)

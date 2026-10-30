@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Requests\ReorderRequest;
 use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
 use App\Support\ImageStore;
 use App\Support\MenuCache;
@@ -99,6 +100,24 @@ class ProductController extends Controller
         $product->update(['image_path' => null, 'image_credit' => null]);
 
         return new ProductResource($product);
+    }
+
+    /**
+     * Turn delivery on or off for every dish in a section (and its subsections).
+     */
+    public function delivery(Request $request): Response
+    {
+        $data = $request->validate([
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'on' => ['required', 'boolean'],
+        ]);
+
+        $sections = Category::query()->where('parent_id', $data['category_id'])->pluck('id')->push($data['category_id']);
+        Product::query()->whereIn('category_id', $sections)->update(['is_delivery' => $data['on']]);
+
+        MenuCache::flush();
+
+        return response()->noContent();
     }
 
     public function reorder(ReorderRequest $request): Response

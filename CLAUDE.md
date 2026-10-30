@@ -53,7 +53,7 @@ backend/                      Laravel 13, PHP 8.4, SQLite, Sanctum tokens
   routes/api.php, routes/console.php (artisan menu:* commands), routes/web.php (SPA fallback)
   database/data/menu.json     ← latest price list (FINAL menu 26-10-2026 + Börek Trays 30-10-2026). Edit this to change names/prices.
   database/data/menu.xlsx     original spreadsheet (seeder imports it, then applies menu.json)
-  tests/Feature/              39 tests — run `php artisan test`
+  tests/Feature/              41 tests — run `php artisan test`
 frontend/                     React 19 + TS + Vite, motion/react, react-router 7
   src/menu/                   public site: MenuApp (routes), Home, GroupPage, DishView (pop-up), Gate (/welcome),
                               Reserve (/reserve), Offers, SearchOverlay, MyListSheet, parts.tsx (DishPlate, Price)
@@ -66,7 +66,7 @@ deploy/                       Dockerfile, docker-compose.yml, nginx-borektime.co
 ```
 
 Public routes: `/` menu home, `/menu/:group`, `/menu/:group/:dish` (pop-up), `/offers/:id`, `/welcome` (QR
-landing), `/reserve`. Admin: `/admin/*`. API: `/api/menu`, `POST /api/reservations` (throttle 10/min, honeypot
+landing), `/reserve`, `/delivery`. Admin: `/admin/*`. API: `/api/menu`, `POST /api/reservations` (throttle 10/min, honeypot
 field `website`), `/api/auth/*`, `/api/admin/*` (Bearer token).
 
 Settings are a key/value table of strings (`Setting::allWithDefaults()` merges `config('menu.default_settings')`)
@@ -89,6 +89,13 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   kept at the smallest (Product `saving` hook), cards show "from 9 JD", the pop-up has a size picker and My list
   stores the chosen size. In menu.json a section gives `"sizes": [{en, ar}]` and each item `"prices": [9, 18, 28]`.
   Admin → Dishes has a Sizes editor.
+- **Delivery** (31-10-2026): `products.is_delivery` (switch per dish in Admin → Dishes, plus "Delivery: all on / all
+  off" per section → `POST /api/admin/products/delivery`). Guests use `/delivery` (`menu/Delivery.tsx`, basket in
+  localStorage `bt_delivery`), fill name/phone/address/notes and send a ready-written **WhatsApp** message (wa.me,
+  local 07… numbers become 962…). Settings (card at the top of Admin → Dishes): `delivery_whatsapp` (required for
+  sending), `delivery_min`, `delivery_from`/`delivery_until` (Asia/Amman, may pass midnight). **No delivery fee** —
+  the owner asked to remove it. The Delivery buttons (welcome page, home) and card badges only show once at least
+  one dish has delivery on.
 - **Photos:** none on the live site right now (owner asked to remove them). Owner uploads real ones in
   Admin → Photos. `php artisan menu:clear-photos` wipes all photos/banners/videos/offer images. The admin's
   `ImageDrop` shrinks photos in the browser (max 2000px, WebP) before upload; the server allows 20 MB
@@ -172,7 +179,7 @@ Production admin username is `admin` (password: ask the owner — not stored in 
 
 ## State on 26-10-2026 and open ideas
 
-Done and live: Börek Trays tab in Kitchen (13 trays, 3 sizes each, 30-10-2026); site moved to borektime.com (29-10-2026); menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
+Done and live: Delivery page + WhatsApp ordering (31-10-2026, no dishes switched on yet, WhatsApp number not set); Börek Trays tab in Kitchen (13 trays, 3 sizes each, 30-10-2026); site moved to borektime.com (29-10-2026); menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
 added; 8 dropped dishes hidden; Fatteh Yalanji / Fattet Maqdous moved into Hot Mezzah so the Fatteh tab no longer
 shows; Hardal steak replaces Fattet Mozat as a featured dish; Breakfast is "coming later" per the PDF, so it has
 `"available": false` in menu.json and the Kitchen subtitle on live no longer mentions breakfast — when it starts,

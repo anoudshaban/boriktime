@@ -1,0 +1,212 @@
+/* ============================================================
+   Delivery (/delivery) — Stone & Wine, built on the booking page's
+   cards, fields and bottom bar (reserve.css).
+   ============================================================ */
+
+/* Home: "Book a table" and "Delivery" side by side. */
+.st-brief__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 10px;
+}
+
+/* Small delivery mark on menu cards (top corner opposite the Signature tag). */
+.st-card__dlv {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 10px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-line);
+  background: var(--card);
+  color: var(--gold);
+}
+
+.dish--pop .dish__dlv {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--gold-line);
+  color: var(--wine);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.st-dlv {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 120px;
+}
+
+/* Clear the sticky top bar when the page scrolls to the details form. */
+.st-dlv .st-res__card {
+  scroll-margin-top: 84px;
+}
+
+.st-dlv__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-dlv__facts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: var(--card);
+  color: var(--ink-2);
+  font-size: 12.5px;
+}
+
+.st-dlv__facts svg {
+  color: var(--gold);
+}
+
+.st-dlv__notice {
+  margin: 16px auto 0;
+  max-width: 420px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(90, 18, 20, 0.06);
+  color: var(--wine);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.st-dlv__empty {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.st-dlv__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-dlv__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.st-dlv__item:first-child {
+  border-top: 0;
+  padding-top: 4px;
+}
+
+.st-dlv__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.st-dlv__name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.st-dlv__alt {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.st-dlv__price {
+  margin-top: 2px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.st-dlv__sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.st-dlv__size {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: var(--card);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.st-dlv__size.is-on {
+  border-color: var(--wine);
+  background: var(--wine);
+  color: var(--wine-ink);
+}
+
+.st-dlv__add {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--wine);
+  background: none;
+  color: var(--wine);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.st-dlv__lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.st-dlv__lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.st-dlv__lines small {
+  color: var(--gold);
+}
+
+.st-dlv__lines .st-dlv__total {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--ink);
+}
+
+.st-dlv__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

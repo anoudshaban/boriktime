@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { DeliveryIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import type { Group, Settings } from '../types'
 import { rise, SiteFooter } from './Home'
@@ -105,6 +106,11 @@ export function GroupPage({ group, settings }: Props) {
                   >
                     <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="st-card">
                       {onSale ? <span className="st-card__tag st-card__tag--offer">{t('offer')}</span> : product.featured && <span className="st-card__tag">{t('signature')}</span>}
+                      {product.delivery && (
+                        <span className="st-card__dlv" title={t('deliveryAvailable')} aria-label={t('deliveryAvailable')}>
+                          <DeliveryIcon size={14} />
+                        </span>
+                      )}
                       <DishPlate product={product} icon={section.icon} />
                       <span className="st-card__name">{pick(product.name)}</span>
                       <span className="st-card__alt" lang={lang === 'en' ? 'ar' : 'en'}>

@@ -2,24 +2,28 @@ import { motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
-import { BookIcon, CalendarIcon, ChevronIcon } from '../components/icons'
+import { BookIcon, CalendarIcon, ChevronIcon, DeliveryIcon } from '../components/icons'
 import { useI18n, type StringKey } from '../lib/i18n'
 import type { Settings } from '../types'
 import { rise, SiteFooter } from './Home'
+import { useMenuData } from './menuData'
 
 type Choice = { to: string; icon: ReactNode; title: StringKey; sub: StringKey }
 
 /**
- * Where the table QR code lands: the logo and two big choices — the menu or a booking.
+ * Where the table QR code lands: the logo and big choices — the menu, a booking, delivery.
  */
 export function Gate({ settings }: { settings: Settings | null }) {
   const { t } = useI18n()
   const reduce = useReducedMotion()
+  const { dishes } = useMenuData()
   const bookingOn = settings?.reservations_enabled !== '0'
+  const deliveryOn = [...dishes.values()].some((d) => d.product.delivery)
 
   const choices: Choice[] = [
     { to: '/', icon: <BookIcon />, title: 'menu', sub: 'gateMenuSub' },
     ...(bookingOn ? [{ to: '/reserve', icon: <CalendarIcon />, title: 'bookTable', sub: 'gateBookSub' } satisfies Choice] : []),
+    ...(deliveryOn ? [{ to: '/delivery', icon: <DeliveryIcon />, title: 'delivery', sub: 'deliverySub' } satisfies Choice] : []),
   ]
 
   return (

@@ -34,6 +34,11 @@ class SettingsRequest extends FormRequest
         $rules['reservation_interval'] = ['sometimes', 'required', 'in:15,30,60'];
         $rules['reservation_max_guests'] = ['sometimes', 'required', 'integer', 'min:1', 'max:200'];
 
+        $rules['delivery_whatsapp'] = ['sometimes', 'nullable', 'string', 'max:30', 'regex:/^\+?[\d\s()-]{7,}$/'];
+        $rules['delivery_min'] = ['sometimes', 'nullable', 'numeric', 'min:0', 'max:10000'];
+        $rules['delivery_from'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:delivery_until'];
+        $rules['delivery_until'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:delivery_from'];
+
         $rules['name_en'] = ['sometimes', 'required', 'string', 'max:120'];
         $rules['name_ar'] = ['sometimes', 'required', 'string', 'max:120'];
 

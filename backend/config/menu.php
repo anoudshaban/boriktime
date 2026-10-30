@@ -187,6 +187,11 @@ return [
         'reservation_last' => '23:00',
         'reservation_interval' => '30',
         'reservation_max_guests' => '20',
+        // Delivery orders, sent by the guest over WhatsApp (empty = not shown / ordering off). No delivery fee (owner's choice).
+        'delivery_whatsapp' => null,
+        'delivery_min' => null,
+        'delivery_from' => null,
+        'delivery_until' => null,
     ],
 
 ];

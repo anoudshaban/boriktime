@@ -84,6 +84,41 @@ class AdminApiTest extends TestCase
             ->assertOk()->assertJsonPath('data.sizes', null)->assertJsonPath('data.price', 5);
     }
 
+    public function test_delivery_can_be_switched_per_dish_and_per_section(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $group = Category::factory()->create();
+        $section = Category::factory()->create(['parent_id' => $group->id]);
+        $other = Category::factory()->create();
+        $a = Product::factory()->create(['category_id' => $section->id]);
+        $b = Product::factory()->create(['category_id' => $section->id]);
+        $c = Product::factory()->create(['category_id' => $other->id]);
+
+        $this->assertFalse($a->fresh()->is_delivery);
+        $this->putJson("/api/admin/products/{$a->id}", ['is_delivery' => true])->assertOk()->assertJsonPath('data.is_delivery', true);
+
+        // A whole group (with its sections) at once; other sections are untouched.
+        $this->postJson('/api/admin/products/delivery', ['category_id' => $group->id, 'on' => true])->assertNoContent();
+        $this->assertTrue($b->fresh()->is_delivery);
+        $this->assertFalse($c->fresh()->is_delivery);
+
+        $this->postJson('/api/admin/products/delivery', ['category_id' => $section->id, 'on' => false])->assertNoContent();
+        $this->assertFalse($a->fresh()->is_delivery);
+    }
+
+    public function test_delivery_settings_are_validated(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+
+        $this->putJson('/api/admin/settings', ['delivery_whatsapp' => '+962 79 511 2000', 'delivery_min' => '10', 'delivery_from' => '12:00', 'delivery_until' => '23:30'])
+            ->assertOk();
+        $this->getJson('/api/menu')->assertJsonPath('settings.delivery_min', '10')->assertJsonPath('settings.delivery_whatsapp', '+962 79 511 2000');
+
+        $this->putJson('/api/admin/settings', ['delivery_whatsapp' => 'call me'])->assertJsonValidationErrors('delivery_whatsapp');
+        $this->putJson('/api/admin/settings', ['delivery_min' => 'ten'])->assertJsonValidationErrors('delivery_min');
+        $this->putJson('/api/admin/settings', ['delivery_from' => '12:00', 'delivery_until' => null])->assertJsonValidationErrors('delivery_until');
+    }
+
     public function test_product_tags_are_validated(): void
     {
         Sanctum::actingAs(User::factory()->create());

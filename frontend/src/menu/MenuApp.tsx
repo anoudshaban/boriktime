@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'reac
 import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { useI18n } from '../lib/i18n'
+import { Delivery } from './Delivery'
 import { DishView } from './DishView'
 import { Gate } from './Gate'
 import { GroupPage } from './GroupPage'
@@ -19,6 +20,7 @@ import './theme.css'
 import './theme-extras.css'
 import './stone.css'
 import './reserve.css'
+import './delivery.css'
 
 const SEEN_KEY = 'bt_logo_drawn'
 
@@ -33,7 +35,8 @@ function takeFirstVisit(): boolean {
 }
 
 /**
- * "/welcome" is where the table QR code lands (menu or booking); "/reserve" books a table.
+ * "/welcome" is where the table QR code lands (menu or booking); "/reserve" books a table;
+ * "/delivery" lists the delivery dishes and sends the order over WhatsApp.
  * Public menu: "/" home → "/menu/:group" sections → "/menu/:group/:dish" quick view.
  * The dish view is layered over its group page so closing it keeps your place.
  */
@@ -65,6 +68,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
   const gate = Boolean(matchPath('/welcome', location.pathname))
   const reserve = Boolean(matchPath('/reserve', location.pathname))
+  const delivery = Boolean(matchPath('/delivery', location.pathname))
 
   const offerMatch = matchPath('/offers/:offer', location.pathname)
   const offer = offerMatch ? menu?.offers?.find((o) => o.id === Number(offerMatch.params.offer)) : undefined
@@ -80,16 +84,16 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
   }, [group, dishMatch])
 
   // New page → start at the top (but not when a dish opens over its group).
-  const pageKey = gate ? 'gate' : reserve ? 'reserve' : group ? `g-${group.slug}` : groupMatch ? 'missing' : 'home'
+  const pageKey = gate ? 'gate' : reserve ? 'reserve' : delivery ? 'delivery' : group ? `g-${group.slug}` : groupMatch ? 'missing' : 'home'
   useLayoutEffect(() => {
     window.scrollTo(0, 0)
   }, [pageKey])
 
   useEffect(() => {
     const brand = lang === 'ar' ? (settings?.name_ar ?? 'بوريك تايم') : (settings?.name_en ?? 'Börek Time')
-    const page = gate ? t('welcome') : reserve ? t('bookTable') : dish ? pick(dish.product.name) : offer ? pick(offer.title) : group ? pick(group.name) : t('menu')
+    const page = gate ? t('welcome') : reserve ? t('bookTable') : delivery ? t('delivery') : dish ? pick(dish.product.name) : offer ? pick(offer.title) : group ? pick(group.name) : t('menu')
     document.title = `${page} — ${brand}`
-  }, [lang, settings, group, dish, offer, gate, reserve, pick, t])
+  }, [lang, settings, group, dish, offer, gate, reserve, delivery, pick, t])
 
   const closeDish = useCallback(() => {
     if (!group) return
@@ -119,7 +123,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
   return (
     <div className="menu">
-      <TopNav backTo={groupMatch ? '/' : reserve ? '/welcome' : undefined} showLogo={Boolean(groupMatch || reserve)} logoUrl={settings?.logo_url} onSearch={openSearch} />
+      <TopNav backTo={groupMatch || delivery ? '/' : reserve ? '/welcome' : undefined} showLogo={Boolean(groupMatch || reserve || delivery)} logoUrl={settings?.logo_url} onSearch={openSearch} />
 
       {status === 'loading' && (
         <div className="state">
@@ -143,7 +147,8 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
         <div key={pageKey}>
           {gate && <Gate settings={settings} />}
           {reserve && <Reserve settings={settings} />}
-          {!groupMatch && !gate && !reserve && <Home groups={groups} settings={settings} firstVisit={firstVisit} />}
+          {delivery && <Delivery settings={settings} />}
+          {!groupMatch && !gate && !reserve && !delivery && <Home groups={groups} settings={settings} firstVisit={firstVisit} />}
           {group && <GroupPage group={group} settings={settings} />}
           {groupMatch && !group && (
             <main className="view state">
@@ -164,7 +169,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
       <AnimatePresence>{offer && <OfferView key="offer" offer={offer} onClose={closeOffer} />}</AnimatePresence>
 
-      {!gate && !reserve && <MyListButton />}
+      {!gate && !reserve && !delivery && <MyListButton />}
 
       <SearchOverlay open={searchOpen} groups={groups} settings={settings} onClose={closeSearch} />
 

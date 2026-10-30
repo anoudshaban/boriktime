@@ -37,6 +37,7 @@ class ProductResource extends JsonResource
             'video' => ImageStore::url($this->video_path),
             'is_featured' => $this->is_featured,
             'is_available' => $this->is_available,
+            'is_delivery' => $this->is_delivery,
             'sort_order' => $this->sort_order,
             'updated_at' => $this->updated_at,
         ];

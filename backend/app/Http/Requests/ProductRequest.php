@@ -40,6 +40,7 @@ class ProductRequest extends FormRequest
             'tags.*' => ['string', Rule::in(Product::TAGS)],
             'is_featured' => ['sometimes', 'boolean'],
             'is_available' => ['sometimes', 'boolean'],
+            'is_delivery' => ['sometimes', 'boolean'],
         ];
     }
 }
