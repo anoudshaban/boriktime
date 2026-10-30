@@ -1073,69 +1073,104 @@ body:has(.menu) {
   text-align: center;
 }
 
-.st-foot__info {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 12px;
-  width: 100%;
-}
-
-@media (min-width: 640px) {
-  .st-foot__info {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-.st-foot__info li {
+/* Contact card: a row of round buttons with names, the phone number, address and hours. */
+.st-foot__card {
   display: flex;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 460px;
+  padding: 22px 18px 20px;
+  border-radius: 22px;
   border: 1px solid var(--line);
   background: var(--card);
-  text-align: start;
-  font-family: var(--font-display);
-  font-size: 16px;
+  box-shadow: 0 14px 30px -24px rgba(42, 35, 33, 0.45);
 }
 
-.st-foot__info a {
-  color: var(--ink);
-  text-decoration: none;
-  border-bottom: 1px solid var(--gold-line);
-}
-
-.st-foot__ico {
-  flex: none;
-  padding-top: 3px;
+.st-foot__title {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
   color: var(--gold);
 }
 
-.st-foot__label {
-  display: block;
-  margin-bottom: 2px;
-  font-family: var(--font-ui);
-  font-size: 9.5px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
+.st-foot__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 18px;
+}
+
+.st-foot__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  min-width: 58px;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.st-foot__circle {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--wine);
+  color: var(--wine-ink);
+  box-shadow: 0 8px 18px -10px rgba(90, 18, 20, 0.7);
+  transition: transform 0.2s ease;
+}
+
+.st-foot__link:active .st-foot__circle {
+  transform: scale(0.94);
+}
+
+.st-foot__name {
+  font-size: 12px;
+}
+
+.st-foot__phone {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.st-foot__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.st-foot__lines p {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 7px;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.st-foot__lines svg {
+  flex: none;
   color: var(--gold);
 }
 
 .st-foot .pre {
   white-space: pre-line;
-}
-
-.st-foot__socials {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 10px;
-}
-
-.st-foot__socials .round-btn {
-  color: var(--wine-2);
 }
 
 .st-foot__note {
@@ -1155,9 +1190,13 @@ body:has(.menu) {
 }
 
 :root[lang='ar'] .st-foot__brand,
-:root[lang='ar'] .st-foot__label {
+:root[lang='ar'] .st-foot__title {
   letter-spacing: 0;
-  font-size: 12.5px;
+  font-size: 13px;
+}
+
+:root[lang='ar'] .st-foot__name {
+  font-size: 13.5px;
 }
 
 /* ---------- Floating "My list" in wine ---------- */

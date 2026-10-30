@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { CalendarIcon, CategoryIcon, ChevronIcon, ClockIcon, DeliveryIcon, FacebookIcon, InstagramIcon, PhoneIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
-import { formatInt } from '../lib/text'
+import { formatInt, waNumber } from '../lib/text'
 import type { Group, Settings } from '../types'
 import { PhotoCredits } from './Credits'
 import { dishPath, useMenuData } from './menuData'
@@ -148,69 +148,58 @@ export function SiteFooter({ settings: s }: { settings: Settings | null }) {
   const { lang, t } = useI18n()
   if (!s) return null
   const local = (en: string | null, ar: string | null) => (lang === 'ar' ? ar || en : en || ar)
-  const whatsapp = s.whatsapp?.replace(/[^\d]/g, '')
-  const items: { key: string; icon: ReactNode; label: string; node: ReactNode }[] = []
-
+  const whatsapp = waNumber(s.whatsapp) ?? waNumber(s.delivery_whatsapp)
   const address = local(s.address_en, s.address_ar)
-  if (address)
-    items.push({
-      key: 'address',
-      icon: <PinIcon size={16} />,
-      label: t('visitUs'),
-      node: s.map_url ? (
-        <a href={s.map_url} target="_blank" rel="noreferrer">
-          {address}
-        </a>
-      ) : (
-        address
-      ),
-    })
   const hours = local(s.hours_en, s.hours_ar)
-  if (hours) items.push({ key: 'hours', icon: <ClockIcon size={16} />, label: t('openingHours'), node: <span className="pre">{hours}</span> })
-  if (s.phone)
-    items.push({
-      key: 'phone',
-      icon: <PhoneIcon size={16} />,
-      label: t('getInTouch'),
-      node: (
-        <a href={`tel:${s.phone.replace(/\s/g, '')}`} dir="ltr">
-          {s.phone}
-        </a>
-      ),
-    })
+  const tel = `tel:${(s.phone ?? '').replace(/\s/g, '')}`
 
-  const socials = [
-    s.instagram && { href: s.instagram, label: 'Instagram', icon: <InstagramIcon size={17} /> },
-    s.facebook && { href: s.facebook, label: 'Facebook', icon: <FacebookIcon size={17} /> },
-    whatsapp && { href: `https://wa.me/${whatsapp}`, label: 'WhatsApp', icon: <WhatsappIcon size={17} /> },
-  ].filter(Boolean) as { href: string; label: string; icon: ReactNode }[]
+  // One row of round buttons; each appears once it is filled in Admin → Restaurant info.
+  const links = [
+    s.phone && { key: 'call', href: tel, label: t('call'), icon: <PhoneIcon size={19} />, external: false },
+    whatsapp && { key: 'whatsapp', href: `https://wa.me/${whatsapp}`, label: t('whatsapp'), icon: <WhatsappIcon size={19} />, external: true },
+    s.instagram && { key: 'instagram', href: s.instagram, label: t('instagram'), icon: <InstagramIcon size={19} />, external: true },
+    s.facebook && { key: 'facebook', href: s.facebook, label: t('facebook'), icon: <FacebookIcon size={19} />, external: true },
+    s.map_url && { key: 'map', href: s.map_url, label: t('location'), icon: <PinIcon size={19} />, external: true },
+  ].filter(Boolean) as { key: string; href: string; label: string; icon: ReactNode; external: boolean }[]
   const note = local(s.note_en, s.note_ar)
 
   return (
     <footer className="st-foot">
-      {items.length > 0 && (
-        <ul className="st-foot__info">
-          {items.map((it) => (
-            <li key={it.key}>
-              <span className="st-foot__ico">{it.icon}</span>
-              <span>
-                <span className="st-foot__label">{it.label}</span>
-                {it.node}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {socials.length > 0 && (
-        <ul className="st-foot__socials">
-          {socials.map((x) => (
-            <li key={x.label}>
-              <a href={x.href} target="_blank" rel="noreferrer" aria-label={x.label} className="round-btn">
-                {x.icon}
-              </a>
-            </li>
-          ))}
-        </ul>
+      {(links.length > 0 || address || hours) && (
+        <section className="st-foot__card" aria-label={t('getInTouch')}>
+          <p className="st-foot__title">{t('getInTouch')}</p>
+          {links.length > 0 && (
+            <ul className="st-foot__links">
+              {links.map((l) => (
+                <li key={l.key}>
+                  <a href={l.href} {...(l.external ? { target: '_blank', rel: 'noreferrer' } : {})} className="st-foot__link">
+                    <span className="st-foot__circle">{l.icon}</span>
+                    <span className="st-foot__name">{l.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+          {s.phone && (
+            <a className="st-foot__phone" href={tel} dir="ltr">
+              {s.phone}
+            </a>
+          )}
+          {(address || hours) && (
+            <div className="st-foot__lines">
+              {address && (
+                <p>
+                  <PinIcon size={14} /> {address}
+                </p>
+              )}
+              {hours && (
+                <p>
+                  <ClockIcon size={14} /> <span className="pre">{hours}</span>
+                </p>
+              )}
+            </div>
+          )}
+        </section>
       )}
       {note && <p className="st-foot__note">{note}</p>}
       <p className="st-foot__brand">
