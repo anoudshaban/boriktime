@@ -172,7 +172,7 @@ Production admin username is `admin` (password: ask the owner — not stored in 
 
 ## State on 26-10-2026 and open ideas
 
-Done and live: menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
+Done and live: Börek Trays tab in Kitchen (13 trays, 3 sizes each, 30-10-2026); site moved to borektime.com (29-10-2026); menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
 added; 8 dropped dishes hidden; Fatteh Yalanji / Fattet Maqdous moved into Hot Mezzah so the Fatteh tab no longer
 shows; Hardal steak replaces Fattet Mozat as a featured dish; Breakfast is "coming later" per the PDF, so it has
 `"available": false` in menu.json and the Kitchen subtitle on live no longer mentions breakfast — when it starts,
