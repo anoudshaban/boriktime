@@ -35,7 +35,7 @@ class MenuSync
             $seen = [];
 
             foreach ($data['sections'] as $section) {
-                $category = Category::query()->where('slug', $section['slug'])->firstOrFail();
+                $category = Category::query()->where('slug', $section['slug'])->first() ?? $this->createSection($section['slug']);
 
                 foreach ($section['items'] as $index => $item) {
                     $names = array_map('mb_strtolower', [$item['name_en'], ...(array) ($item['was'] ?? [])]);
@@ -56,7 +56,11 @@ class MenuSync
                         'code' => $item['code'] ?? null,
                         'name_en' => $item['name_en'],
                         'name_ar' => $item['name_ar'],
-                        'price' => $item['price'],
+                        'price' => $item['price'] ?? min($item['prices']),
+                        // A section with "sizes" (labels) gives each item one price per size in "prices".
+                        'sizes' => isset($section['sizes'], $item['prices'])
+                            ? array_map(fn (array $size, $price) => $size + ['price' => $price], $section['sizes'], $item['prices'])
+                            : null,
                         'sort_order' => $index,
                         'is_available' => $item['available'] ?? true,
                     ]);
@@ -78,6 +82,32 @@ class MenuSync
         MenuCache::flush();
 
         return $stats;
+    }
+
+    /**
+     * A section new to this price list: created from config('menu.categories'),
+     * under its home-page group and right after the section listed before it there.
+     */
+    private function createSection(string $slug): Category
+    {
+        $key = collect(config('menu.categories'))->search(fn (array $meta) => $meta['slug'] === $slug);
+        if ($key === false) {
+            throw new InvalidArgumentException("Unknown section: {$slug} (add it to config/menu.php)");
+        }
+
+        $group = collect(config('menu.groups'))->first(fn (array $g) => in_array($key, $g['sections'], true));
+        $parent = $group ? Category::query()->where('slug', $group['slug'])->first() : null;
+
+        $before = $group ? array_slice($group['sections'], 0, array_search($key, $group['sections'], true)) : [];
+        $beforeSlugs = array_map(fn (string $title) => config('menu.categories')[$title]['slug'] ?? $title, $before);
+        $after = Category::query()->whereIn('slug', $beforeSlugs)->max('sort_order') ?? $parent?->sort_order ?? -1;
+
+        Category::query()->where('sort_order', '>', $after)->increment('sort_order');
+
+        return Category::query()->create(config('menu.categories')[$key] + [
+            'parent_id' => $parent?->id,
+            'sort_order' => $after + 1,
+        ]);
     }
 
     /**

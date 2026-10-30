@@ -855,6 +855,73 @@ body:has(.menu) {
   color: var(--gold);
 }
 
+/* Dishes that come in sizes (börek trays): one row per size, the chosen one in wine. */
+.dish--pop .dish__sizes {
+  display: grid;
+  gap: 8px;
+  margin: 18px auto 0;
+  padding-top: 16px;
+  max-width: 320px;
+  border-top: 1px solid var(--line-2);
+}
+
+.dish--pop .dish__sizes-label {
+  margin: 0 0 2px;
+}
+
+.dish__size {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  text-align: start;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.dish__size.is-on {
+  border-color: var(--wine);
+  background: var(--wine);
+  color: var(--wine-ink);
+}
+
+.dish__size-price {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.dish__size.is-on .dish__size-price {
+  color: #e2c48d;
+}
+
+.dish__size-price .price__cur {
+  font-size: 0.65em;
+}
+
+.price__from {
+  font-family: var(--font-ui);
+  font-size: 0.68em;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.mylist__size {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--gold);
+}
+
 .dish--pop .dish__save,
 .dish--pop .kcal {
   font-size: 10.5px;
@@ -951,7 +1018,8 @@ body:has(.menu) {
     justify-content: flex-start;
   }
   .dish--pop .dish__desc,
-  .dish--pop .dish__price {
+  .dish--pop .dish__price,
+  .dish--pop .dish__sizes {
     margin-inline: 0;
   }
   .dish--pop .also {

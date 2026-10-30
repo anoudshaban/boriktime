@@ -116,7 +116,7 @@ export function Home({ groups, settings, firstVisit }: Props) {
                 <Link to={dishPath(ref)} state={{ modal: true }} className="st-card">
                   <DishPlate product={ref.product} icon={ref.section.icon} />
                   <span className="st-card__name">{pick(ref.product.name)}</span>
-                  <Price value={ref.product.price} sale={ref.product.sale_price} settings={null} className="st-card__price" />
+                  <Price value={ref.product.price} sale={ref.product.sale_price} settings={null} className="st-card__price" from={!!ref.product.sizes?.length} />
                 </Link>
               </motion.div>
             ))}

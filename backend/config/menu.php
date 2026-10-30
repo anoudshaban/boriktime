@@ -29,7 +29,7 @@ return [
             'description_en' => 'Breakfast, börek, mezze and the kitchen.',
             'description_ar' => 'فطور، بوريك، مقبلات وأطباق المطبخ.',
             'icon' => 'cutlery',
-            'sections' => ['breakfast', 'bakery', 'salad', 'cold mezzah', 'hot mezzah', 'fattat', 'main course'],
+            'sections' => ['breakfast', 'bakery', 'borek trays', 'salad', 'cold mezzah', 'hot mezzah', 'fattat', 'main course'],
         ],
         [
             'slug' => 'cafe',
@@ -66,6 +66,14 @@ return [
             'name_ar' => 'المخبوزات',
             'description_en' => 'Börek and pies, baked fresh through the day.',
             'description_ar' => 'بوريك وفطائر تُخبز طازجة طوال اليوم.',
+            'icon' => 'borek',
+        ],
+        'borek trays' => [
+            'slug' => 'borek-trays',
+            'name_en' => 'Börek Trays',
+            'name_ar' => 'صواني البوريك',
+            'description_en' => 'Whole trays of börek to take home or share: 12, 24 or 40 pieces.',
+            'description_ar' => 'صواني بوريك للبيت أو للمشاركة: 12 أو 24 أو 40 قطعة.',
             'icon' => 'borek',
         ],
         'salad' => [

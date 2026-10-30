@@ -66,6 +66,24 @@ class AdminApiTest extends TestCase
         $this->assertDatabaseMissing('products', ['id' => $id]);
     }
 
+    public function test_a_dish_can_have_sizes_and_its_price_is_the_smallest(): void
+    {
+        Sanctum::actingAs(User::factory()->create());
+
+        $id = $this->postJson('/api/admin/products', [
+            'category_id' => Category::factory()->create()->id,
+            'name_en' => 'Cheese Borek', 'name_ar' => 'بوريك جبنة', 'price' => 0,
+            'sizes' => [['en' => 'Large · 40 pcs', 'ar' => 'كبيرة · 40 قطعة', 'price' => '28'], ['en' => 'Small · 12 pcs', 'ar' => 'صغيرة · 12 قطعة', 'price' => 9]],
+        ])->assertCreated()->assertJsonPath('data.price', 9)->assertJsonPath('data.sizes.0.price', 28)->json('data.id');
+
+        $this->putJson("/api/admin/products/{$id}", ['sizes' => [['en' => 'Small', 'ar' => '', 'price' => 9]]])
+            ->assertJsonValidationErrors('sizes.0.ar');
+
+        // Removing the sizes leaves a plain one-price dish.
+        $this->putJson("/api/admin/products/{$id}", ['sizes' => [], 'price' => 5])
+            ->assertOk()->assertJsonPath('data.sizes', null)->assertJsonPath('data.price', 5);
+    }
+
     public function test_product_tags_are_validated(): void
     {
         Sanctum::actingAs(User::factory()->create());

@@ -4,14 +4,17 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
  * "My list": guests collect dishes while browsing and show the list to the
  * waiter. Saved on the phone only — there is no online ordering.
  */
-type Entry = { id: number; qty: number }
+/** `size` is the chosen size (index into product.sizes) for dishes that come in sizes. */
+type Entry = { id: number; qty: number; size?: number }
+
+const same = (e: Entry, id: number, size?: number) => e.id === id && (e.size ?? null) === (size ?? null)
 
 type MyList = {
   entries: Entry[]
   count: number
-  qtyOf: (id: number) => number
-  add: (id: number) => void
-  remove: (id: number) => void
+  qtyOf: (id: number, size?: number) => number
+  add: (id: number, size?: number) => void
+  remove: (id: number, size?: number) => void
   clear: () => void
   /** Bumps every time something is added, for the button's pulse animation. */
   pulse: number
@@ -41,13 +44,15 @@ export function MyListProvider({ children }: { children: ReactNode }) {
     }
   }, [entries])
 
-  const add = useCallback((id: number) => {
-    setEntries((list) => (list.some((e) => e.id === id) ? list.map((e) => (e.id === id ? { ...e, qty: e.qty + 1 } : e)) : [...list, { id, qty: 1 }]))
+  const add = useCallback((id: number, size?: number) => {
+    setEntries((list) =>
+      list.some((e) => same(e, id, size)) ? list.map((e) => (same(e, id, size) ? { ...e, qty: e.qty + 1 } : e)) : [...list, size == null ? { id, qty: 1 } : { id, qty: 1, size }],
+    )
     setPulse((p) => p + 1)
   }, [])
 
-  const remove = useCallback((id: number) => {
-    setEntries((list) => list.flatMap((e) => (e.id !== id ? [e] : e.qty > 1 ? [{ ...e, qty: e.qty - 1 }] : [])))
+  const remove = useCallback((id: number, size?: number) => {
+    setEntries((list) => list.flatMap((e) => (!same(e, id, size) ? [e] : e.qty > 1 ? [{ ...e, qty: e.qty - 1 }] : [])))
   }, [])
 
   const clear = useCallback(() => setEntries([]), [])
@@ -56,7 +61,7 @@ export function MyListProvider({ children }: { children: ReactNode }) {
     () => ({
       entries,
       count: entries.reduce((n, e) => n + e.qty, 0),
-      qtyOf: (id) => entries.find((e) => e.id === id)?.qty ?? 0,
+      qtyOf: (id, size) => entries.find((e) => same(e, id, size))?.qty ?? 0,
       add,
       remove,
       clear,

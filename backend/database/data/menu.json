@@ -40,6 +40,30 @@
       ]
     },
     {
+      "slug": "borek-trays",
+      "source": "Börek trays price list (صواني البوريك), 30-10-2026",
+      "sizes": [
+        { "en": "Small · 12 pcs", "ar": "صغيرة · 12 قطعة" },
+        { "en": "Medium · 24 pcs", "ar": "وسط · 24 قطعة" },
+        { "en": "Large · 40 pcs", "ar": "كبيرة · 40 قطعة" }
+      ],
+      "items": [
+        { "name_en": "Cheese Borek", "name_ar": "بوريك جبنة", "prices": [9, 18, 28] },
+        { "name_en": "Special Cheese Borek", "name_ar": "بوريك جبنة سبيشل", "prices": [10, 20, 30] },
+        { "name_en": "Cheese and Green Thyme Borek", "name_ar": "بوريك جبنة مع زعتر أخضر", "prices": [10, 20, 30] },
+        { "name_en": "Cheese and Spinach Borek", "name_ar": "بوريك جبنة مع سبانخ", "prices": [10, 20, 30] },
+        { "name_en": "Spinach Borek with Onion and Sumac", "name_ar": "بوريك سبانخ مع بصل وسماق", "prices": [10, 20, 30] },
+        { "name_en": "Pizza Pepperoni Borek", "name_ar": "بوريك بيتزا بيبروني", "prices": [10, 20, 30] },
+        { "name_en": "Mix Borek", "name_ar": "ميكس بوريك", "prices": [10, 20, 30], "description_en": "2–3 kinds of your choice", "description_ar": "2-3 نوع من اختياركم" },
+        { "name_en": "Cheese and Sojok Borek", "name_ar": "بوريك جبنة مع سجق", "prices": [11, 22, 32] },
+        { "name_en": "Cheese and Basterma Borek", "name_ar": "بوريك جبنة مع بسطرما", "prices": [11, 22, 32] },
+        { "name_en": "Beef Pomegranate Molasses Borek", "name_ar": "بوريك لحمة مع دبس الرمان", "prices": [11, 22, 32] },
+        { "name_en": "Mosakhan Chicken Borek", "name_ar": "بوريك مسخن دجاج", "prices": [11, 22, 32] },
+        { "name_en": "Chicken Borek with Cream", "name_ar": "بوريك دجاج بالكريمة", "prices": [11, 22, 32] },
+        { "name_en": "Apple with Cinnamon Borek", "name_ar": "بوريك التفاح مع القرفة والجوز", "prices": [9, 18, 28], "description_en": "Apple, cinnamon and walnuts", "description_ar": "تفاح وقرفة وجوز" }
+      ]
+    },
+    {
       "slug": "salads",
       "items": [
         { "code": 14, "name_en": "Bomali Salad", "name_ar": "سلطة البوملي", "price": 4.5 },
@@ -72,7 +96,7 @@
         { "code": 31, "name_en": "Grilled Kebbah - Sajeih", "name_ar": "كبة مشوية - صاجية", "price": 4.5 },
         { "code": 32, "name_en": "Friekah with Cream and Mushroom", "name_ar": "فريكة بالفطر والكريمة", "price": 5 },
         { "code": 33, "name_en": "Homos With Minced Meat and Nuts", "name_ar": "حمص مع اللحمة والمكسرات", "price": 5 },
-        { "code": 34, "name_en": "Turkey Sojok", "name_ar": "سجق تركي", "price": 5 },
+        { "code": 34, "name_en": "Special Sojok", "name_ar": "سجق تركي", "price": 5, "was": "Turkey Sojok" },
         { "code": 35, "name_en": "Manty", "name_ar": "مانتي", "price": 7 },
         { "code": 36, "name_en": "Ali Nazik", "name_ar": "علي نازك", "price": 7 },
         { "code": 37, "name_en": "Fatteh Yalanji", "name_ar": "فتة يلانجي", "price": 7 },
@@ -126,7 +150,7 @@
         { "code": 65, "name_en": "Special Arabic Icecream with pistachio", "name_ar": "ايسكريم عربية مع الفستق الحلبي", "price": 4 },
         { "code": 66, "name_en": "Brownie with Dandurma", "name_ar": "براوني مع ايسكريم", "price": 4.5 },
         { "code": 67, "name_en": "Bqlawa Special with dandurma", "name_ar": "بقلاوة خاصة مع الايسكريم والفستق الحلبي", "price": 4.5 },
-        { "code": 68, "name_en": "Osmaliyya with Fresh Cream", "name_ar": "عصلية مع القشطة البلدي والفستق الحلبي", "price": 6 }
+        { "code": 68, "name_en": "Osmaliyya with Fresh Cream", "name_ar": "عصملية مع القشطة البلدي والفستق الحلبي", "price": 6 }
       ]
     }
   ]

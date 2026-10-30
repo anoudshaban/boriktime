@@ -131,7 +131,7 @@ export function SearchOverlay({ open, groups, settings, onClose }: Props) {
                       </span>
                       <span className="search__meta">{pick(item.section.name)}</span>
                     </span>
-                    <Price value={item.product.price} settings={settings} className="card__price" />
+                    <Price value={item.product.price} settings={settings} className="card__price" from={!!item.product.sizes?.length} />
                   </button>
                 </motion.li>
               ))}

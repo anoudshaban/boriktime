@@ -51,9 +51,9 @@ backend/                      Laravel 13, PHP 8.4, SQLite, Sanctum tokens
   app/Http/Controllers/Api/   MenuController (public /api/menu), ReservationController (public POST),
                               AuthController, Admin/* (categories, products, offers, settings, import, reservations)
   routes/api.php, routes/console.php (artisan menu:* commands), routes/web.php (SPA fallback)
-  database/data/menu.json     ← latest price list (FINAL menu 26-10-2026). Edit this to change names/prices.
+  database/data/menu.json     ← latest price list (FINAL menu 26-10-2026 + Börek Trays 30-10-2026). Edit this to change names/prices.
   database/data/menu.xlsx     original spreadsheet (seeder imports it, then applies menu.json)
-  tests/Feature/              36 tests — run `php artisan test`
+  tests/Feature/              39 tests — run `php artisan test`
 frontend/                     React 19 + TS + Vite, motion/react, react-router 7
   src/menu/                   public site: MenuApp (routes), Home, GroupPage, DishView (pop-up), Gate (/welcome),
                               Reserve (/reserve), Offers, SearchOverlay, MyListSheet, parts.tsx (DishPlate, Price)
@@ -81,6 +81,14 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   (`docker exec borektime-app cat storage/app/database.sqlite` → `DB_DATABASE=<copy> php artisan menu:sync`). Locally
   `php artisan menu:sync`; after deploying, run it on the server:
   `sudo docker exec borektime-app php artisan menu:sync`. Admins can also edit single dishes in Admin → Dishes.
+  **menu:sync overwrites admin edits** to names/prices/sections — before syncing, compare the live DB with menu.json
+  and copy any owner edits into the file first (on 30-10-2026: "Special Sojok" was "Turkey Sojok", Arabic "عصملية").
+  A section new to the file is created from `config('menu.categories')` (placed after its predecessor in the
+  group's `sections` list).
+- **Dishes in sizes** (Börek Trays, 12/24/40 pcs): `products.sizes` JSON `[{en, ar, price}]`; the product price is
+  kept at the smallest (Product `saving` hook), cards show "from 9 JD", the pop-up has a size picker and My list
+  stores the chosen size. In menu.json a section gives `"sizes": [{en, ar}]` and each item `"prices": [9, 18, 28]`.
+  Admin → Dishes has a Sizes editor.
 - **Photos:** none on the live site right now (owner asked to remove them). Owner uploads real ones in
   Admin → Photos. `php artisan menu:clear-photos` wipes all photos/banners/videos/offer images. The admin's
   `ImageDrop` shrinks photos in the browser (max 2000px, WebP) before upload; the server allows 20 MB

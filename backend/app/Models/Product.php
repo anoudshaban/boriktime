@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'category_id', 'code', 'name_en', 'name_ar', 'description_en', 'description_ar',
-    'price', 'sale_price', 'calories', 'tags', 'image_path', 'image_credit', 'video_path', 'is_featured', 'is_available', 'sort_order',
+    'price', 'sale_price', 'sizes', 'calories', 'tags', 'image_path', 'image_credit', 'video_path', 'is_featured', 'is_available', 'sort_order',
 ])]
 class Product extends Model
 {
@@ -25,6 +25,15 @@ class Product extends Model
 
     protected static function booted(): void
     {
+        // With sizes, the price is the smallest one, shown as "from …" on the cards.
+        static::saving(function (Product $product) {
+            $product->sizes = array_map(fn (array $size) => [
+                'en' => $size['en'], 'ar' => $size['ar'], 'price' => (float) $size['price'],
+            ], $product->sizes ?? []) ?: null;
+            if ($product->sizes) {
+                $product->price = min(array_column($product->sizes, 'price'));
+            }
+        });
         static::saved(fn () => MenuCache::flush());
         static::deleted(fn () => MenuCache::flush());
     }
@@ -39,6 +48,7 @@ class Product extends Model
         return [
             'price' => 'decimal:3',
             'sale_price' => 'decimal:3',
+            'sizes' => 'array',
             'calories' => 'integer',
             'code' => 'integer',
             'tags' => 'array',

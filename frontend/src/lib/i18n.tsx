@@ -22,6 +22,8 @@ const STRINGS = {
   viewOffer: { en: 'View offer', ar: 'عرض التفاصيل' },
   partOfOffer: { en: 'Also in an offer', ar: 'ضمن عرض' },
   save: { en: 'Save', ar: 'وفّر' },
+  priceFrom: { en: 'from', ar: 'من' },
+  chooseSize: { en: 'Choose a size', ar: 'اختر الحجم' },
   addToList: { en: 'Add to my list', ar: 'أضف إلى قائمتي' },
   addAnother: { en: 'Add one more', ar: 'أضف واحداً آخر' },
   inList: { en: 'in your list', ar: 'في قائمتك' },

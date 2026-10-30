@@ -11,15 +11,18 @@ type PriceProps = {
   sale?: number | null
   settings: Settings | null
   className?: string
+  /** The dish comes in sizes: `value` is the smallest, shown as "from …". */
+  from?: boolean
 }
 
-export function Price({ value, sale, settings, className = 'price' }: PriceProps) {
-  const { lang } = useI18n()
+export function Price({ value, sale, settings, className = 'price', from = false }: PriceProps) {
+  const { lang, t } = useI18n()
   const currency = lang === 'ar' ? settings?.currency_ar : settings?.currency_en
   const onSale = sale != null && sale < value
 
   return (
     <span className={`${className}${onSale ? ' is-sale' : ''}`}>
+      {from && <span className="price__from">{t('priceFrom')} </span>}
       {onSale && <s className="price__was">{formatPrice(value, lang)}</s>}
       {formatPrice(onSale ? sale : value, lang)}
       {currency && <span className="price__cur"> {currency}</span>}

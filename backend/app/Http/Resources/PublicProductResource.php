@@ -24,6 +24,7 @@ class PublicProductResource extends JsonResource
             'description' => ['en' => $this->description_en, 'ar' => $this->description_ar],
             'price' => (float) $this->price,
             'sale_price' => $this->sale_price !== null ? (float) $this->sale_price : null,
+            'sizes' => $this->sizes ?: null,
             'calories' => $this->calories,
             'tags' => $this->tags ?? [],
             'image' => ImageStore::url($this->image_path),

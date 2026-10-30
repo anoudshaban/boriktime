@@ -30,6 +30,11 @@ class ProductRequest extends FormRequest
             'price' => [$required, 'numeric', 'min:0', 'max:99999'],
             // Optional offer price shown with the regular price crossed out.
             'sale_price' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            // Optional sizes with their own prices (e.g. börek trays); the card shows "from" the price.
+            'sizes' => ['nullable', 'array', 'max:6'],
+            'sizes.*.en' => ['required', 'string', 'max:60'],
+            'sizes.*.ar' => ['required', 'string', 'max:60'],
+            'sizes.*.price' => ['required', 'numeric', 'min:0', 'max:99999'],
             'calories' => ['nullable', 'integer', 'min:0', 'max:20000'],
             'tags' => ['sometimes', 'array'],
             'tags.*' => ['string', Rule::in(Product::TAGS)],

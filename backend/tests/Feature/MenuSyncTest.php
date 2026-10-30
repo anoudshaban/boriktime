@@ -22,8 +22,8 @@ class MenuSyncTest extends TestCase
 
         $stats = app(MenuSync::class)->sync(database_path('data/menu.json'));
 
-        $this->assertSame(['updated' => 64, 'created' => 4, 'hidden' => 10], $stats);
-        $this->assertSame(67, Product::where('is_available', true)->count());
+        $this->assertSame(['updated' => 64, 'created' => 17, 'hidden' => 10], $stats);
+        $this->assertSame(80, Product::where('is_available', true)->count());
         $this->assertFalse((bool) Product::where('name_en', 'Breakfast / 2 Persons')->value('is_available'));
 
         // Renumbered dishes are matched by name, renamed ones by their old name.
@@ -42,6 +42,36 @@ class MenuSyncTest extends TestCase
             ->assertJsonMissing(['name_en' => 'Fattet Mozat'])
             ->assertJsonMissing(['slug' => 'fatteh'])
             ->assertJsonMissing(['slug' => 'breakfast']);
+    }
+
+    public function test_borek_trays_get_their_own_kitchen_tab_with_three_sizes(): void
+    {
+        app(MenuImporter::class)->import(config('menu.source'));
+        app(MenuSync::class)->sync(database_path('data/menu.json'));
+
+        // The new tab sits right after Bakery in the Kitchen.
+        $kitchen = Category::where('slug', 'kitchen')->firstOrFail();
+        $this->assertSame(
+            ['breakfast', 'bakery', 'borek-trays', 'salads'],
+            Category::where('parent_id', $kitchen->id)->orderBy('sort_order')->limit(4)->pluck('slug')->all(),
+        );
+
+        $cheese = Product::where('name_en', 'Cheese Borek')->firstOrFail();
+        $this->assertSame('borek-trays', $cheese->category->slug);
+        $this->assertSame('9.000', $cheese->price);
+        $this->assertEquals([
+            ['en' => 'Small · 12 pcs', 'ar' => 'صغيرة · 12 قطعة', 'price' => 9.0],
+            ['en' => 'Medium · 24 pcs', 'ar' => 'وسط · 24 قطعة', 'price' => 18.0],
+            ['en' => 'Large · 40 pcs', 'ar' => 'كبيرة · 40 قطعة', 'price' => 28.0],
+        ], $cheese->sizes);
+        $this->assertSame(13, $cheese->category->products()->where('is_available', true)->count());
+
+        // A dish with one price has no sizes; syncing again changes nothing.
+        $this->assertNull(Product::where('name_en', 'Zaatar Pie')->value('sizes'));
+        $this->assertSame(['updated' => 81, 'created' => 0, 'hidden' => 0], app(MenuSync::class)->sync(database_path('data/menu.json')));
+
+        $this->getJson('/api/menu')->assertOk()->assertJsonFragment(['slug' => 'borek-trays'])
+            ->assertJsonFragment(['en' => 'Large · 40 pcs', 'ar' => 'كبيرة · 40 قطعة', 'price' => 28]);
     }
 
     public function test_clearing_photos_removes_files_and_links(): void

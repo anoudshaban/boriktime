@@ -222,7 +222,7 @@ export function OfferView({ offer, onClose }: { offer: Offer; onClose: () => voi
                   <Link key={ref.product.id} to={dishPath(ref)} className="card card--mini">
                     <DishPlate product={ref.product} icon={ref.section.icon} size="s" />
                     <span className="card__name">{pick(ref.product.name)}</span>
-                    <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" />
+                    <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" from={!!ref.product.sizes?.length} />
                   </Link>
                 ))}
               </div>

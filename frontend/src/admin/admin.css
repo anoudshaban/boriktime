@@ -698,6 +698,27 @@
   color: var(--danger);
 }
 
+/* One row per size in the dish editor: English, Arabic, price, remove. */
+.a-size {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 72px auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.a-size .a-field__error {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 520px) {
+  .a-size {
+    grid-template-columns: minmax(0, 1fr) 72px auto;
+  }
+  .a-size input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
 .a-field.has-error input,
 .a-field.has-error textarea,
 .a-field.has-error select {

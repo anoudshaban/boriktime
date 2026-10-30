@@ -63,11 +63,14 @@ function MyListSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
   }, [open, onClose])
 
   // Dishes removed from the menu since they were added are skipped.
-  const rows = list.entries.map((e) => ({ ...e, ref: dishes.get(e.id) })).filter((r) => r.ref)
-  const total = rows.reduce((sum, r) => {
-    const p = r.ref!.product
-    return sum + (p.sale_price ?? p.price) * r.qty
-  }, 0)
+  const rows = list.entries
+    .map((e) => {
+      const ref = dishes.get(e.id)
+      const chosen = e.size != null ? ref?.product.sizes?.[e.size] : undefined
+      return { ...e, ref, chosen, price: chosen ? chosen.price : ref ? (ref.product.sale_price ?? ref.product.price) : 0 }
+    })
+    .filter((r) => r.ref)
+  const total = rows.reduce((sum, r) => sum + r.price * r.qty, 0)
   const currency = lang === 'ar' ? settings?.currency_ar : settings?.currency_en
 
   return (
@@ -101,19 +104,20 @@ function MyListSheet({ open, onClose }: { open: boolean; onClose: () => void }) 
                 <p className="eyebrow sheet__hint">{t('showWaiter')}</p>
                 <ul className="mylist">
                   <AnimatePresence initial={false}>
-                    {rows.map(({ id, qty, ref }) => (
-                      <motion.li key={id} layout exit={{ opacity: 0, x: -30 }}>
+                    {rows.map(({ id, qty, ref, size, chosen }) => (
+                      <motion.li key={`${id}:${size ?? ''}`} layout exit={{ opacity: 0, x: -30 }}>
                         <DishMedia product={ref!.product} icon={ref!.section.icon} size="g" spin={false} />
                         <span className="mylist__name">
                           {pick(ref!.product.name)}
+                          {chosen && <span className="mylist__size">{pick(chosen)}</span>}
                           <span className="mylist__alt">{lang === 'ar' ? ref!.product.name.en : ref!.product.name.ar}</span>
                         </span>
                         <span className="mylist__qty">
-                          <button onClick={() => list.remove(id)} aria-label="−">
+                          <button onClick={() => list.remove(id, size)} aria-label="−">
                             −
                           </button>
                           <span>{formatInt(qty, lang)}</span>
-                          <button onClick={() => list.add(id)} aria-label="+">
+                          <button onClick={() => list.add(id, size)} aria-label="+">
                             +
                           </button>
                         </span>

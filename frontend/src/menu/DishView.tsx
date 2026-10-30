@@ -50,6 +50,10 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
   const scroller = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
+  // Chosen size for dishes that come in sizes; back to the first one for each dish.
+  const [picked, setPicked] = useState({ id: product.id, size: 0 })
+  const sizes = product.sizes?.length ? product.sizes : null
+  const size = sizes ? (picked.id === product.id ? Math.min(picked.size, sizes.length - 1) : 0) : undefined
 
   const siblings = section.products
   const index = Math.max(0, siblings.findIndex((p) => p.id === product.id))
@@ -117,15 +121,15 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
   }
 
   const addToList = () => {
-    list.add(product.id)
-    setToast(`${pick(product.name)} — ${t('inList')}`)
+    list.add(product.id, size)
+    setToast(`${pick(product.name)}${sizes && size != null ? ` (${pick(sizes[size])})` : ''} — ${t('inList')}`)
   }
 
   const others = siblings.filter((p) => p.id !== product.id)
   const related = [...others.slice(index), ...others.slice(0, index)].slice(0, 3)
   const pairs = pairsFor(product, group, groups)
   const offers = offersFor(product.id)
-  const qty = list.qtyOf(product.id)
+  const qty = list.qtyOf(product.id, size)
   const description = pick(product.description)
   const onSale = product.sale_price != null && product.sale_price < product.price
   const currency = lang === 'ar' ? settings?.currency_ar : settings?.currency_en
@@ -217,8 +221,27 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
               <Tags tags={product.tags} />
               {description && <p className="dish__desc">{description}</p>}
 
-              <Price value={product.price} sale={product.sale_price} settings={settings} className="dish__price" />
-              {onSale && (
+              {sizes && size != null ? (
+                <div className="dish__sizes" role="radiogroup" aria-label={t('chooseSize')}>
+                  <p className="eyebrow dish__sizes-label">{t('chooseSize')}</p>
+                  {sizes.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      role="radio"
+                      aria-checked={i === size}
+                      className={`dish__size${i === size ? ' is-on' : ''}`}
+                      onClick={() => setPicked({ id: product.id, size: i })}
+                    >
+                      <span className="dish__size-name">{pick(s)}</span>
+                      <Price value={s.price} settings={settings} className="dish__size-price" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <Price value={product.price} sale={product.sale_price} settings={settings} className="dish__price" />
+              )}
+              {onSale && !sizes && (
                 <p className="dish__save">
                   {t('save')} {formatPrice(product.price - product.sale_price!, lang)} {currency}
                 </p>
@@ -309,7 +332,7 @@ function Strip({ title, refs, settings }: { title: string; refs: DishRef[]; sett
           <Link key={ref.product.id} to={dishPath(ref)} replace state={{ modal: true }} className="card card--mini">
             <DishPlate product={ref.product} icon={ref.section.icon} size="s" />
             <span className="card__name">{pick(ref.product.name)}</span>
-            <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" />
+            <Price value={ref.product.price} sale={ref.product.sale_price} settings={settings} className="card__price" from={!!ref.product.sizes?.length} />
           </Link>
         ))}
       </div>

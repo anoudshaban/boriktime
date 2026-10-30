@@ -5,6 +5,8 @@ export type LocalizedOptional = { en: string | null; ar: string | null }
 
 export type Tag = 'new' | 'popular' | 'spicy' | 'vegetarian' | 'vegan' | 'sharing' | 'gluten_free' | 'nuts'
 
+export type Size = { en: string; ar: string; price: number }
+
 export type Product = {
   id: number
   code: number | null
@@ -13,6 +15,8 @@ export type Product = {
   price: number
   /** Offer price; when set the regular price is shown crossed out. */
   sale_price: number | null
+  /** Sizes with their own prices (e.g. börek trays); `price` is then the smallest. */
+  sizes?: Size[] | null
   calories: number | null
   tags: Tag[]
   image: string | null
@@ -125,6 +129,7 @@ export type AdminProduct = {
   description_ar: string | null
   price: number
   sale_price: number | null
+  sizes: Size[] | null
   calories: number | null
   tags: Tag[]
   image: string | null

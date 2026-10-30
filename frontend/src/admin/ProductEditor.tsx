@@ -14,9 +14,12 @@ type Props = {
   onSaved: (product: AdminProduct, deleted?: boolean) => void
 }
 
-type Draft = Omit<AdminProduct, 'id' | 'image' | 'sort_order' | 'price' | 'sale_price' | 'calories' | 'code'> & {
+type SizeDraft = { en: string; ar: string; price: string }
+
+type Draft = Omit<AdminProduct, 'id' | 'image' | 'sort_order' | 'price' | 'sale_price' | 'sizes' | 'calories' | 'code'> & {
   price: string
   sale_price: string
+  sizes: SizeDraft[]
   calories: string
   code: string
 }
@@ -42,6 +45,7 @@ function toDraft(p: AdminProduct | null, categoryId?: number): Draft {
     description_ar: p?.description_ar ?? '',
     price: p ? String(p.price) : '',
     sale_price: p?.sale_price != null ? String(p.sale_price) : '',
+    sizes: (p?.sizes ?? []).map((s) => ({ ...s, price: String(s.price) })),
     calories: p?.calories != null ? String(p.calories) : '',
     tags: p?.tags ?? [],
     is_featured: p?.is_featured ?? false,
@@ -76,6 +80,8 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
       code: draft.code === '' ? null : Number(draft.code),
       price: Number(draft.price),
       sale_price: draft.sale_price.trim() === '' ? null : Number(draft.sale_price),
+      // With sizes the server sets the price to the smallest one.
+      sizes: draft.sizes.map((s) => ({ ...s, price: Number(s.price) })),
       calories: draft.calories === '' ? null : Number(draft.calories),
       description_en: draft.description_en || null,
       description_ar: draft.description_ar || null,
@@ -127,6 +133,9 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
     toast('Dish deleted')
     onClose()
   }
+
+  const setSize = (i: number, key: keyof SizeDraft, value: string) => set('sizes', draft.sizes.map((s, j) => (j === i ? { ...s, [key]: value } : s)))
+  const hasSizes = draft.sizes.length > 0
 
   const toggleTag = (tag: Tag) => set('tags', draft.tags.includes(tag) ? draft.tags.filter((t) => t !== tag) : [...draft.tags, tag])
 
@@ -189,13 +198,42 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
           <textarea dir="rtl" lang="ar" rows={3} value={draft.description_ar ?? ''} onChange={(e) => set('description_ar', e.target.value)} />
         </Field>
 
-        <div className="a-grid-2">
-          <Field label={`Price (${currency})`} error={err('price')}>
-            <input inputMode="decimal" value={draft.price} onChange={(e) => set('price', e.target.value.replace(',', '.'))} required />
-          </Field>
-          <Field label={`Offer price (${currency})`} hint="Optional — the price is then shown crossed out" error={err('sale_price')}>
-            <input inputMode="decimal" value={draft.sale_price} onChange={(e) => set('sale_price', e.target.value.replace(',', '.'))} />
-          </Field>
+        {!hasSizes && (
+          <div className="a-grid-2">
+            <Field label={`Price (${currency})`} error={err('price')}>
+              <input inputMode="decimal" value={draft.price} onChange={(e) => set('price', e.target.value.replace(',', '.'))} required />
+            </Field>
+            <Field label={`Offer price (${currency})`} hint="Optional — the price is then shown crossed out" error={err('sale_price')}>
+              <input inputMode="decimal" value={draft.sale_price} onChange={(e) => set('sale_price', e.target.value.replace(',', '.'))} />
+            </Field>
+          </div>
+        )}
+
+        <div className="a-field a-field--wide">
+          <span className="a-field__label">Sizes</span>
+          <span className="a-muted">
+            {hasSizes
+              ? 'Each size has its own price. The menu card shows “from” the smallest price.'
+              : 'Optional — for dishes sold in sizes, e.g. trays of 12 / 24 / 40 pieces.'}
+          </span>
+          {draft.sizes.map((size, i) => (
+            <div className="a-size" key={i}>
+              <input aria-label="Size (English)" placeholder="Small · 12 pcs" value={size.en} onChange={(e) => setSize(i, 'en', e.target.value)} />
+              <input aria-label="الحجم (عربي)" placeholder="صغيرة · 12 قطعة" dir="rtl" lang="ar" value={size.ar} onChange={(e) => setSize(i, 'ar', e.target.value)} />
+              <input aria-label={`Price (${currency})`} placeholder={currency} inputMode="decimal" value={size.price} onChange={(e) => setSize(i, 'price', e.target.value.replace(',', '.'))} />
+              <button type="button" className="a-btn a-btn--ghost a-btn--danger" onClick={() => set('sizes', draft.sizes.filter((_, j) => j !== i))} aria-label="Remove size">
+                ✕
+              </button>
+              {(err(`sizes.${i}.en`) || err(`sizes.${i}.ar`) || err(`sizes.${i}.price`)) && (
+                <span className="a-field__error">{err(`sizes.${i}.en`) ?? err(`sizes.${i}.ar`) ?? err(`sizes.${i}.price`)}</span>
+              )}
+            </div>
+          ))}
+          <div>
+            <button type="button" className="a-btn a-btn--ghost" onClick={() => set('sizes', [...draft.sizes, { en: '', ar: '', price: '' }])}>
+              + Add size
+            </button>
+          </div>
         </div>
 
         <Field label="Calories" hint="Optional" error={err('calories')}>

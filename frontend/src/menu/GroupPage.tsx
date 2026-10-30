@@ -110,7 +110,7 @@ export function GroupPage({ group, settings }: Props) {
                       <span className="st-card__alt" lang={lang === 'en' ? 'ar' : 'en'}>
                         {lang === 'en' ? product.name.ar : product.name.en}
                       </span>
-                      <Price value={product.price} sale={product.sale_price} settings={settings} className="st-card__price" />
+                      <Price value={product.price} sale={product.sale_price} settings={settings} className="st-card__price" from={!!product.sizes?.length} />
                     </Link>
                   </motion.div>
                 )
