@@ -27,6 +27,8 @@ export type Product = {
   featured: boolean
   /** Can be ordered for delivery (listed on /delivery). */
   delivery?: boolean
+  /** Can be ordered for pick-up at the restaurant (the Pick up tab on /delivery). */
+  pickup?: boolean
 }
 
 /** A promotion shown on the menu home. */
@@ -100,6 +102,9 @@ export type Settings = {
   delivery_min?: string | null
   delivery_from?: string | null
   delivery_until?: string | null
+  /** Pick-up hours "HH:mm" (same WhatsApp number, no minimum). */
+  pickup_from?: string | null
+  pickup_until?: string | null
 }
 
 export type Menu = {
@@ -144,6 +149,7 @@ export type AdminProduct = {
   is_featured: boolean
   is_available: boolean
   is_delivery: boolean
+  is_pickup: boolean
   sort_order: number
 }
 

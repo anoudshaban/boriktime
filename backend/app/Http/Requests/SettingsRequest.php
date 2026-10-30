@@ -39,6 +39,9 @@ class SettingsRequest extends FormRequest
         $rules['delivery_from'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:delivery_until'];
         $rules['delivery_until'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:delivery_from'];
 
+        $rules['pickup_from'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:pickup_until'];
+        $rules['pickup_until'] = ['sometimes', 'nullable', 'date_format:H:i', 'required_with:pickup_from'];
+
         $rules['name_en'] = ['sometimes', 'required', 'string', 'max:120'];
         $rules['name_ar'] = ['sometimes', 'required', 'string', 'max:120'];
 

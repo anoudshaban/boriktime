@@ -414,3 +414,70 @@
   gap: 8px;
   width: 100%;
 }
+
+/* Delivery / Pick up switch under the title. */
+.st-dlv__modes {
+  display: inline-flex;
+  gap: 4px;
+  margin: 16px auto 0;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--line-2);
+  background: var(--card);
+}
+
+.st-dlv__mode {
+  position: relative;
+  min-width: 132px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.st-dlv__mode.is-on {
+  color: var(--wine-ink);
+}
+
+.st-dlv__mode-on {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--wine);
+}
+
+.st-dlv__mode-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+:root[lang='ar'] .st-dlv__mode {
+  font-size: 16px;
+}
+
+/* In the order: a dish not offered the chosen way (kept, but not counted). */
+.st-dlv__lines li.is-off .st-dlv__line-name {
+  opacity: 0.55;
+}
+
+.st-dlv__lines .st-dlv__line-off {
+  color: var(--wine);
+}
+
+.st-dlv__checkout select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-2);
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+}

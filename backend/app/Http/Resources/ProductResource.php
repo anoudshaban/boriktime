@@ -38,6 +38,7 @@ class ProductResource extends JsonResource
             'is_featured' => $this->is_featured,
             'is_available' => $this->is_available,
             'is_delivery' => $this->is_delivery,
+            'is_pickup' => $this->is_pickup,
             'sort_order' => $this->sort_order,
             'updated_at' => $this->updated_at,
         ];

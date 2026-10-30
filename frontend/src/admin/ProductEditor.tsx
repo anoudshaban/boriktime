@@ -51,6 +51,7 @@ function toDraft(p: AdminProduct | null, categoryId?: number): Draft {
     is_featured: p?.is_featured ?? false,
     is_available: p?.is_available ?? true,
     is_delivery: p?.is_delivery ?? false,
+    is_pickup: p?.is_pickup ?? false,
   }
 }
 
@@ -259,11 +260,15 @@ export function ProductEditor({ product, open, categories, defaultCategory, curr
         </div>
         <div className="a-switch-row">
           <Switch checked={draft.is_delivery} onChange={(v) => set('is_delivery', v)} label="Delivery" />
-          <span>Available for delivery (shown on the Delivery page)</span>
+          <span>Available for delivery (Delivery tab)</span>
+        </div>
+        <div className="a-switch-row">
+          <Switch checked={draft.is_pickup} onChange={(v) => set('is_pickup', v)} label="Pick-up" />
+          <span>Available for pick-up at the restaurant (Pick up tab)</span>
         </div>
         <div className="a-switch-row">
           <Switch checked={draft.is_featured} onChange={(v) => set('is_featured', v)} label="Chef's pick" />
-          <span>Show in “Chef’s picks”</span>
+          <span>★ Chef’s pick — shown in the “Chef’s picks” row on the menu home, with a “Signature” label</span>
         </div>
 
         <button type="submit" hidden />

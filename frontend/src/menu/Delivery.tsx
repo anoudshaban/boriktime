@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { ClockIcon, CloseIcon, WhatsappIcon } from '../components/icons'
+import { ClockIcon, CloseIcon, DeliveryIcon, PinIcon, WhatsappIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import { formatInt, formatPrice } from '../lib/text'
 import type { Product, Settings, Size } from '../types'
@@ -15,7 +15,8 @@ const DETAILS_KEY = 'bt_delivery_details'
 const CHIPS_OFFSET = 128
 
 type Details = { name: string; phone: string; address: string }
-type Line = { id: number; qty: number; size?: number; ref?: DishRef; chosen?: Size; each: number }
+/** `ok`: the dish can be ordered the chosen way (the basket is shared by both tabs). */
+type Line = { id: number; qty: number; size?: number; ref?: DishRef; chosen?: Size; each: number; ok: boolean }
 
 function readDetails(): Details {
   try {
@@ -39,14 +40,43 @@ const minutes = (hhmm: string) => {
   return h * 60 + m
 }
 
-/** Is it delivery time now in Amman? Hours may run past midnight (e.g. 18:00–01:00). */
-function openNow(from?: string | null, until?: string | null): boolean {
-  if (!from || !until) return true
+/** Minutes since midnight in Amman, whatever the phone's time zone. */
+function ammanNow(): number {
   const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Amman', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date())
-  const now = Number(parts.find((p) => p.type === 'hour')?.value) * 60 + Number(parts.find((p) => p.type === 'minute')?.value)
+  return Number(parts.find((p) => p.type === 'hour')?.value) * 60 + Number(parts.find((p) => p.type === 'minute')?.value)
+}
+
+/** Is `at` (minutes) within the hours? Hours may run past midnight (e.g. 18:00–01:00); no hours = always. */
+function openAt(at: number, from?: string | null, until?: string | null): boolean {
+  if (!from || !until) return true
   const a = minutes(from)
   const b = minutes(until)
-  return a <= b ? now >= a && now <= b : now >= a || now <= b
+  const t = ((at % 1440) + 1440) % 1440
+  return a <= b ? t >= a && t <= b : t >= a || t <= b
+}
+
+const openNow = (from?: string | null, until?: string | null) => openAt(ammanNow(), from, until)
+
+const hhmm = (m: number) => `${String(Math.floor((m % 1440) / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+
+/** Pick-up times for the next 12 hours, every 15 minutes from 20 minutes from now, within pick-up hours. */
+function pickupSlots(from?: string | null, until?: string | null): string[] {
+  const start = Math.ceil((ammanNow() + 20) / 15) * 15
+  const slots: string[] = []
+  for (let m = start; m < start + 12 * 60; m += 15) if (openAt(m, from, until)) slots.push(hhmm(m))
+  return slots
+}
+
+export type OrderMode = 'delivery' | 'pickup'
+const MODE_KEY = 'bt_order_mode'
+const offered = (p: Product, mode: OrderMode) => Boolean(mode === 'delivery' ? p.delivery : p.pickup)
+
+function readMode(): OrderMode {
+  try {
+    return localStorage.getItem(MODE_KEY) === 'pickup' ? 'pickup' : 'delivery'
+  } catch {
+    return 'delivery'
+  }
 }
 
 const amount = (value?: string | null) => (value != null && value !== '' && !Number.isNaN(Number(value)) ? Number(value) : null)
@@ -57,9 +87,10 @@ const sectionId = (slug: string) => `dlv-${slug}`
 const overlayRoot = () => document.querySelector<HTMLElement>('.menu') ?? document.body
 
 /**
- * Delivery: section tabs and one short row per dish marked for delivery. Dishes in
- * sizes open a small sheet to pick size and quantity; the basket bar opens the
- * checkout sheet, which sends a ready-written WhatsApp message (no online payment).
+ * Delivery / Pick up: a tab for each way of ordering, section tabs and one short row
+ * per dish offered that way. Dishes in sizes open a small sheet to pick size and
+ * quantity; the basket (shared by both tabs) opens the checkout sheet, which sends a
+ * ready-written WhatsApp message (no online payment).
  */
 export function Delivery({ settings }: { settings: Settings | null }) {
   const { lang, pick, t } = useI18n()
@@ -69,22 +100,35 @@ export function Delivery({ settings }: { settings: Settings | null }) {
   const chipsRef = useRef<HTMLDivElement>(null)
   const [picking, setPicking] = useState<DishRef | null>(null)
   const [checkout, setCheckout] = useState(false)
+  const [chosenMode, setChosenMode] = useState<OrderMode>(readMode)
+
+  // Dishes offered either way (so the basket keeps them when switching tabs).
+  const refs = useMemo(() => {
+    const map = new Map<number, DishRef>()
+    for (const group of groups) for (const section of group.sections) for (const product of section.products) if (product.delivery || product.pickup) map.set(product.id, { product, section, group })
+    return map
+  }, [groups])
+
+  const modes = (['delivery', 'pickup'] as const).filter((m) => [...refs.values()].some((r) => offered(r.product, m)))
+  const mode: OrderMode = modes.includes(chosenMode) ? chosenMode : (modes[0] ?? 'delivery')
+  const setMode = (m: OrderMode) => {
+    setChosenMode(m)
+    try {
+      localStorage.setItem(MODE_KEY, m)
+    } catch {
+      /* private mode */
+    }
+  }
 
   const sections = useMemo(
     () =>
       groups.flatMap((group) =>
         group.sections
-          .map((section) => ({ group, section, products: section.products.filter((p) => p.delivery) }))
+          .map((section) => ({ group, section, products: section.products.filter((p) => offered(p, mode)) }))
           .filter((s) => s.products.length),
       ),
-    [groups],
+    [groups, mode],
   )
-
-  const refs = useMemo(() => {
-    const map = new Map<number, DishRef>()
-    for (const s of sections) for (const product of s.products) map.set(product.id, { product, section: s.section, group: s.group })
-    return map
-  }, [sections])
 
   const active = useScrollSpy(
     sections.map((s) => sectionId(s.section.slug)),
@@ -102,29 +146,33 @@ export function Delivery({ settings }: { settings: Settings | null }) {
     strip.scrollBy({ left: a.left + a.width / 2 - (b.left + b.width / 2), behavior: 'smooth' })
   }, [activeSlug, lang])
 
-  // Dishes taken off delivery since they were added are skipped.
+  // Dishes taken off delivery and pick-up since they were added are skipped; dishes
+  // not offered the chosen way stay in the basket but are left out of the order.
   const lines: Line[] = basket.entries
     .map((e) => {
       const ref = refs.get(e.id)
       const chosen = e.size != null ? ref?.product.sizes?.[e.size] : undefined
       const each = chosen ? chosen.price : ref ? (ref.product.sale_price ?? ref.product.price) : 0
-      return { ...e, ref, chosen, each }
+      return { ...e, ref, chosen, each, ok: ref ? offered(ref.product, mode) : false }
     })
     .filter((l) => l.ref)
-  const count = lines.reduce((n, l) => n + l.qty, 0)
-  const total = Math.round(lines.reduce((sum, l) => sum + l.each * l.qty, 0) * 1000) / 1000
+  const ordered = lines.filter((l) => l.ok)
+  const count = ordered.reduce((n, l) => n + l.qty, 0)
+  const total = Math.round(ordered.reduce((sum, l) => sum + l.each * l.qty, 0) * 1000) / 1000
   const currency = lang === 'ar' ? settings?.currency_ar : settings?.currency_en
   const money = (v: number) => `${formatPrice(v, lang)} ${currency ?? ''}`.trim()
 
-  const min = amount(settings?.delivery_min)
-  const hours = settings?.delivery_from && settings?.delivery_until ? `${settings.delivery_from} – ${settings.delivery_until}` : null
+  const from = mode === 'delivery' ? settings?.delivery_from : settings?.pickup_from
+  const until = mode === 'delivery' ? settings?.delivery_until : settings?.pickup_until
+  const min = mode === 'delivery' ? amount(settings?.delivery_min) : null
+  const hours = from && until ? `${from} – ${until}` : null
   const whatsapp = waNumber(settings?.delivery_whatsapp)
-  const blocked = !whatsapp ? t('deliveryOff') : !openNow(settings?.delivery_from, settings?.delivery_until) ? t('deliveryClosed') : null
+  const blocked = !whatsapp ? t('deliveryOff') : !openNow(from, until) ? t(mode === 'delivery' ? 'deliveryClosed' : 'pickupClosed') : null
 
   // Close the checkout when the basket is emptied from inside it.
   useEffect(() => {
-    if (!count) setCheckout(false)
-  }, [count])
+    if (!lines.length) setCheckout(false)
+  }, [lines.length])
 
   const addPicked = (size: number, qty: number) => {
     if (!picking) return
@@ -136,11 +184,23 @@ export function Delivery({ settings }: { settings: Settings | null }) {
     <main className="st st-dlv">
       <header className="st-head st-dlv__head">
         <motion.h1 className="st-head__title" {...rise(0.05, reduce)}>
-          {t('delivery')}
+          {modes.length > 1 ? t('deliveryPickup') : t(mode)}
         </motion.h1>
         <motion.p className="st-eyebrow" {...rise(0.12, reduce)}>
-          {t('deliverySub')}
+          {t(mode === 'delivery' ? 'deliverySub' : 'pickupSub')}
         </motion.p>
+        {modes.length > 1 && (
+          <motion.div className="st-dlv__modes" role="tablist" aria-label={t('deliveryPickup')} {...rise(0.16, reduce)}>
+            {modes.map((m) => (
+              <button key={m} type="button" role="tab" aria-selected={m === mode} className={`st-dlv__mode${m === mode ? ' is-on' : ''}`} onClick={() => setMode(m)}>
+                {m === mode && <motion.span layoutId="dlv-mode" className="st-dlv__mode-on" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                <span className="st-dlv__mode-label">
+                  {m === 'delivery' ? <DeliveryIcon size={16} /> : <PinIcon size={16} />} {t(m)}
+                </span>
+              </button>
+            ))}
+          </motion.div>
+        )}
         {(min != null || hours) && (
           <motion.p className="st-dlv__facts" {...rise(0.18, reduce)}>
             {min != null && (
@@ -150,7 +210,7 @@ export function Delivery({ settings }: { settings: Settings | null }) {
             )}
             {hours && (
               <span>
-                <ClockIcon size={14} /> <span dir="ltr">{hours}</span>
+                <ClockIcon size={14} /> {t(mode === 'delivery' ? 'deliveryHours' : 'pickupHours')} <span dir="ltr">{hours}</span>
               </span>
             )}
           </motion.p>
@@ -172,7 +232,7 @@ export function Delivery({ settings }: { settings: Settings | null }) {
                   className={`st-chip${on ? ' is-on' : ''}`}
                   onClick={() => scrollToSection(sectionId(section.slug), CHIPS_OFFSET - 4)}
                 >
-                  {on && <motion.span layoutId="dlv-chip" className="st-chip__on" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                  {on && <motion.span layoutId={`dlv-chip-${mode}`} className="st-chip__on" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
                   <span className="st-chip__label">{pick(section.name)}</span>
                 </button>
               )
@@ -200,7 +260,7 @@ export function Delivery({ settings }: { settings: Settings | null }) {
 
       {createPortal(
       <AnimatePresence>
-        {count > 0 && (
+        {lines.length > 0 && (
           <motion.div className="st-dlv__bar" initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} transition={{ type: 'spring', stiffness: 320, damping: 30 }}>
             <button className="st-dlv__bar-btn" onClick={() => setCheckout(true)}>
               <motion.span key={basket.pulse} className="st-dlv__bar-count" initial={reduce ? false : { scale: 1.35 }} animate={{ scale: 1 }}>
@@ -219,8 +279,8 @@ export function Delivery({ settings }: { settings: Settings | null }) {
         {picking && <SizePicker dish={picking} settings={settings} money={money} onAdd={addPicked} />}
       </Sheet>
 
-      <Sheet open={checkout} onClose={() => setCheckout(false)} label={t('yourOrder')}>
-        <Checkout lines={lines} total={total} min={min} blocked={blocked} whatsapp={whatsapp} basket={basket} money={money} settings={settings} />
+      <Sheet open={checkout} onClose={() => setCheckout(false)} label={`${t('yourOrder')} · ${t(mode)}`}>
+        <Checkout mode={mode} lines={lines} total={total} min={min} blocked={blocked} whatsapp={whatsapp} basket={basket} money={money} settings={settings} />
       </Sheet>
     </main>
   )
@@ -311,6 +371,7 @@ function SizePicker({ dish, settings, money, onAdd }: { dish: DishRef; settings:
 }
 
 type CheckoutProps = {
+  mode: OrderMode
   lines: Line[]
   total: number
   min: number | null
@@ -321,12 +382,16 @@ type CheckoutProps = {
   settings: Settings | null
 }
 
-function Checkout({ lines, total, min, blocked, whatsapp, basket, money, settings }: CheckoutProps) {
+function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, settings }: CheckoutProps) {
   const { lang, pick, t } = useI18n()
   const [details, setDetails] = useState<Details>(readDetails)
   const [notes, setNotes] = useState('')
   const [message, setMessage] = useState<string | null>(null)
+  const [time, setTime] = useState('') // '' = as soon as possible
+  const slots = useMemo(() => (mode === 'pickup' ? pickupSlots(settings?.pickup_from, settings?.pickup_until) : []), [mode, settings])
   const belowMin = min != null && total < min
+  const delivery = mode === 'delivery'
+  const ordered = lines.filter((l) => l.ok)
 
   useEffect(() => {
     setMessage(null)
@@ -339,17 +404,17 @@ function Checkout({ lines, total, min, blocked, whatsapp, basket, money, setting
 
   const send = (e: FormEvent) => {
     e.preventDefault()
-    if (!details.name.trim() || !details.phone.trim() || !details.address.trim()) {
-      setMessage(t('fillDetails'))
+    if (!details.name.trim() || !details.phone.trim() || (delivery && !details.address.trim())) {
+      setMessage(t(delivery ? 'fillDetails' : 'fillPickup'))
       return
     }
     setMessage(null)
     // Written for staff, who read both languages: dish names in Arabic and English, plain digits.
     const cur = settings?.currency_en ?? 'JD'
     const text = [
-      '*طلب توصيل — Delivery order*',
+      delivery ? '*طلب توصيل — Delivery order*' : '*طلب استلام من المطعم — Pick-up order*',
       '',
-      ...lines.map((l) => {
+      ...ordered.map((l) => {
         const p = l.ref!.product
         const size = l.chosen ? ` (${l.chosen.ar} / ${l.chosen.en})` : ''
         return `${l.qty} × ${p.name.ar} / ${p.name.en}${size} — ${formatPrice(l.each * l.qty, 'en')} ${cur}`
@@ -359,7 +424,7 @@ function Checkout({ lines, total, min, blocked, whatsapp, basket, money, setting
       '',
       `الاسم / Name: ${details.name.trim()}`,
       `الهاتف / Phone: ${details.phone.trim()}`,
-      `العنوان / Address: ${details.address.trim()}`,
+      delivery ? `العنوان / Address: ${details.address.trim()}` : `وقت الاستلام / Pick-up time: ${time || 'بأسرع وقت / As soon as possible'}`,
       ...(notes.trim() ? [`ملاحظات / Notes: ${notes.trim()}`] : []),
     ].join('\n')
     window.location.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`
@@ -369,11 +434,11 @@ function Checkout({ lines, total, min, blocked, whatsapp, basket, money, setting
     <form className="st-dlv__checkout" onSubmit={send} noValidate>
       <ul className="st-dlv__lines">
         {lines.map((l) => (
-          <li key={`${l.id}:${l.size ?? ''}`}>
+          <li key={`${l.id}:${l.size ?? ''}`} className={l.ok ? undefined : 'is-off'}>
             <span className="st-dlv__line-name">
               {pick(l.ref!.product.name)}
               {l.chosen && <small>{pick(l.chosen)}</small>}
-              <em>{money(l.each * l.qty)}</em>
+              {l.ok ? <em>{money(l.each * l.qty)}</em> : <em className="st-dlv__line-off">{t(delivery ? 'notForDelivery' : 'notForPickup')}</em>}
             </span>
             <span className="st-dlv__step">
               <button type="button" onClick={() => basket.remove(l.id, l.size)} aria-label="−">
@@ -407,20 +472,34 @@ function Checkout({ lines, total, min, blocked, whatsapp, basket, money, setting
           <span>{t('phone')}</span>
           <input type="tel" dir="ltr" inputMode="tel" placeholder="07X XXX XXXX" value={details.phone} onChange={(e) => setDetails({ ...details, phone: e.target.value })} autoComplete="tel" maxLength={40} required />
         </label>
-        <label className="st-res__field st-res__field--wide">
-          <span>{t('yourAddress')}</span>
-          <textarea rows={2} value={details.address} onChange={(e) => setDetails({ ...details, address: e.target.value })} placeholder={t('addressHint')} autoComplete="street-address" maxLength={300} required />
-        </label>
+        {delivery ? (
+          <label className="st-res__field st-res__field--wide">
+            <span>{t('yourAddress')}</span>
+            <textarea rows={2} value={details.address} onChange={(e) => setDetails({ ...details, address: e.target.value })} placeholder={t('addressHint')} autoComplete="street-address" maxLength={300} required />
+          </label>
+        ) : (
+          <label className="st-res__field st-res__field--wide">
+            <span>{t('pickupTime')}</span>
+            <select value={time} onChange={(e) => setTime(e.target.value)} dir="ltr">
+              <option value="">{t('asap')}</option>
+              {slots.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="st-res__field st-res__field--wide">
           <span>{t('orderNotes')}</span>
           <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={500} />
         </label>
       </div>
-      <p className="st-res__hint">{t('paymentNote')}</p>
+      <p className="st-res__hint">{t(delivery ? 'paymentNote' : 'pickupNote')}</p>
 
       <div className="st-dlv__send-wrap">
         {(message || blocked) && <p className="st-res__err">{message ?? blocked}</p>}
-        <button className="st-res__btn st-dlv__send" disabled={Boolean(blocked) || belowMin}>
+        <button className="st-res__btn st-dlv__send" disabled={Boolean(blocked) || belowMin || !ordered.length}>
           <WhatsappIcon size={17} /> {t('sendWhatsapp')}
         </button>
       </div>

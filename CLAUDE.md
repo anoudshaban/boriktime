@@ -89,6 +89,11 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   kept at the smallest (Product `saving` hook), cards show "from 9 JD", the pop-up has a size picker and My list
   stores the chosen size. In menu.json a section gives `"sizes": [{en, ar}]` and each item `"prices": [9, 18, 28]`.
   Admin → Dishes has a Sizes editor.
+- **Pick-up** (01-11-2026): `products.is_pickup` (separate from delivery; switch per dish + "Pick-up: all on/off"
+  per section). `/delivery` is now "Delivery / Pick up" with a tab for each (only tabs that have dishes show; basket shared,
+  dishes not offered the chosen way are kept but left out). Pick-up asks name, phone, pick-up time (ASAP or 15-min slots
+  within `pickup_from`/`pickup_until`), notes; same WhatsApp number, no minimum. "★ Pick" in admin is renamed "★ Chef's pick"
+  (= is_featured: Chef's picks row on home + Signature label; not related to pick-up).
 - **Delivery** (31-10-2026): `products.is_delivery` (switch per dish in Admin → Dishes, plus "Delivery: all on / all
   off" per section → `POST /api/admin/products/bulk` {category_id, field: is_delivery|is_featured, on}; the same row has "★ Pick: all on / all off"). Guests use `/delivery` (`menu/Delivery.tsx`: section tabs, one short row per dish, sized dishes open a size sheet,
   basket bar → checkout sheet; sheets/bar are portalled to `.menu` because the page's entry animation breaks fixed; basket in

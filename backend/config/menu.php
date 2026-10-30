@@ -192,6 +192,9 @@ return [
         'delivery_min' => null,
         'delivery_from' => null,
         'delivery_until' => null,
+        // Pick-up at the restaurant: same WhatsApp number, own optional hours, no minimum
+        'pickup_from' => null,
+        'pickup_until' => null,
     ],
 
 ];

@@ -5,6 +5,7 @@ import { DeliveryIcon } from '../components/icons'
 import { useI18n } from '../lib/i18n'
 import type { Group, Settings } from '../types'
 import { rise, SiteFooter } from './Home'
+import { orderLabel } from './menuData'
 import { DishPlate, Price } from './parts'
 import { scrollToSection, useScrollSpy } from './useScrollSpy'
 
@@ -106,8 +107,8 @@ export function GroupPage({ group, settings }: Props) {
                   >
                     <Link to={`/menu/${group.slug}/${product.id}`} state={{ modal: true }} className="st-card">
                       {onSale ? <span className="st-card__tag st-card__tag--offer">{t('offer')}</span> : product.featured && <span className="st-card__tag">{t('signature')}</span>}
-                      {product.delivery && (
-                        <span className="st-card__dlv" title={t('deliveryAvailable')} aria-label={t('deliveryAvailable')}>
+                      {(product.delivery || product.pickup) && (
+                        <span className="st-card__dlv" title={t(orderLabel(product))} aria-label={t(orderLabel(product))}>
                           <DeliveryIcon size={14} />
                         </span>
                       )}

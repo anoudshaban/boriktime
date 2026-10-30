@@ -103,13 +103,13 @@ class ProductController extends Controller
     }
 
     /**
-     * Turn delivery or "Chef's pick" on or off for every dish in a section (and its subsections).
+     * Turn delivery, pick-up or "Chef's pick" on or off for every dish in a section (and its subsections).
      */
     public function bulk(Request $request): Response
     {
         $data = $request->validate([
             'category_id' => ['required', 'integer', 'exists:categories,id'],
-            'field' => ['required', 'in:is_delivery,is_featured'],
+            'field' => ['required', 'in:is_delivery,is_pickup,is_featured'],
             'on' => ['required', 'boolean'],
         ]);
 

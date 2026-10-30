@@ -32,6 +32,7 @@ class PublicProductResource extends JsonResource
             'video' => ImageStore::url($this->video_path),
             'featured' => $this->is_featured,
             'delivery' => $this->is_delivery,
+            'pickup' => $this->is_pickup,
         ];
     }
 }

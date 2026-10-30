@@ -36,7 +36,11 @@ export function Home({ groups, settings, firstVisit }: Props) {
   const about = (lang === 'ar' ? settings?.about_ar || settings?.about_en : settings?.about_en || settings?.about_ar) ?? ''
   const motto = (lang === 'ar' ? settings?.motto_ar || settings?.motto_en : settings?.motto_en || settings?.motto_ar) ?? ''
 
-  const deliveryOn = useMemo(() => [...dishes.values()].some((d) => d.product.delivery), [dishes])
+  const [delivery, pickup] = useMemo(() => {
+    const all = [...dishes.values()]
+    return [all.some((d) => d.product.delivery), all.some((d) => d.product.pickup)]
+  }, [dishes])
+  const deliveryOn = delivery || pickup
 
   const picks = useMemo(() => {
     const all = [...dishes.values()]
@@ -73,7 +77,7 @@ export function Home({ groups, settings, firstVisit }: Props) {
             )}
             {deliveryOn && (
               <Link to="/delivery" className="st-brief__book">
-                <DeliveryIcon size={15} /> {t('delivery')}
+                <DeliveryIcon size={15} /> {t(delivery && pickup ? 'deliveryPickup' : delivery ? 'delivery' : 'pickup')}
               </Link>
             )}
           </motion.div>

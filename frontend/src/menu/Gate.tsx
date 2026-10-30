@@ -18,12 +18,14 @@ export function Gate({ settings }: { settings: Settings | null }) {
   const reduce = useReducedMotion()
   const { dishes } = useMenuData()
   const bookingOn = settings?.reservations_enabled !== '0'
-  const deliveryOn = [...dishes.values()].some((d) => d.product.delivery)
+  const delivery = [...dishes.values()].some((d) => d.product.delivery)
+  const pickup = [...dishes.values()].some((d) => d.product.pickup)
+  const orderTitle: StringKey = delivery && pickup ? 'deliveryPickup' : delivery ? 'delivery' : 'pickup'
 
   const choices: Choice[] = [
     { to: '/', icon: <BookIcon />, title: 'menu', sub: 'gateMenuSub' },
     ...(bookingOn ? [{ to: '/reserve', icon: <CalendarIcon />, title: 'bookTable', sub: 'gateBookSub' } satisfies Choice] : []),
-    ...(deliveryOn ? [{ to: '/delivery', icon: <DeliveryIcon />, title: 'delivery', sub: 'deliverySub' } satisfies Choice] : []),
+    ...(delivery || pickup ? [{ to: '/delivery', icon: <DeliveryIcon />, title: orderTitle, sub: delivery && pickup ? 'orderSub' : delivery ? 'deliverySub' : 'pickupSub' } satisfies Choice] : []),
   ]
 
   return (

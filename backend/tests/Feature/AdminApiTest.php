@@ -110,6 +110,12 @@ class AdminApiTest extends TestCase
         $this->assertTrue($a->fresh()->is_featured);
         $this->assertTrue($b->fresh()->is_featured);
         $this->assertFalse((bool) $c->fresh()->is_featured);
+        // Pick-up is separate from delivery.
+        $this->postJson('/api/admin/products/bulk', ['category_id' => $section->id, 'field' => 'is_pickup', 'on' => true])->assertNoContent();
+        $this->assertTrue($a->fresh()->is_pickup);
+        $this->assertFalse($a->fresh()->is_delivery);
+        $this->putJson("/api/admin/products/{$b->id}", ['is_pickup' => false])->assertOk()->assertJsonPath('data.is_pickup', false);
+        $this->getJson('/api/menu')->assertJsonFragment(['id' => $a->id, 'delivery' => false, 'pickup' => true]);
         $this->postJson('/api/admin/products/bulk', ['category_id' => $section->id, 'field' => 'price', 'on' => true])->assertJsonValidationErrors('field');
     }
 
@@ -124,6 +130,8 @@ class AdminApiTest extends TestCase
         $this->putJson('/api/admin/settings', ['delivery_whatsapp' => 'call me'])->assertJsonValidationErrors('delivery_whatsapp');
         $this->putJson('/api/admin/settings', ['delivery_min' => 'ten'])->assertJsonValidationErrors('delivery_min');
         $this->putJson('/api/admin/settings', ['delivery_from' => '12:00', 'delivery_until' => null])->assertJsonValidationErrors('delivery_until');
+        $this->putJson('/api/admin/settings', ['pickup_from' => '11:00', 'pickup_until' => '23:00'])->assertOk();
+        $this->putJson('/api/admin/settings', ['pickup_from' => 'noon'])->assertJsonValidationErrors('pickup_from');
     }
 
     public function test_product_tags_are_validated(): void

@@ -41,6 +41,7 @@ class ProductRequest extends FormRequest
             'is_featured' => ['sometimes', 'boolean'],
             'is_available' => ['sometimes', 'boolean'],
             'is_delivery' => ['sometimes', 'boolean'],
+            'is_pickup' => ['sometimes', 'boolean'],
         ];
     }
 }

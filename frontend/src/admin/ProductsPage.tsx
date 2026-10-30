@@ -43,13 +43,13 @@ export function ProductsPage() {
     }
   }
 
-  /** Delivery or Chef's pick on/off for every dish in a section at once. */
-  const setSection = async (category: AdminCategory, field: 'is_delivery' | 'is_featured', on: boolean) => {
+  /** Delivery, pick-up or Chef's pick on/off for every dish in a section at once. */
+  const setSection = async (category: AdminCategory, field: 'is_delivery' | 'is_pickup' | 'is_featured', on: boolean) => {
     const before = products
     setProducts((list) => list.map((p) => (p.category_id === category.id ? { ...p, [field]: on } : p)))
     try {
       await api('/admin/products/bulk', { method: 'POST', body: { category_id: category.id, field, on } })
-      const what = field === 'is_delivery' ? 'delivery' : "Chef's picks"
+      const what = field === 'is_delivery' ? 'delivery' : field === 'is_pickup' ? 'pick-up' : "Chef's picks"
       toast(`${category.name_en}: ${what} ${on ? 'on for all dishes' : 'off'}`)
     } catch (err) {
       setProducts(before)
@@ -88,6 +88,7 @@ export function ProductsPage() {
       photos: products.filter((p) => p.image).length,
       featured: products.filter((p) => p.is_featured).length,
       delivery: products.filter((p) => p.is_delivery).length,
+      pickup: products.filter((p) => p.is_pickup).length,
     }),
     [products],
   )
@@ -111,6 +112,7 @@ export function ProductsPage() {
           ['With photo', stats.photos],
           ["Chef's picks", stats.featured],
           ['Delivery', stats.delivery],
+          ['Pick-up', stats.pickup],
         ].map(([label, value], i) => (
           <motion.div key={label} className="a-stat" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <span className="a-stat__value">{value}</span>
@@ -157,8 +159,16 @@ export function ProductsPage() {
                 </button>
               </span>
               <span className="a-group__pair">
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_pickup', true)}>
+                  Pick-up: all on
+                </button>
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_pickup', false)}>
+                  all off
+                </button>
+              </span>
+              <span className="a-group__pair">
                 <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_featured', true)}>
-                  ★ Pick: all on
+                  ★ Chef’s pick: all on
                 </button>
                 <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_featured', false)}>
                   all off
@@ -211,9 +221,13 @@ export function ProductsPage() {
                       <Switch checked={p.is_delivery} label="Delivery" onChange={(v) => patch(p, { is_delivery: v }, v ? 'Available for delivery' : 'Not for delivery')} />
                       <span>Delivery</span>
                     </label>
-                    <label title="Show in Chef's picks">
+                    <label title="Can be ordered for pick-up at the restaurant">
+                      <Switch checked={p.is_pickup} label="Pick-up" onChange={(v) => patch(p, { is_pickup: v }, v ? 'Available for pick-up' : 'Not for pick-up')} />
+                      <span>Pick-up</span>
+                    </label>
+                    <label title="Chef's pick: shown in the Chef's picks row on the menu home">
                       <Switch checked={p.is_featured} label="Chef's pick" onChange={(v) => patch(p, { is_featured: v })} />
-                      <span>★ Pick</span>
+                      <span>★ Chef’s pick</span>
                     </label>
                   </div>
                 </motion.li>

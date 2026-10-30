@@ -42,4 +42,8 @@ export function useMenuData(): MenuData {
 }
 
 /** Path to a dish's quick view. */
+/** How a dish can be ordered online, for its badge: delivery, pick-up or both. */
+export const orderLabel = (p: Product): 'bothAvailable' | 'deliveryAvailable' | 'pickupAvailable' =>
+  p.delivery && p.pickup ? 'bothAvailable' : p.delivery ? 'deliveryAvailable' : 'pickupAvailable'
+
 export const dishPath = (ref: DishRef) => `/menu/${ref.group.slug}/${ref.product.id}`

@@ -5,7 +5,7 @@ import { ChevronIcon, CloseIcon, DeliveryIcon, ShareIcon } from '../components/i
 import { useI18n } from '../lib/i18n'
 import { formatInt, formatPrice } from '../lib/text'
 import type { Category, Group, Product, Settings } from '../types'
-import { dishPath, useMenuData, type DishRef } from './menuData'
+import { dishPath, orderLabel, useMenuData, type DishRef } from './menuData'
 import { useMyList } from './myList'
 import { SplitText } from './fx'
 import { DishPlate, Price, Tags } from './parts'
@@ -246,9 +246,9 @@ export function DishView({ group, section, product, settings, onClose }: Props) 
                   {t('save')} {formatPrice(product.price - product.sale_price!, lang)} {currency}
                 </p>
               )}
-              {product.delivery && (
+              {(product.delivery || product.pickup) && (
                 <Link to="/delivery" className="dish__dlv">
-                  <DeliveryIcon size={15} /> {t('deliveryAvailable')}
+                  <DeliveryIcon size={15} /> {t(orderLabel(product))}
                 </Link>
               )}
               {product.calories != null && (
