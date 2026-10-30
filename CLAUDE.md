@@ -65,7 +65,8 @@ frontend/                     React 19 + TS + Vite, motion/react, react-router 7
 deploy/                       Dockerfile, docker-compose.yml, nginx-borektime.conf, deploy.sh
 ```
 
-Public routes: `/` menu home, `/menu/:group`, `/menu/:group/:dish` (pop-up), `/offers/:id`, `/welcome` (QR
+Public routes: `/` first page (welcome: Menu / Book a table / Delivery·Pick up — owner's choice 02-11-2026; `/welcome`
+shows the same, for printed QR codes), `/menu` menu home, `/menu/:group`, `/menu/:group/:dish` (pop-up), `/offers/:id`, `/welcome` (QR
 landing), `/reserve`, `/delivery`. Admin: `/admin/*`. API: `/api/menu`, `POST /api/reservations` (throttle 10/min, honeypot
 field `website`), `/api/auth/*`, `/api/admin/*` (Bearer token).
 

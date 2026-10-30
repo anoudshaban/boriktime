@@ -373,7 +373,7 @@ function Done({ booked, settings, lang, onAgain }: { booked: BookedDetails; sett
             </a>
           </>
         )}
-        <Link to="/" className={`st-res__btn${whatsapp ? ' st-res__btn--ghost' : ''}`}>
+        <Link to="/menu" className={`st-res__btn${whatsapp ? ' st-res__btn--ghost' : ''}`}>
           {t('browseMenu')}
         </Link>
         <button type="button" className="st-res__link" onClick={onAgain}>

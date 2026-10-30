@@ -35,7 +35,8 @@ function takeFirstVisit(): boolean {
 }
 
 /**
- * "/welcome" is where the table QR code lands (menu or booking); "/reserve" books a table;
+ * "/" (also "/welcome", where older table QR codes land) is the first page: menu, booking or delivery;
+ * "/reserve" books a table;
  * "/delivery" lists the delivery dishes and sends the order over WhatsApp.
  * Public menu: "/" home → "/menu/:group" sections → "/menu/:group/:dish" quick view.
  * The dish view is layered over its group page so closing it keeps your place.
@@ -66,7 +67,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
   const groupMatch = dishMatch ?? matchPath('/menu/:group', location.pathname)
   const group = groupMatch ? groups.find((g) => g.slug === groupMatch.params.group) : undefined
 
-  const gate = Boolean(matchPath('/welcome', location.pathname))
+  const gate = location.pathname === '/' || Boolean(matchPath('/welcome', location.pathname))
   const reserve = Boolean(matchPath('/reserve', location.pathname))
   const delivery = Boolean(matchPath('/delivery', location.pathname))
 
@@ -103,7 +104,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
   const closeOffer = useCallback(() => {
     if ((location.state as { modal?: boolean } | null)?.modal) navigate(-1)
-    else navigate('/', { replace: true })
+    else navigate('/menu', { replace: true })
   }, [location.state, navigate])
 
   const openSearch = useCallback(() => setSearchOpen(true), [])
@@ -123,7 +124,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
 
   return (
     <div className="menu">
-      <TopNav backTo={groupMatch || delivery ? '/' : reserve ? '/welcome' : undefined} showLogo={Boolean(groupMatch || reserve || delivery)} logoUrl={settings?.logo_url} onSearch={openSearch} />
+      <TopNav backTo={groupMatch ? '/menu' : gate ? undefined : '/'} showLogo={Boolean(groupMatch || reserve || delivery)} logoUrl={settings?.logo_url} onSearch={openSearch} />
 
       {status === 'loading' && (
         <div className="state">
@@ -153,7 +154,7 @@ function MenuShell({ menu, status, offline, retry }: ReturnType<typeof useMenu>)
           {groupMatch && !group && (
             <main className="view state">
               <p className="note">{t('notFound')}</p>
-              <Link to="/" className="pill-btn">
+              <Link to="/menu" className="pill-btn">
                 {t('home')}
               </Link>
             </main>

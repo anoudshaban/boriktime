@@ -23,7 +23,7 @@ export function Gate({ settings }: { settings: Settings | null }) {
   const orderTitle: StringKey = delivery && pickup ? 'deliveryPickup' : delivery ? 'delivery' : 'pickup'
 
   const choices: Choice[] = [
-    { to: '/', icon: <BookIcon />, title: 'menu', sub: 'gateMenuSub' },
+    { to: '/menu', icon: <BookIcon />, title: 'menu', sub: 'gateMenuSub' },
     ...(bookingOn ? [{ to: '/reserve', icon: <CalendarIcon />, title: 'bookTable', sub: 'gateBookSub' } satisfies Choice] : []),
     ...(delivery || pickup ? [{ to: '/delivery', icon: <DeliveryIcon />, title: orderTitle, sub: delivery && pickup ? 'orderSub' : delivery ? 'deliverySub' : 'pickupSub' } satisfies Choice] : []),
   ]
