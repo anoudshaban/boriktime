@@ -21,10 +21,19 @@ type Line = { id: number; qty: number; size?: number; ref?: DishRef; chosen?: Si
 function readDetails(): Details {
   try {
     const raw = JSON.parse(localStorage.getItem(DETAILS_KEY) ?? '{}')
-    return { name: String(raw.name ?? ''), phone: String(raw.phone ?? ''), address: String(raw.address ?? '') }
+    return { name: String(raw.name ?? ''), phone: phoneDigits(String(raw.phone ?? '')), address: String(raw.address ?? '') }
   } catch {
     return { name: '', phone: '', address: '' }
   }
+}
+
+/** The guest's phone: digits only (Arabic ٠–٩ become 0–9), at most 10 — a Jordanian number such as 0791234567. */
+function phoneDigits(value: string): string {
+  return value
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/\D/g, '')
+    .slice(0, 10)
 }
 
 /** "0795 112 000" → "962795112000" (wa.me wants the full international number, digits only). */
@@ -387,6 +396,9 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
   const [details, setDetails] = useState<Details>(readDetails)
   const [notes, setNotes] = useState('')
   const [message, setMessage] = useState<string | null>(null)
+  const [phoneTouched, setPhoneTouched] = useState(false)
+  const phoneOk = /^\d{10}$/.test(details.phone)
+  const phoneError = phoneTouched && details.phone !== '' && !phoneOk
   const [time, setTime] = useState('') // '' = as soon as possible
   const slots = useMemo(() => (mode === 'pickup' ? pickupSlots(settings?.pickup_from, settings?.pickup_until) : []), [mode, settings])
   const belowMin = min != null && total < min
@@ -406,6 +418,11 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
     e.preventDefault()
     if (!details.name.trim() || !details.phone.trim() || (delivery && !details.address.trim())) {
       setMessage(t(delivery ? 'fillDetails' : 'fillPickup'))
+      return
+    }
+    if (!phoneOk) {
+      setPhoneTouched(true)
+      setMessage(t('phone10'))
       return
     }
     setMessage(null)
@@ -468,9 +485,21 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
           <span>{t('fullName')}</span>
           <input value={details.name} onChange={(e) => setDetails({ ...details, name: e.target.value })} autoComplete="name" maxLength={120} required />
         </label>
-        <label className="st-res__field">
+        <label className={`st-res__field${phoneError ? ' has-error' : ''}`}>
           <span>{t('phone')}</span>
-          <input type="tel" dir="ltr" inputMode="tel" placeholder="07X XXX XXXX" value={details.phone} onChange={(e) => setDetails({ ...details, phone: e.target.value })} autoComplete="tel" maxLength={40} required />
+          <input
+            type="tel"
+            dir="ltr"
+            inputMode="numeric"
+            placeholder="07XXXXXXXX"
+            value={details.phone}
+            onChange={(e) => setDetails({ ...details, phone: phoneDigits(e.target.value) })}
+            onBlur={() => setPhoneTouched(true)}
+            autoComplete="tel"
+            maxLength={10}
+            required
+          />
+          {phoneError && <em>{t('phone10')}</em>}
         </label>
         {delivery ? (
           <label className="st-res__field st-res__field--wide">

@@ -91,6 +91,7 @@ const STRINGS = {
   pickupClosed: { en: 'Pick-up is closed right now. You can still prepare your order.', ar: 'الاستلام مغلق حالياً. يمكنك تجهيز طلبك الآن.' },
   pickupTime: { en: 'Pick-up time', ar: 'وقت الاستلام' },
   fillPickup: { en: 'Please fill in your name and phone', ar: 'يرجى تعبئة الاسم ورقم الهاتف' },
+  phone10: { en: 'Phone number must be 10 digits, e.g. 0791234567', ar: 'رقم الهاتف يجب أن يكون 10 أرقام، مثال: 0791234567' },
   asap: { en: 'As soon as possible', ar: 'بأسرع وقت' },
   pickupNote: { en: 'Pay when you collect. We confirm the order and time on WhatsApp.', ar: 'الدفع عند الاستلام من المطعم. نؤكد الطلب والوقت عبر واتساب.' },
   notForPickup: { en: 'Not available for pick-up', ar: 'غير متوفر للاستلام' },
