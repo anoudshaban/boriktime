@@ -375,9 +375,16 @@
 /* "Delivery: all on / all off" for the whole section. */
 .a-group__actions {
   display: inline-flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px 12px;
   margin-inline-start: auto;
   font-family: 'Jost', system-ui, sans-serif;
+}
+
+.a-group__pair {
+  display: inline-flex;
+  gap: 6px;
 }
 
 .a-btn--sm {

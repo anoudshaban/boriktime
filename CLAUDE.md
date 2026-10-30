@@ -90,7 +90,7 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   stores the chosen size. In menu.json a section gives `"sizes": [{en, ar}]` and each item `"prices": [9, 18, 28]`.
   Admin → Dishes has a Sizes editor.
 - **Delivery** (31-10-2026): `products.is_delivery` (switch per dish in Admin → Dishes, plus "Delivery: all on / all
-  off" per section → `POST /api/admin/products/delivery`). Guests use `/delivery` (`menu/Delivery.tsx`: section tabs, one short row per dish, sized dishes open a size sheet,
+  off" per section → `POST /api/admin/products/bulk` {category_id, field: is_delivery|is_featured, on}; the same row has "★ Pick: all on / all off"). Guests use `/delivery` (`menu/Delivery.tsx`: section tabs, one short row per dish, sized dishes open a size sheet,
   basket bar → checkout sheet; sheets/bar are portalled to `.menu` because the page's entry animation breaks fixed; basket in
   localStorage `bt_delivery`), fill name/phone/address/notes and send a ready-written **WhatsApp** message (wa.me,
   local 07… numbers become 962…). Settings (card at the top of Admin → Dishes): `delivery_whatsapp` (required for

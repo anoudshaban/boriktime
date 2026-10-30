@@ -43,12 +43,14 @@ export function ProductsPage() {
     }
   }
 
-  const deliverySection = async (category: AdminCategory, on: boolean) => {
+  /** Delivery or Chef's pick on/off for every dish in a section at once. */
+  const setSection = async (category: AdminCategory, field: 'is_delivery' | 'is_featured', on: boolean) => {
     const before = products
-    setProducts((list) => list.map((p) => (p.category_id === category.id ? { ...p, is_delivery: on } : p)))
+    setProducts((list) => list.map((p) => (p.category_id === category.id ? { ...p, [field]: on } : p)))
     try {
-      await api('/admin/products/delivery', { method: 'POST', body: { category_id: category.id, on } })
-      toast(on ? `${category.name_en}: all dishes available for delivery` : `${category.name_en}: delivery off`)
+      await api('/admin/products/bulk', { method: 'POST', body: { category_id: category.id, field, on } })
+      const what = field === 'is_delivery' ? 'delivery' : "Chef's picks"
+      toast(`${category.name_en}: ${what} ${on ? 'on for all dishes' : 'off'}`)
     } catch (err) {
       setProducts(before)
       toast(err instanceof ApiError ? err.firstError : 'Save failed', 'error')
@@ -146,12 +148,22 @@ export function ProductsPage() {
             </span>
             {!category.is_active && <span className="a-pill a-pill--muted">Section hidden</span>}
             <span className="a-group__actions">
-              <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => deliverySection(category, true)}>
-                Delivery: all on
-              </button>
-              <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => deliverySection(category, false)}>
-                all off
-              </button>
+              <span className="a-group__pair">
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_delivery', true)}>
+                  Delivery: all on
+                </button>
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_delivery', false)}>
+                  all off
+                </button>
+              </span>
+              <span className="a-group__pair">
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_featured', true)}>
+                  ★ Pick: all on
+                </button>
+                <button className="a-btn a-btn--ghost a-btn--sm" onClick={() => setSection(category, 'is_featured', false)}>
+                  all off
+                </button>
+              </span>
             </span>
           </h2>
 

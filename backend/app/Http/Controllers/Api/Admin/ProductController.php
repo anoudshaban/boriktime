@@ -103,17 +103,18 @@ class ProductController extends Controller
     }
 
     /**
-     * Turn delivery on or off for every dish in a section (and its subsections).
+     * Turn delivery or "Chef's pick" on or off for every dish in a section (and its subsections).
      */
-    public function delivery(Request $request): Response
+    public function bulk(Request $request): Response
     {
         $data = $request->validate([
             'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'field' => ['required', 'in:is_delivery,is_featured'],
             'on' => ['required', 'boolean'],
         ]);
 
         $sections = Category::query()->where('parent_id', $data['category_id'])->pluck('id')->push($data['category_id']);
-        Product::query()->whereIn('category_id', $sections)->update(['is_delivery' => $data['on']]);
+        Product::query()->whereIn('category_id', $sections)->update([$data['field'] => $data['on']]);
 
         MenuCache::flush();
 

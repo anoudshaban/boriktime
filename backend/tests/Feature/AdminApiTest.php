@@ -98,12 +98,19 @@ class AdminApiTest extends TestCase
         $this->putJson("/api/admin/products/{$a->id}", ['is_delivery' => true])->assertOk()->assertJsonPath('data.is_delivery', true);
 
         // A whole group (with its sections) at once; other sections are untouched.
-        $this->postJson('/api/admin/products/delivery', ['category_id' => $group->id, 'on' => true])->assertNoContent();
+        $this->postJson('/api/admin/products/bulk', ['category_id' => $group->id, 'field' => 'is_delivery', 'on' => true])->assertNoContent();
         $this->assertTrue($b->fresh()->is_delivery);
         $this->assertFalse($c->fresh()->is_delivery);
 
-        $this->postJson('/api/admin/products/delivery', ['category_id' => $section->id, 'on' => false])->assertNoContent();
+        $this->postJson('/api/admin/products/bulk', ['category_id' => $section->id, 'field' => 'is_delivery', 'on' => false])->assertNoContent();
         $this->assertFalse($a->fresh()->is_delivery);
+
+        // Chef's picks for a whole section the same way; other fields are refused.
+        $this->postJson('/api/admin/products/bulk', ['category_id' => $section->id, 'field' => 'is_featured', 'on' => true])->assertNoContent();
+        $this->assertTrue($a->fresh()->is_featured);
+        $this->assertTrue($b->fresh()->is_featured);
+        $this->assertFalse((bool) $c->fresh()->is_featured);
+        $this->postJson('/api/admin/products/bulk', ['category_id' => $section->id, 'field' => 'price', 'on' => true])->assertJsonValidationErrors('field');
     }
 
     public function test_delivery_settings_are_validated(): void
