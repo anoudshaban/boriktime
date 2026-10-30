@@ -180,11 +180,6 @@ export function SiteFooter({ settings: s }: { settings: Settings | null }) {
               ))}
             </ul>
           )}
-          {s.phone && (
-            <a className="st-foot__phone" href={tel} dir="ltr">
-              {s.phone}
-            </a>
-          )}
           {(address || hours) && (
             <div className="st-foot__lines">
               {address && (

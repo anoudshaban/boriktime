@@ -1073,7 +1073,7 @@ body:has(.menu) {
   text-align: center;
 }
 
-/* Contact card: a row of round buttons with names, the phone number, address and hours. */
+/* Contact card: a row of round buttons with names, then address and hours. */
 .st-foot__card {
   display: flex;
   flex-direction: column;
@@ -1134,14 +1134,6 @@ body:has(.menu) {
 
 .st-foot__name {
   font-size: 12px;
-}
-
-.st-foot__phone {
-  font-family: var(--font-display);
-  font-size: 20px;
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  text-decoration: none;
 }
 
 .st-foot__lines {
