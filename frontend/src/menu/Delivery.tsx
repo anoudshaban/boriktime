@@ -2,8 +2,9 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { ClockIcon, CloseIcon, DeliveryIcon, PinIcon, WhatsappIcon } from '../components/icons'
+import { api, ApiError } from '../lib/api'
 import { useI18n } from '../lib/i18n'
-import { formatInt, formatPrice } from '../lib/text'
+import { formatInt, formatPrice, phoneDigits, waNumber } from '../lib/text'
 import type { Product, Settings, Size } from '../types'
 import { rise } from './Home'
 import { useMenuData, type DishRef } from './menuData'
@@ -25,23 +26,6 @@ function readDetails(): Details {
   } catch {
     return { name: '', phone: '', address: '' }
   }
-}
-
-/** The guest's phone: digits only (Arabic ٠–٩ become 0–9), at most 10 — a Jordanian number such as 0791234567. */
-function phoneDigits(value: string): string {
-  return value
-    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
-    .replace(/\D/g, '')
-    .slice(0, 10)
-}
-
-/** "0795 112 000" → "962795112000" (wa.me wants the full international number, digits only). */
-function waNumber(raw: string | null | undefined): string | null {
-  let digits = (raw ?? '').replace(/\D/g, '')
-  if (digits.startsWith('00')) digits = digits.slice(2)
-  else if (digits.startsWith('0')) digits = `962${digits.slice(1)}`
-  return digits.length >= 8 ? digits : null
 }
 
 const minutes = (hhmm: string) => {
@@ -396,6 +380,7 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
   const [details, setDetails] = useState<Details>(readDetails)
   const [notes, setNotes] = useState('')
   const [message, setMessage] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   const [phoneTouched, setPhoneTouched] = useState(false)
   const phoneOk = /^\d{10}$/.test(details.phone)
   const phoneError = phoneTouched && details.phone !== '' && !phoneOk
@@ -414,8 +399,9 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
     }
   }, [details])
 
-  const send = (e: FormEvent) => {
+  const send = async (e: FormEvent) => {
     e.preventDefault()
+    if (busy) return
     if (!details.name.trim() || !details.phone.trim() || (delivery && !details.address.trim())) {
       setMessage(t(delivery ? 'fillDetails' : 'fillPickup'))
       return
@@ -426,10 +412,39 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
       return
     }
     setMessage(null)
+    setBusy(true)
+
+    // Saved in admin first (prices checked by the server), then WhatsApp opens with the order number.
+    let reference: string | null = null
+    try {
+      const saved = await api<{ reference: string }>('/orders', {
+        method: 'POST',
+        body: {
+          type: mode,
+          name: details.name.trim(),
+          phone: details.phone,
+          address: delivery ? details.address.trim() : null,
+          pickup_time: delivery ? null : time || null,
+          notes: notes.trim() || null,
+          lang,
+          items: ordered.map((l) => ({ id: l.id, size: l.size ?? null, qty: l.qty })),
+        },
+      })
+      reference = saved.reference
+    } catch (err) {
+      // A refused order (closed, dish gone, below minimum…) is explained; if the phone is
+      // offline the order still goes out on WhatsApp so it isn't lost.
+      if (err instanceof ApiError) {
+        setBusy(false)
+        setMessage(err.status === 429 ? t('tooMany') : err.firstError)
+        return
+      }
+    }
+
     // Written for staff, who read both languages: dish names in Arabic and English, plain digits.
     const cur = settings?.currency_en ?? 'JD'
     const text = [
-      delivery ? '*طلب توصيل — Delivery order*' : '*طلب استلام من المطعم — Pick-up order*',
+      (delivery ? '*طلب توصيل — Delivery order*' : '*طلب استلام من المطعم — Pick-up order*') + (reference ? ` ${reference}` : ''),
       '',
       ...ordered.map((l) => {
         const p = l.ref!.product
@@ -444,6 +459,7 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
       delivery ? `العنوان / Address: ${details.address.trim()}` : `وقت الاستلام / Pick-up time: ${time || 'بأسرع وقت / As soon as possible'}`,
       ...(notes.trim() ? [`ملاحظات / Notes: ${notes.trim()}`] : []),
     ].join('\n')
+    basket.clear()
     window.location.href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(text)}`
   }
 
@@ -528,7 +544,7 @@ function Checkout({ mode, lines, total, min, blocked, whatsapp, basket, money, s
 
       <div className="st-dlv__send-wrap">
         {(message || blocked) && <p className="st-res__err">{message ?? blocked}</p>}
-        <button className="st-res__btn st-dlv__send" disabled={Boolean(blocked) || belowMin || !ordered.length}>
+        <button className="st-res__btn st-dlv__send" disabled={Boolean(blocked) || belowMin || !ordered.length || busy}>
           <WhatsappIcon size={17} /> {t('sendWhatsapp')}
         </button>
       </div>

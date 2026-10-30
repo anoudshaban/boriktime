@@ -764,3 +764,73 @@
   text-transform: uppercase;
   color: var(--gold);
 }
+
+/* ---------- Orders ---------- */
+.a-orders__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px 18px;
+}
+
+.a-orders__month {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.a-orders__month input {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  font: inherit;
+}
+
+.a-stat__sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--burgundy);
+}
+
+.a-orders__top ol {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: top;
+}
+
+.a-orders__top li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  counter-increment: top;
+}
+
+.a-orders__top li:first-child {
+  border-top: 0;
+}
+
+.a-orders__top li > span:first-child::before {
+  content: counter(top) '. ';
+  color: var(--muted);
+}
+
+.a-order .a-res__time strong {
+  font-size: 20px;
+}
+
+.a-order__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.6;
+}

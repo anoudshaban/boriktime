@@ -563,3 +563,19 @@
   gap: 10px;
   margin-top: 22px;
 }
+
+/* Thank-you screen: the last step, sending the booking on WhatsApp. */
+.st-res__wa-hint {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.st-res__wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

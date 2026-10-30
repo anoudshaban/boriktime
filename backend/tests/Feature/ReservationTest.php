@@ -34,7 +34,7 @@ class ReservationTest extends TestCase
     {
         return [
             'name' => 'Laith',
-            'phone' => '+962 79 123 4567',
+            'phone' => '079 123 4567',
             'guests' => 4,
             'date' => '2026-10-22',
             'time' => '20:00',
@@ -51,7 +51,9 @@ class ReservationTest extends TestCase
             ->assertCreated()
             ->assertJson(['reference' => 'BT-0001', 'guests' => 4, 'date' => '2026-10-22', 'time' => '20:00', 'status' => 'pending']);
 
-        $this->assertDatabaseHas('reservations', ['name' => 'Laith', 'occasion' => 'birthday', 'lang' => 'ar', 'status' => 'pending']);
+        // Spaces are dropped and Arabic digits accepted: the phone is kept as 10 digits.
+        $this->assertDatabaseHas('reservations', ['name' => 'Laith', 'phone' => '0791234567', 'occasion' => 'birthday', 'lang' => 'ar', 'status' => 'pending']);
+        $this->postJson('/api/reservations', $this->booking(['phone' => '٠٧٩١٢٣٤٥٦٧']))->assertCreated();
     }
 
     public function test_times_in_the_past_or_off_the_list_are_refused(): void
@@ -66,6 +68,8 @@ class ReservationTest extends TestCase
     {
         $this->postJson('/api/reservations', $this->booking(['guests' => 21]))->assertJsonValidationErrors('guests');
         $this->postJson('/api/reservations', $this->booking(['phone' => 'call me']))->assertJsonValidationErrors('phone');
+        $this->postJson('/api/reservations', $this->booking(['phone' => '079123456']))->assertJsonValidationErrors('phone');
+        $this->postJson('/api/reservations', $this->booking(['phone' => '+962791234567']))->assertJsonValidationErrors('phone');
         $this->postJson('/api/reservations', $this->booking(['website' => 'spam.example']))->assertJsonValidationErrors('website');
 
         $this->assertSame(0, Reservation::count());

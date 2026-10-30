@@ -4,12 +4,14 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Logo } from '../components/brand/Logo'
 import { api } from '../lib/api'
 import { useAuth } from './AdminApp'
+import { ORDERS_CHANGED } from './OrdersPage'
 import { BOOKINGS_CHANGED } from './ReservationsPage'
 import { useToast } from './ui'
 
 const LINKS = [
   { to: '/admin', label: 'Dashboard', end: true },
   { to: '/admin/reservations', label: 'Reservations' },
+  { to: '/admin/orders', label: 'Orders' },
   { to: '/admin/dishes', label: 'Dishes & prices' },
   { to: '/admin/photos', label: 'Photos' },
   { to: '/admin/offers', label: 'Offers' },
@@ -23,7 +25,14 @@ const LINKS = [
 export function Layout() {
   const { user, logout } = useAuth()
   const location = useLocation()
-  const pending = usePendingBookings()
+  const pending = useNewCount<{ counts: { pending: number } }>('/admin/reservations?view=today', (r) => r.counts.pending, BOOKINGS_CHANGED, (n) => (n === 1 ? '🔔 New booking request' : `🔔 ${n} new booking requests`))
+  const orders = useNewCount<{ new: number }>('/admin/orders/pending', (r) => r.new, ORDERS_CHANGED, (n) => (n === 1 ? '🛵 New order' : `🛵 ${n} new orders`))
+  const badges: Record<string, number> = { '/admin/reservations': pending, '/admin/orders': orders }
+
+  useEffect(() => {
+    const waiting = pending + orders
+    document.title = waiting > 0 ? `(${waiting}) Börek Time — Admin` : 'Börek Time — Admin'
+  }, [pending, orders])
 
   return (
     <div className="admin">
@@ -41,7 +50,7 @@ export function Layout() {
                   {isActive && <motion.span layoutId="a-nav-pill" className="a-nav__pill" transition={{ type: 'spring', damping: 30, stiffness: 380 }} />}
                   <span>
                     {link.label}
-                    {link.to === '/admin/reservations' && pending > 0 && <span className="a-nav__count">{pending}</span>}
+                    {badges[link.to] > 0 && <span className="a-nav__count">{badges[link.to]}</span>}
                   </span>
                 </>
               )}
@@ -69,7 +78,7 @@ export function Layout() {
   )
 }
 
-/** Soft two-note chime for a new booking (Web Audio, nothing to download). */
+/** Soft two-note chime for a new booking or order (Web Audio, nothing to download). */
 function chime() {
   try {
     const ctx = new AudioContext()
@@ -92,41 +101,39 @@ function chime() {
 }
 
 /**
- * New booking requests, checked every 20 seconds on every admin page: drives the sidebar
- * badge and the tab title, and chimes + toasts when a new request arrives.
+ * New booking requests or orders, checked every 20 seconds on every admin page: drives a
+ * sidebar badge and the tab title, and chimes + toasts when a new one arrives.
  */
-function usePendingBookings(): number {
+function useNewCount<T>(path: string, pick: (r: T) => number, changed: string, message: (n: number) => string): number {
   const toast = useToast()
   const [count, setCount] = useState(0)
   const last = useRef<number | null>(null)
+  const pickRef = useRef(pick)
+  const messageRef = useRef(message)
 
   useEffect(() => {
     const check = () =>
-      api<{ counts: { pending: number } }>('/admin/reservations?view=today')
+      api<T>(path)
         .then((r) => {
-          const pending = r.counts.pending
+          const now = pickRef.current(r)
           const before = last.current
-          last.current = pending
-          if (before !== null && pending > before) {
+          last.current = now
+          if (before !== null && now > before) {
             chime()
-            toast(pending - before === 1 ? '🔔 New booking request' : `🔔 ${pending - before} new booking requests`)
-            window.dispatchEvent(new Event(BOOKINGS_CHANGED))
+            toast(messageRef.current(now - before))
+            window.dispatchEvent(new Event(changed))
           }
-          setCount(pending)
+          setCount(now)
         })
         .catch(() => {})
     check()
     const id = window.setInterval(check, 20_000)
-    window.addEventListener(BOOKINGS_CHANGED, check)
+    window.addEventListener(changed, check)
     return () => {
       window.clearInterval(id)
-      window.removeEventListener(BOOKINGS_CHANGED, check)
+      window.removeEventListener(changed, check)
     }
-  }, [toast])
-
-  useEffect(() => {
-    document.title = count > 0 ? `(${count}) Börek Time — Admin` : 'Börek Time — Admin'
-  }, [count])
+  }, [path, changed, toast])
 
   return count
 }

@@ -13,6 +13,7 @@ import { OffersPage } from './OffersPage'
 import { PhotosPage } from './PhotosPage'
 import { ProductsPage } from './ProductsPage'
 import { QrPage } from './QrPage'
+import { OrdersPage } from './OrdersPage'
 import { ReservationsPage } from './ReservationsPage'
 import { SettingsPage } from './SettingsPage'
 import { ToastProvider } from './ui'
@@ -64,6 +65,7 @@ export default function AdminApp() {
             <Route element={<Layout />}>
               <Route index element={<Dashboard />} />
               <Route path="reservations" element={<ReservationsPage />} />
+              <Route path="orders" element={<OrdersPage />} />
               <Route path="qr" element={<QrPage />} />
               <Route path="dishes" element={<ProductsPage />} />
               <Route path="photos" element={<PhotosPage />} />

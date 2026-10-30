@@ -53,7 +53,7 @@ backend/                      Laravel 13, PHP 8.4, SQLite, Sanctum tokens
   routes/api.php, routes/console.php (artisan menu:* commands), routes/web.php (SPA fallback)
   database/data/menu.json     ← latest price list (FINAL menu 26-10-2026 + Börek Trays 30-10-2026). Edit this to change names/prices.
   database/data/menu.xlsx     original spreadsheet (seeder imports it, then applies menu.json)
-  tests/Feature/              41 tests — run `php artisan test`
+  tests/Feature/              46 tests — run `php artisan test`
 frontend/                     React 19 + TS + Vite, motion/react, react-router 7
   src/menu/                   public site: MenuApp (routes), Home, GroupPage, DishView (pop-up), Gate (/welcome),
                               Reserve (/reserve), Offers, SearchOverlay, MyListSheet, parts.tsx (DishPlate, Price)
@@ -89,6 +89,14 @@ and are sent to the public menu, e.g. `reservations_enabled` "1"/"0", `reservati
   kept at the smallest (Product `saving` hook), cards show "from 9 JD", the pop-up has a size picker and My list
   stores the chosen size. In menu.json a section gives `"sizes": [{en, ar}]` and each item `"prices": [9, 18, 28]`.
   Admin → Dishes has a Sizes editor.
+- **Orders** (02-11-2026): every delivery/pick-up order is saved by `POST /api/orders` (throttle 10/min, honeypot
+  `website`; the server re-prices from the menu, checks hours/minimum/flags) just before WhatsApp opens; the message carries
+  the reference `OR-0001`. Admin → Orders (`admin/OrdersPage.tsx`): month picker (Amman time), delivery/pick-up totals
+  (cancelled not counted), best sellers, Excel/CSV download (`/api/admin/orders/export`), statuses new/confirmed/done/
+  cancelled, staff note; sidebar badge + chime via `/api/admin/orders/pending` (`useNewCount` in Layout).
+- **Bookings on WhatsApp**: still saved in admin; the thank-you screen has a "Send booking on WhatsApp" button (to
+  `delivery_whatsapp`, else `whatsapp`). Free WhatsApp can't message the restaurant automatically (paid API declined).
+- **Guest phones** (bookings and orders) must be 10 digits (`AppSupportPhone`, `phoneDigits` in lib/text.ts; Arabic digits ok).
 - **Pick-up** (01-11-2026): `products.is_pickup` (separate from delivery; switch per dish + "Pick-up: all on/off"
   per section). `/delivery` is now "Delivery / Pick up" with a tab for each (only tabs that have dishes show; basket shared,
   dishes not offered the chosen way are kept but left out). Pick-up asks name, phone, pick-up time (ASAP or 15-min slots
@@ -185,7 +193,7 @@ Production admin username is `admin` (password: ask the owner — not stored in 
 
 ## State on 26-10-2026 and open ideas
 
-Done and live: Delivery page + WhatsApp ordering (31-10-2026, no dishes switched on yet, WhatsApp number not set); Börek Trays tab in Kitchen (13 trays, 3 sizes each, 30-10-2026); site moved to borektime.com (29-10-2026); menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
+Done and live: Orders page + saved orders, bookings sent on WhatsApp, 10-digit phones (02-11-2026); Delivery page + WhatsApp ordering (31-10-2026, no dishes switched on yet, WhatsApp number not set); Börek Trays tab in Kitchen (13 trays, 3 sizes each, 30-10-2026); site moved to borektime.com (29-10-2026); menu updated to "FINAL menu 26-10-2026" (68 dishes, 67 shown; Zaatar Pie and Akkawi & Zaatar Pie
 added; 8 dropped dishes hidden; Fatteh Yalanji / Fattet Maqdous moved into Hot Mezzah so the Fatteh tab no longer
 shows; Hardal steak replaces Fattet Mozat as a featured dish; Breakfast is "coming later" per the PDF, so it has
 `"available": false` in menu.json and the Kitchen subtitle on live no longer mentions breakfast — when it starts,

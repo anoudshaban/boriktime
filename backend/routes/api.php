@@ -3,11 +3,13 @@
 use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\ImportController;
 use App\Http\Controllers\Api\Admin\OfferController;
+use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\ProductController;
 use App\Http\Controllers\Api\Admin\ReservationController as AdminReservationController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ReservationController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +19,10 @@ Route::get('/menu', MenuController::class)->name('menu');
 Route::post('/reservations', [ReservationController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('reservations.store');
+
+Route::post('/orders', [OrderController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('orders.store');
 
 Route::post('/auth/login', [AuthController::class, 'login'])
     ->middleware('throttle:6,1')
@@ -48,6 +54,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('offers', OfferController::class)->except('show');
 
         Route::apiResource('reservations', AdminReservationController::class)->only(['index', 'update', 'destroy']);
+
+        Route::get('orders/pending', [AdminOrderController::class, 'pending'])->name('orders.pending');
+        Route::get('orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
+        Route::apiResource('orders', AdminOrderController::class)->only(['index', 'update', 'destroy']);
 
         Route::get('settings', [SettingController::class, 'show'])->name('settings.show');
         Route::put('settings', [SettingController::class, 'update'])->name('settings.update');

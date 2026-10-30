@@ -3,8 +3,8 @@ import { useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { CalendarIcon, CheckIcon, ClockIcon, GuestsIcon, MinusIcon, PhoneIcon, PlusIcon, WhatsappIcon } from '../components/icons'
 import { api, ApiError } from '../lib/api'
-import { useI18n, type StringKey } from '../lib/i18n'
-import { formatInt } from '../lib/text'
+import { STRINGS, useI18n, type StringKey } from '../lib/i18n'
+import { formatInt, phoneDigits, waNumber } from '../lib/text'
 import type { Lang, Settings } from '../types'
 import { rise } from './Home'
 
@@ -17,6 +17,8 @@ const GUEST_KEY = 'bt_guest'
 
 type Occasion = (typeof OCCASIONS)[number]
 type Booked = { reference: string; name: string; guests: number; date: string; time: string }
+/** What the guest filled in, kept for the WhatsApp message on the thank-you screen. */
+type BookedDetails = Booked & { phone: string; occasion: Occasion | null; notes: string | null }
 
 /* ---------- Time helpers (restaurant time, Amman) ---------- */
 
@@ -67,7 +69,8 @@ const separator = (lang: Lang) => (lang === 'ar' ? '، ' : ' · ')
 
 function loadGuest(): { name: string; phone: string } {
   try {
-    return { name: '', phone: '', ...JSON.parse(localStorage.getItem(GUEST_KEY) ?? '{}') }
+    const saved = { name: '', phone: '', ...JSON.parse(localStorage.getItem(GUEST_KEY) ?? '{}') }
+    return { name: String(saved.name), phone: phoneDigits(String(saved.phone)) }
   } catch {
     return { name: '', phone: '' }
   }
@@ -78,7 +81,7 @@ function loadGuest(): { name: string; phone: string } {
 export function Reserve({ settings }: { settings: Settings | null }) {
   const { t, lang } = useI18n()
   const reduce = useReducedMotion()
-  const [booked, setBooked] = useState<Booked | null>(null)
+  const [booked, setBooked] = useState<BookedDetails | null>(null)
 
   const closed = settings?.reservations_enabled === '0'
   const phone = settings?.phone
@@ -115,7 +118,7 @@ export function Reserve({ settings }: { settings: Settings | null }) {
   )
 }
 
-function BookingForm({ settings, onBooked }: { settings: Settings | null; onBooked: (b: Booked) => void }) {
+function BookingForm({ settings, onBooked }: { settings: Settings | null; onBooked: (b: BookedDetails) => void }) {
   const { t, lang } = useI18n()
   const reduce = useReducedMotion()
   const maxGuests = Math.max(1, Number(settings?.reservation_max_guests) || 20)
@@ -135,6 +138,7 @@ function BookingForm({ settings, onBooked }: { settings: Settings | null; onBook
   const [errors, setErrors] = useState<Record<string, string[]>>({})
   const [message, setMessage] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [phoneTouched, setPhoneTouched] = useState(false)
 
   const times = timesFor(date)
   const pickDate = (value: string) => {
@@ -142,7 +146,10 @@ function BookingForm({ settings, onBooked }: { settings: Settings | null; onBook
     if (time && !timesFor(value).some((s) => s.time === time)) setTime(null)
   }
 
-  const ready = Boolean(time && guest.name.trim().length >= 2 && guest.phone.replace(/\D/g, '').length >= 7)
+  const phoneOk = /^\d{10}$/.test(guest.phone)
+  // Shown after leaving the field, or as soon as the phone is all that keeps the button grey.
+  const phoneError = guest.phone !== '' && !phoneOk && (phoneTouched || Boolean(time && guest.name.trim().length >= 2))
+  const ready = Boolean(time && guest.name.trim().length >= 2 && phoneOk)
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
@@ -153,15 +160,15 @@ function BookingForm({ settings, onBooked }: { settings: Settings | null; onBook
     try {
       const res = await api<Booked>('/reservations', {
         method: 'POST',
-        body: { name: guest.name.trim(), phone: guest.phone.trim(), guests, date, time, occasion, notes: notes.trim() || null, lang, website: website || undefined },
+        body: { name: guest.name.trim(), phone: guest.phone, guests, date, time, occasion, notes: notes.trim() || null, lang, website: website || undefined },
       })
       try {
-        localStorage.setItem(GUEST_KEY, JSON.stringify({ name: guest.name.trim(), phone: guest.phone.trim() }))
+        localStorage.setItem(GUEST_KEY, JSON.stringify({ name: guest.name.trim(), phone: guest.phone }))
       } catch {
         /* ignore */
       }
       window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
-      onBooked(res)
+      onBooked({ ...res, phone: guest.phone, occasion, notes: notes.trim() || null })
     } catch (err) {
       if (err instanceof ApiError) {
         setErrors(err.errors)
@@ -248,10 +255,21 @@ function BookingForm({ settings, onBooked }: { settings: Settings | null; onBook
             <input value={guest.name} onChange={(e) => setGuest({ ...guest, name: e.target.value })} autoComplete="name" maxLength={120} required />
             {errors.name && <em>{errors.name[0]}</em>}
           </label>
-          <label className={`st-res__field${errors.phone ? ' has-error' : ''}`}>
+          <label className={`st-res__field${errors.phone || phoneError ? ' has-error' : ''}`}>
             <span>{t('phone')}</span>
-            <input type="tel" dir="ltr" inputMode="tel" placeholder="07X XXX XXXX" value={guest.phone} onChange={(e) => setGuest({ ...guest, phone: e.target.value })} autoComplete="tel" maxLength={40} required />
-            {errors.phone && <em>{errors.phone[0]}</em>}
+            <input
+              type="tel"
+              dir="ltr"
+              inputMode="numeric"
+              placeholder="07XXXXXXXX"
+              value={guest.phone}
+              onChange={(e) => setGuest({ ...guest, phone: phoneDigits(e.target.value) })}
+              onBlur={() => setPhoneTouched(true)}
+              autoComplete="tel"
+              maxLength={10}
+              required
+            />
+            {phoneError ? <em>{t('phone10')}</em> : errors.phone && <em>{errors.phone[0]}</em>}
           </label>
           <label className="st-res__field st-res__field--wide">
             <span>
@@ -298,13 +316,26 @@ function Block({ icon, label, optional, delay, children }: { icon?: ReactNode; l
   )
 }
 
-function Done({ booked, settings, lang, onAgain }: { booked: Booked; settings: Settings | null; lang: Lang; onAgain: () => void }) {
+function Done({ booked, settings, lang, onAgain }: { booked: BookedDetails; settings: Settings | null; lang: Lang; onAgain: () => void }) {
   const { t } = useI18n()
   const reduce = useReducedMotion()
   const guest = loadGuest()
-  const whatsapp = settings?.whatsapp?.replace(/[^\d]/g, '')
+  // The orders WhatsApp number receives bookings too (the general one if it isn't set).
+  const whatsapp = waNumber(settings?.delivery_whatsapp) ?? waNumber(settings?.whatsapp)
   const when = `${formatDay(booked.date, lang, { weekday: 'long', day: 'numeric', month: 'long' })}${separator(lang)}${formatTime(booked.time, lang)}`
-  const waText = `${booked.reference} — ${booked.name}, ${booked.guests} ${booked.guests === 1 ? 'guest' : 'guests'}, ${booked.date} ${booked.time}`
+  // Written for staff, who read both languages; the booking is already saved in admin.
+  const day = new Intl.DateTimeFormat('en-GB', { weekday: 'long', timeZone: 'UTC' }).format(new Date(`${booked.date}T00:00:00Z`))
+  const waText = [
+    `*حجز طاولة — Table booking* ${booked.reference}`,
+    '',
+    `الاسم / Name: ${booked.name}`,
+    `الهاتف / Phone: ${booked.phone}`,
+    `عدد الأشخاص / Guests: ${booked.guests}`,
+    `التاريخ / Date: ${booked.date} (${day})`,
+    `الوقت / Time: ${booked.time}`,
+    ...(booked.occasion ? [`المناسبة / Occasion: ${STRINGS[`occ_${booked.occasion}`].ar} / ${STRINGS[`occ_${booked.occasion}`].en}`] : []),
+    ...(booked.notes ? [`ملاحظات / Notes: ${booked.notes}`] : []),
+  ].join('\n')
 
   return (
     <motion.section className="st-res__card st-res__done" initial={reduce ? false : { opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5 }}>
@@ -335,11 +366,14 @@ function Done({ booked, settings, lang, onAgain }: { booked: Booked; settings: S
 
       <div className="st-res__actions">
         {whatsapp && (
-          <a className="st-res__btn st-res__btn--ghost" href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noreferrer">
-            <WhatsappIcon size={17} /> {t('messageUs')}
-          </a>
+          <>
+            <p className="st-res__wa-hint">{t('sendBookingHint')}</p>
+            <a className="st-res__btn st-res__wa" href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(waText)}`}>
+              <WhatsappIcon size={17} /> {t('sendBookingWhatsapp')}
+            </a>
+          </>
         )}
-        <Link to="/" className="st-res__btn">
+        <Link to="/" className={`st-res__btn${whatsapp ? ' st-res__btn--ghost' : ''}`}>
           {t('browseMenu')}
         </Link>
         <button type="button" className="st-res__link" onClick={onAgain}>

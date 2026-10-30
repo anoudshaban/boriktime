@@ -65,3 +65,20 @@ export function highlightParts(text: string, query: string): { text: string; hit
     { text: text.slice(end), hit: false },
   ].filter((p) => p.text)
 }
+
+/** A guest's phone: digits only (Arabic ٠–٩ become 0–9), at most 10 — a Jordanian number such as 0791234567. */
+export function phoneDigits(value: string): string {
+  return value
+    .replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x06f0))
+    .replace(/\D/g, '')
+    .slice(0, 10)
+}
+
+/** "0795 112 000" → "962795112000" (wa.me wants the full international number, digits only). */
+export function waNumber(raw: string | null | undefined): string | null {
+  let digits = (raw ?? '').replace(/\D/g, '')
+  if (digits.startsWith('00')) digits = digits.slice(2)
+  else if (digits.startsWith('0')) digits = `962${digits.slice(1)}`
+  return digits.length >= 8 ? digits : null
+}

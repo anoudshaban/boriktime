@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
+use App\Support\Phone;
 use App\Support\ReservationRules;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,9 +24,11 @@ class ReservationController extends Controller
             throw ValidationException::withMessages(['date' => 'Online booking is closed right now — please call us.']);
         }
 
+        $request->merge(['phone' => Phone::normalize($request->input('phone'))]);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'min:2', 'max:120'],
-            'phone' => ['required', 'string', 'max:40', 'regex:/^\+?[\d\s\-()]{7,20}$/'],
+            'phone' => ['required', 'string', Phone::RULE],
             'guests' => ['required', 'integer', 'min:1', 'max:'.$rules->maxGuests()],
             'date' => ['required', 'date_format:Y-m-d'],
             'time' => ['required', 'date_format:H:i'],
@@ -35,7 +38,7 @@ class ReservationController extends Controller
             // Hidden field real guests never fill; bots usually do.
             'website' => ['prohibited'],
         ], [
-            'phone.regex' => 'Please enter a valid phone number.',
+            'phone.regex' => Phone::message(),
             'guests.max' => 'For more than :max guests, please call us.',
         ]);
 

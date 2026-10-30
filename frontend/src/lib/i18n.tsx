@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { Lang, Localized, LocalizedOptional } from '../types'
 
-const STRINGS = {
+/** Every UI string in both languages (also read directly where a message needs both, e.g. WhatsApp). */
+export const STRINGS = {
   menu: { en: 'Menu', ar: 'القائمة' },
   theMenu: { en: 'The menu', ar: 'القائمة' },
   digitalMenu: { en: 'Digital menu', ar: 'القائمة الرقمية' },
@@ -98,7 +99,7 @@ const STRINGS = {
   notForDelivery: { en: 'Not available for delivery', ar: 'غير متوفر للتوصيل' },
   pickupAvailable: { en: 'Available for pick-up', ar: 'متوفر للاستلام' },
   bothAvailable: { en: 'Delivery & pick-up', ar: 'توصيل واستلام' },
-  deliverySub: { en: 'Order to your door on WhatsApp', ar: 'اطلب لباب بيتك عبر واتساب' },
+  deliverySub: { en: 'Order to your door on WhatsApp', ar: 'اطلب لباب بيتك عبر واتساب' },
   deliveryAvailable: { en: 'Available for delivery', ar: 'متوفر للتوصيل' },
   deliveryMin: { en: 'Minimum order', ar: 'الحد الأدنى للطلب' },
   deliveryHours: { en: 'Delivery hours', ar: 'أوقات التوصيل' },
@@ -107,8 +108,8 @@ const STRINGS = {
   deliveryEmpty: { en: 'No dishes are available for delivery yet.', ar: 'لا توجد أطباق متاحة للتوصيل حالياً.' },
   deliveryBelowMin: { en: 'Add a little more to reach the minimum order', ar: 'أضف القليل للوصول إلى الحد الأدنى للطلب' },
   yourOrder: { en: 'Your order', ar: 'طلبك' },
-  viewOrder: { en: 'View order', ar: 'عرض الطلب' },
-  add: { en: 'Add', ar: 'أضف' },
+  viewOrder: { en: 'View order', ar: 'عرض الطلب' },
+  add: { en: 'Add', ar: 'أضف' },
   yourAddress: { en: 'Area and address', ar: 'المنطقة والعنوان' },
   addressHint: { en: 'Area, street, building, floor', ar: 'المنطقة، الشارع، البناية، الطابق' },
   orderNotes: { en: 'Notes (optional)', ar: 'ملاحظات (اختياري)' },
@@ -146,6 +147,9 @@ const STRINGS = {
   bookingSentSub: { en: "Thank you, {name}. We'll call {phone} shortly to confirm your table.", ar: 'شكراً {name}. سنتصل بك على {phone} قريباً لتأكيد الحجز.' },
   bookingRef: { en: 'Booking no.', ar: 'رقم الحجز' },
   messageUs: { en: 'Message us on WhatsApp', ar: 'راسلنا على واتساب' },
+  sendBookingWhatsapp: { en: 'Send booking on WhatsApp', ar: 'أرسل الحجز عبر واتساب' },
+  sendBookingHint: { en: 'Last step: send it to us on WhatsApp so we see it straight away.', ar: 'الخطوة الأخيرة: أرسل الحجز لنا عبر واتساب لنراه فوراً.' },
+  tooMany: { en: 'Too many attempts — please wait a minute.', ar: 'محاولات كثيرة — يرجى الانتظار دقيقة.' },
   browseMenu: { en: 'Browse the menu', ar: 'تصفّح القائمة' },
   newBooking: { en: 'Make another booking', ar: 'حجز جديد' },
   bookingClosed: { en: 'Online booking is closed right now — please call us.', ar: 'الحجز عبر الإنترنت متوقف حالياً — يرجى الاتصال بنا.' },
